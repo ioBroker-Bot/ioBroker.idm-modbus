@@ -1,0 +1,695 @@
+{
+    "$comment": "Transcription of the differences between IDM 'Modbus TCP Navigator 10', 812663 Rev.0 (18.06.2025, NAV10_20.23-903) and the Navigator 2.0 document: the base is nav20.source.json, this file lists what the Navigator 10 document does not have, what it states differently, and what only it has. Facts only. IDs follow Xerolux/idm-heatpump-api (MIT, Copyright (c) 2026 Basti). Untested on a real Navigator 10: every entry is verified 'doc'; only a scan from a Navigator 10 owner can set 'device'.",
+    "family": "nav10",
+    "document": "IDM Modbus TCP Navigator 10, 812663 Rev.0, 18.06.2025, NAV10_20.23-903",
+    "extends": "nav20",
+    "axisTo": {
+        "r": 6
+    },
+    "removeIds": ["zm{z}_room9_relay", "thermal_power_flow_sensor", "total_heat_energy"],
+    "overrides": [
+        {
+            "id": "variable_input",
+            "max": 3,
+            "default": 0,
+            "note": "variable-input-functions",
+            "enum": {
+                "0": {
+                    "de": "nicht konfiguriert",
+                    "en": "Not configured"
+                },
+                "1": {
+                    "de": "externe WW-Ladung",
+                    "en": "External hot water charging"
+                },
+                "2": {
+                    "de": "PV / Digitaleingang",
+                    "en": "PV / digital input"
+                },
+                "3": {
+                    "de": "ext. Umsch. Heizen/Kühlen",
+                    "en": "External changeover heating/cooling"
+                }
+            },
+            "label": {
+                "de": "Variabler Eingang",
+                "en": "Variable input"
+            }
+        },
+        {
+            "id": "hp_operating_mode",
+            "enum": {
+                "0": {
+                    "de": "Standby",
+                    "en": "Standby"
+                },
+                "1": {
+                    "de": "Heizbetrieb",
+                    "en": "Heating"
+                },
+                "2": {
+                    "de": "Kühlbetrieb",
+                    "en": "Cooling"
+                },
+                "4": {
+                    "de": "Warmwasser",
+                    "en": "Hot water"
+                },
+                "8": {
+                    "de": "Abtauung",
+                    "en": "Defrost"
+                }
+            }
+        },
+        {
+            "id": "current_electricity_price",
+            "unit": "€/MWh"
+        },
+        {
+            "id": "charging_pump_status",
+            "min": 0,
+            "default": -1
+        },
+        {
+            "id": "brine_pump_status",
+            "min": 0,
+            "default": -1
+        },
+        {
+            "id": "heat_source_pump_status",
+            "min": 0,
+            "default": -1
+        },
+        {
+            "id": "isc_cold_storage_pump_status",
+            "min": 0,
+            "default": -1
+        },
+        {
+            "id": "isc_recooling_pump_status",
+            "min": 0,
+            "default": -1
+        },
+        {
+            "id": "bivalence_point_1_2nd_gen",
+            "min": -40,
+            "default": -5
+        },
+        {
+            "id": "bivalence_point_2_2nd_gen",
+            "min": -40,
+            "default": -20
+        },
+        {
+            "id": "bivalence_point_1_3rd_gen",
+            "min": -40,
+            "default": -5
+        },
+        {
+            "id": "bivalence_point_2_3rd_gen",
+            "min": -40,
+            "default": -20
+        },
+        {
+            "id": "cascade_bivalence_heating_parallel",
+            "min": -40
+        },
+        {
+            "id": "cascade_bivalence_heating_alternative",
+            "min": -40
+        },
+        {
+            "id": "cascade_bivalence_cooling_parallel",
+            "min": -40
+        },
+        {
+            "id": "cascade_bivalence_cooling_alternative",
+            "min": -40
+        },
+        {
+            "id": "cascade_bivalence_dhw_parallel",
+            "min": -40
+        },
+        {
+            "id": "cascade_bivalence_dhw_alternative",
+            "min": -40
+        },
+        {
+            "id": "ext_pump_demand_1",
+            "unit": "%",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "label": {
+                "de": "Externe Anforderung Grundwasserpumpe M15",
+                "en": "External demand groundwater pump M15"
+            }
+        },
+        {
+            "id": "ext_pump_demand_2",
+            "unit": "%",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "label": {
+                "de": "Externe Anforderung Grundwasserpumpe M15",
+                "en": "External demand groundwater pump M15"
+            }
+        }
+    ],
+    "entries": [
+        {
+            "id": "pv_target_value",
+            "address": 88,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "idmSensorRo": true,
+            "unit": "kW",
+            "group": "pv",
+            "poll": "fast",
+            "default": 0,
+            "label": {
+                "de": "PV-Zielwert (Smartfox und Solar-Log)",
+                "en": "PV target value (Smartfox and Solar-Log)"
+            }
+        },
+        {
+            "id": "smart_grid_status",
+            "address": 90,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "system",
+            "poll": "medium",
+            "min": 0,
+            "max": 4,
+            "default": 1,
+            "enum": {
+                "0": {
+                    "de": "Red",
+                    "en": "Red"
+                },
+                "1": {
+                    "de": "Yellow",
+                    "en": "Yellow"
+                },
+                "2": {
+                    "de": "Green",
+                    "en": "Green"
+                },
+                "4": {
+                    "de": "Supergreen",
+                    "en": "Supergreen"
+                }
+            },
+            "label": {
+                "de": "Smart Grid Status",
+                "en": "Smart grid status"
+            }
+        },
+        {
+            "id": "heat_sink_return_temp",
+            "address": 1068,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Rücklauftemperatur Wärmesenke (B124)",
+                "en": "Heat sink return temperature (B124)"
+            }
+        },
+        {
+            "id": "heat_sink_flow_temp",
+            "address": 1070,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Vorlauftemperatur Wärmesenke (B125)",
+                "en": "Heat sink flow temperature (B125)"
+            }
+        },
+        {
+            "id": "heat_sink_flow_rate",
+            "address": 1072,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "unit": "l/min",
+            "note": "flow-only-with-separating-heat-exchanger",
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Durchfluss Wärmesenke (B2)",
+                "en": "Heat sink flow rate (B2)"
+            }
+        },
+        {
+            "id": "heat_sink_charging_pump_signal",
+            "address": 1074,
+            "pdfType": "WORD",
+            "access": "R",
+            "unit": "%",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "group": "hp",
+            "poll": "fast",
+            "label": {
+                "de": "Ladepumpe Wärmesenke Steuersignal (M73)",
+                "en": "Heat sink charging pump control signal (M73)"
+            }
+        },
+        {
+            "id": "groundwater_inlet_temp_1",
+            "address": 1086,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Grundwassereintrittstemperatur (B119)",
+                "en": "Groundwater inlet temperature (B119)"
+            }
+        },
+        {
+            "id": "groundwater_inlet_temp_2",
+            "address": 1088,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Grundwassereintrittstemperatur (B120)",
+                "en": "Groundwater inlet temperature (B120)"
+            }
+        },
+        {
+            "id": "fault_heat_source_circuit",
+            "address": 1680,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "min": 0,
+            "max": 1,
+            "enum": {
+                "0": {
+                    "de": "Störung",
+                    "en": "Fault"
+                },
+                "1": {
+                    "de": "Keine Störung",
+                    "en": "No fault"
+                }
+            },
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Störung Wärmequellenkreis",
+                "en": "Heat source circuit fault"
+            }
+        },
+        {
+            "id": "fault_heat_source_pressure_switch",
+            "address": 1681,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "min": 0,
+            "max": 1,
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Störung Druckschalter Wärmequellenkreis (iPump T und TERRA SWM)",
+                "en": "Heat source circuit pressure switch fault (iPump T and TERRA SWM)"
+            }
+        },
+        {
+            "id": "fault_charging_pump_1_intermediate",
+            "address": 1682,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "min": 0,
+            "max": 1,
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Störung Ladepumpe 1 Zwischenkreis (M125)",
+                "en": "Intermediate circuit charging pump 1 fault (M125)"
+            }
+        },
+        {
+            "id": "fault_charging_pump_2_intermediate",
+            "address": 1683,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "min": 0,
+            "max": 1,
+            "group": "hp",
+            "poll": "medium",
+            "label": {
+                "de": "Störung Ladepumpe 2 Zwischenkreis (M118)",
+                "en": "Intermediate circuit charging pump 2 fault (M118)"
+            }
+        },
+        {
+            "id": "power_limit_hp",
+            "address": 4108,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "config",
+            "default": -1,
+            "sentinel": [-1],
+            "label": {
+                "de": "Leistungsbegrenzung Wärmepumpe",
+                "en": "Heat pump power limit"
+            }
+        },
+        {
+            "id": "power_limit_cascade",
+            "address": 4112,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "config",
+            "default": -1,
+            "sentinel": [-1],
+            "label": {
+                "de": "Leistungsbegrenzung Kaskade",
+                "en": "Cascade power limit"
+            }
+        },
+        {
+            "id": "power_consumption_hp_smartfox",
+            "address": 4124,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "fast",
+            "sentinel": [-1],
+            "label": {
+                "de": "Elektr. Gesamtleistung Wärmepumpe (Smartfox)",
+                "en": "Total electrical power of the heat pump (Smartfox)"
+            }
+        },
+        {
+            "id": "booster_fault",
+            "address": 4001,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "booster",
+            "poll": "medium",
+            "min": 0,
+            "max": 3,
+            "requires": ["block:booster"],
+            "enum": {
+                "0": {
+                    "de": "Keine Störung",
+                    "en": "No fault"
+                },
+                "1": {
+                    "de": "Störung Booster A",
+                    "en": "Booster A fault"
+                },
+                "2": {
+                    "de": "Störung Booster B",
+                    "en": "Booster B fault"
+                },
+                "3": {
+                    "de": "Störung Booster A und B",
+                    "en": "Booster A and B fault"
+                }
+            },
+            "label": {
+                "de": "Booster Störungen",
+                "en": "Booster faults"
+            }
+        },
+        {
+            "id": "booster_interlock",
+            "address": 4002,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "booster",
+            "poll": "medium",
+            "min": 0,
+            "max": 3,
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster Verriegelung",
+                "en": "Booster interlock"
+            }
+        },
+        {
+            "id": "booster_a_source_inlet_temp",
+            "address": 4010,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Wärmequelleneintrittstemperatur",
+                "en": "Booster A heat source inlet temperature"
+            }
+        },
+        {
+            "id": "booster_a_source_outlet_temp",
+            "address": 4012,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Wärmequellenaustrittstemperatur",
+                "en": "Booster A heat source outlet temperature"
+            }
+        },
+        {
+            "id": "booster_a_storage_temp",
+            "address": 4014,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Wärmespeichertemperatur (B104)",
+                "en": "Booster A heat storage temperature (B104)"
+            }
+        },
+        {
+            "id": "booster_a_flow_temp",
+            "address": 4016,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Vorlauftemperatur",
+                "en": "Booster A flow temperature"
+            }
+        },
+        {
+            "id": "booster_a_return_temp",
+            "address": 4018,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Rücklauftemperatur",
+                "en": "Booster A return temperature"
+            }
+        },
+        {
+            "id": "booster_a_source_pump",
+            "address": 4020,
+            "pdfType": "WORD",
+            "access": "R",
+            "unit": "%",
+            "group": "booster",
+            "poll": "fast",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Wärmequellenpumpe",
+                "en": "Booster A heat source pump"
+            }
+        },
+        {
+            "id": "booster_a_charging_pump",
+            "address": 4021,
+            "pdfType": "WORD",
+            "access": "R",
+            "unit": "%",
+            "group": "booster",
+            "poll": "fast",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Ladepumpe",
+                "en": "Booster A charging pump"
+            }
+        },
+        {
+            "id": "booster_a_compressor",
+            "address": 4022,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "booster",
+            "poll": "fast",
+            "min": 0,
+            "max": 1,
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster A Verdichter",
+                "en": "Booster A compressor"
+            }
+        },
+        {
+            "id": "booster_b_source_inlet_temp",
+            "address": 4040,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Wärmequelleneintrittstemperatur",
+                "en": "Booster B heat source inlet temperature"
+            }
+        },
+        {
+            "id": "booster_b_source_outlet_temp",
+            "address": 4042,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Wärmequellenaustrittstemperatur",
+                "en": "Booster B heat source outlet temperature"
+            }
+        },
+        {
+            "id": "booster_b_storage_temp",
+            "address": 4044,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Wärmespeichertemperatur (B104)",
+                "en": "Booster B heat storage temperature (B104)"
+            }
+        },
+        {
+            "id": "booster_b_flow_temp",
+            "address": 4046,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Vorlauftemperatur",
+                "en": "Booster B flow temperature"
+            }
+        },
+        {
+            "id": "booster_b_return_temp",
+            "address": 4048,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "booster",
+            "poll": "medium",
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Rücklauftemperatur",
+                "en": "Booster B return temperature"
+            }
+        },
+        {
+            "id": "booster_b_source_pump",
+            "address": 4050,
+            "pdfType": "WORD",
+            "access": "R",
+            "unit": "%",
+            "group": "booster",
+            "poll": "fast",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Wärmequellenpumpe",
+                "en": "Booster B heat source pump"
+            }
+        },
+        {
+            "id": "booster_b_charging_pump",
+            "address": 4051,
+            "pdfType": "WORD",
+            "access": "R",
+            "unit": "%",
+            "group": "booster",
+            "poll": "fast",
+            "min": 0,
+            "max": 100,
+            "default": -1,
+            "sentinel": [-1],
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Ladepumpe",
+                "en": "Booster B charging pump"
+            }
+        },
+        {
+            "id": "booster_b_compressor",
+            "address": 4052,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "booster",
+            "poll": "fast",
+            "min": 0,
+            "max": 1,
+            "requires": ["block:booster"],
+            "label": {
+                "de": "Booster B Verdichter",
+                "en": "Booster B compressor"
+            }
+        }
+    ]
+}

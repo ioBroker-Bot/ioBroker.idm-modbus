@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+        />
+        <title>Heat pump diagram</title>
+        <link
+            rel="icon"
+            href="favicon.png"
+            type="image/png"
+        />
+        <link
+            rel="stylesheet"
+            href="diagram.css"
+        />
+    </head>
+    <body>
+        <header>
+            <h1 id="title">Heat pump diagram</h1>
+            <div id="status">
+                <span
+                    id="dot"
+                    class="dot"
+                ></span
+                ><span id="statusText"></span>
+            </div>
+        </header>
+        <main>
+            <svg
+                id="diagram"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="Heat pump diagram"
+            ></svg>
+            <p
+                id="empty"
+                hidden
+            >
+                …
+            </p>
+        </main>
+        <script src="diagram.js"></script>
+    </body>
+</html>

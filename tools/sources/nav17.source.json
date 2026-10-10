@@ -1,0 +1,1385 @@
+{
+    "$comment": "Transcription of IDM 'IDM Navigator mit Modbus TCP' for Navigator 1.0 and 1.7, 812049 Rev.1 (parameter list dated 13.06.2016, software from N1.7v / N1.7MLg). A separate register family: input registers (function code 04) from 1000 and 1500, holding registers (03/06) from 2000. Facts only. IDs follow Xerolux/idm-heatpump-api (MIT, Copyright (c) 2026 Basti). The PV supplement (74-82, 4122) is not in this document: it is 'community' (Xerolux, IDM support supplement after 2016). The coil block (3000-3003, function codes 01/05) is not part of this register file: the adapter has no coil support yet. Untested on a real Navigator 1.x.",
+    "family": "nav17",
+    "document": "IDM Modbus TCP Navigator 1.0/1.7, 812049 Rev.1, 13.06.2016, SW from N1.7v",
+    "entries": [
+        {
+            "id": "outdoor_temp",
+            "address": 1000,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "system",
+            "poll": "fast",
+            "sentinel": [-1],
+            "label": {
+                "de": "Außentemperatur",
+                "en": "Outdoor temperature"
+            }
+        },
+        {
+            "id": "hp_flow_temp",
+            "address": 1002,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "fast",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmepumpen Vorlauftemperatur",
+                "en": "Heat pump flow temperature"
+            }
+        },
+        {
+            "id": "hgl_flow_temp",
+            "address": 1004,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "HGL Vorlauftemperatur",
+                "en": "HGL flow temperature"
+            }
+        },
+        {
+            "id": "heat_source_outlet_temp",
+            "address": 1006,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmequellenaustrittstemperatur",
+                "en": "Heat source outlet temperature"
+            }
+        },
+        {
+            "id": "storage_temp",
+            "address": 1008,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "fast",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmepumpen Rücklauftemperatur / Wärmespeichertemperatur",
+                "en": "Heat pump return temperature / heat storage temperature"
+            }
+        },
+        {
+            "id": "cold_storage_temp",
+            "address": 1010,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Kältespeichertemperatur",
+                "en": "Cold storage temperature"
+            }
+        },
+        {
+            "id": "dhw_temp",
+            "address": 1012,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "dhw",
+            "poll": "fast",
+            "sentinel": [-1],
+            "label": {
+                "de": "Trinkwassererwärmertemperatur",
+                "en": "Hot water heater temperature"
+            }
+        },
+        {
+            "id": "dhw_tapping_temp",
+            "address": 1014,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "dhw",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Frischwasserzapftemperatur",
+                "en": "Fresh water tapping temperature"
+            }
+        },
+        {
+            "id": "hc_{i:l}_flow_temp",
+            "address": 1016,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "fast",
+            "sentinel": [-1],
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Heizkreis {i} Vorlauftemperatur",
+                "en": "Heating circuit {i} flow temperature"
+            }
+        },
+        {
+            "id": "hc_{i:l}_room_device_temp",
+            "address": 1030,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "medium",
+            "sentinel": [-1],
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Heizkreis {i} Raumgerät",
+                "en": "Heating circuit {i} room device temperature"
+            }
+        },
+        {
+            "id": "hot_gas_temp",
+            "address": 1044,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Heissgastemperatur",
+                "en": "Hot gas temperature"
+            }
+        },
+        {
+            "id": "humidity_sensor",
+            "address": 1046,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "%rF",
+            "group": "system",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Feuchtesensor",
+                "en": "Humidity sensor"
+            }
+        },
+        {
+            "id": "air_intake_temp",
+            "address": 1048,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Luftansaugtemperatur",
+                "en": "Air intake temperature"
+            }
+        },
+        {
+            "id": "air_heat_exchanger_temp",
+            "address": 1050,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Luftwärmetauschertemperatur",
+                "en": "Air heat exchanger temperature"
+            }
+        },
+        {
+            "id": "solar_collector_temp",
+            "address": 1052,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "solar",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Solar Kollektortemperatur",
+                "en": "Solar collector temperature"
+            }
+        },
+        {
+            "id": "solar_charging_temp",
+            "address": 1054,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "solar",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Solar Ladetemperatur",
+                "en": "Solar charging temperature"
+            }
+        },
+        {
+            "id": "solar_collector_return_temp",
+            "address": 1056,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "solar",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Solar Kollektorrücklauftemperatur",
+                "en": "Solar collector return temperature"
+            }
+        },
+        {
+            "id": "solar_pool_temp",
+            "address": 1058,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "solar",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Solar Wärmequellenreferenztemperatur / Pooltemperatur",
+                "en": "Solar heat source reference temperature / pool temperature"
+            }
+        },
+        {
+            "id": "outdoor_temp_avg",
+            "address": 1060,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "system",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Gemittelte Außentemperatur",
+                "en": "Averaged outdoor temperature"
+            }
+        },
+        {
+            "id": "heat_source_inlet_temp",
+            "address": 1062,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "hp",
+            "poll": "medium",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmequelleneintrittstemperatur",
+                "en": "Heat source inlet temperature"
+            }
+        },
+        {
+            "id": "isc_cooling_charge_temp",
+            "address": 1064,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "isc",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:isc"],
+            "label": {
+                "de": "IDM Systemkühlung - Ladefühler Kühlen",
+                "en": "ISC charging sensor cooling"
+            }
+        },
+        {
+            "id": "isc_recooling_temp",
+            "address": 1066,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "°C",
+            "group": "isc",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:isc"],
+            "label": {
+                "de": "IDM Systemkühlung - Rückkühlfühler",
+                "en": "ISC recooling sensor"
+            }
+        },
+        {
+            "id": "thermal_power_hp_flow",
+            "address": 1068,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "fast",
+            "sentinel": [-1],
+            "note": "navigator-1-0-only",
+            "label": {
+                "de": "Wärmemenge Wärmepumpenvorlauf",
+                "en": "Heat quantity heat pump flow"
+            }
+        },
+        {
+            "id": "thermal_power_hgl_flow",
+            "address": 1070,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "fast",
+            "sentinel": [-1],
+            "note": "navigator-1-0-only",
+            "label": {
+                "de": "Wärmemenge HGL-Vorlauf",
+                "en": "Heat quantity HGL flow"
+            }
+        },
+        {
+            "id": "thermal_power_total",
+            "address": 1072,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "fast",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmemenge Momentanleistung",
+                "en": "Heat quantity instantaneous power"
+            }
+        },
+        {
+            "id": "thermal_power_solar",
+            "address": 1074,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "fast",
+            "sentinel": [-1],
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Wärmemenge Solar",
+                "en": "Heat quantity solar"
+            }
+        },
+        {
+            "id": "energy_total",
+            "address": 1076,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kWh",
+            "group": "energy",
+            "poll": "slow",
+            "sentinel": [-1],
+            "note": "navigator-1-0-only",
+            "label": {
+                "de": "Wärmemenge gesamt",
+                "en": "Total heat quantity"
+            }
+        },
+        {
+            "id": "energy_heating",
+            "address": 1078,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kWh",
+            "group": "energy",
+            "poll": "slow",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmemenge Heizen gesamt",
+                "en": "Total heat quantity heating"
+            }
+        },
+        {
+            "id": "energy_hgl",
+            "address": 1080,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kWh",
+            "group": "energy",
+            "poll": "slow",
+            "sentinel": [-1],
+            "note": "navigator-1-0-only",
+            "label": {
+                "de": "Wärmemenge HGL gesamt",
+                "en": "Total heat quantity HGL"
+            }
+        },
+        {
+            "id": "energy_cooling",
+            "address": 1082,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kWh",
+            "group": "energy",
+            "poll": "slow",
+            "sentinel": [-1],
+            "label": {
+                "de": "Wärmemenge Kühlen gesamt",
+                "en": "Total heat quantity cooling"
+            }
+        },
+        {
+            "id": "energy_solar",
+            "address": 1084,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kWh",
+            "group": "energy",
+            "poll": "slow",
+            "sentinel": [-1],
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Wärmemenge Solar gesamt",
+                "en": "Total heat quantity solar"
+            }
+        },
+        {
+            "id": "groundwater_pump_flow_total",
+            "address": 1086,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": null,
+            "group": "hp",
+            "poll": "slow",
+            "sentinel": [-1],
+            "note": "unit-not-documented",
+            "label": {
+                "de": "Summe Durchflussmengenzähler Grundwasserpumpe",
+                "en": "Total flow meter groundwater pump"
+            }
+        },
+        {
+            "id": "heat_source_pump_operating_hours",
+            "address": 1088,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "h",
+            "group": "hp",
+            "poll": "slow",
+            "sentinel": [-1],
+            "label": {
+                "de": "Betriebsstundenzähler Wärmequellenpumpe",
+                "en": "Operating hours heat source pump"
+            }
+        },
+        {
+            "id": "error_number",
+            "address": 1500,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "system",
+            "poll": "medium",
+            "lowByte": true,
+            "label": {
+                "de": "Aktuelle Störungsnummer",
+                "en": "Current fault number"
+            }
+        },
+        {
+            "id": "hp_operating_mode",
+            "address": 1501,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 8,
+            "lowByte": true,
+            "enum": {
+                "0": {
+                    "de": "AUS",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Heizen",
+                    "en": "Heating"
+                },
+                "2": {
+                    "de": "Kühlen",
+                    "en": "Cooling"
+                },
+                "4": {
+                    "de": "Vorrang",
+                    "en": "Priority"
+                },
+                "8": {
+                    "de": "Abtauen",
+                    "en": "Defrost"
+                }
+            },
+            "label": {
+                "de": "Betriebsart Wärmepumpe",
+                "en": "Heat pump operating mode"
+            }
+        },
+        {
+            "id": "hc_{i:l}_status",
+            "address": 1502,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 1
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "medium",
+            "min": 0,
+            "max": 2,
+            "lowByte": true,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Status Heizkreis {i}",
+                "en": "Heating circuit {i} status"
+            }
+        },
+        {
+            "id": "compressor_status_{n}",
+            "address": 1509,
+            "repeat": [
+                {
+                    "name": "n",
+                    "to": 4,
+                    "stride": 1,
+                    "from": 1
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 1,
+            "lowByte": true,
+            "enum": {
+                "0": {
+                    "de": "Aus",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Ein",
+                    "en": "On"
+                }
+            },
+            "label": {
+                "de": "Status Verdichter {n}",
+                "en": "Compressor {n} status"
+            }
+        },
+        {
+            "id": "charging_pump_status",
+            "address": 1513,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 2,
+            "lowByte": true,
+            "enum": {
+                "0": {
+                    "de": "Aus",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Betrieb",
+                    "en": "Operation"
+                },
+                "2": {
+                    "de": "Störung",
+                    "en": "Fault"
+                }
+            },
+            "label": {
+                "de": "Status Ladepumpe",
+                "en": "Charging pump status"
+            }
+        },
+        {
+            "id": "heat_source_pump_status",
+            "address": 1514,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 2,
+            "lowByte": true,
+            "enum": {
+                "0": {
+                    "de": "Aus",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Betrieb",
+                    "en": "Operation"
+                },
+                "2": {
+                    "de": "Störung",
+                    "en": "Fault"
+                }
+            },
+            "label": {
+                "de": "Status Wärmequellenpumpe",
+                "en": "Heat source pump status"
+            }
+        },
+        {
+            "id": "intermediate_circuit_pump_status",
+            "address": 1515,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 2,
+            "lowByte": true,
+            "enum": {
+                "0": {
+                    "de": "Aus",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Betrieb",
+                    "en": "Operation"
+                },
+                "2": {
+                    "de": "Störung",
+                    "en": "Fault"
+                }
+            },
+            "label": {
+                "de": "Status Zwischenkreispumpe",
+                "en": "Intermediate circuit pump status"
+            }
+        },
+        {
+            "id": "isc_cold_storage_pump_status",
+            "address": 1516,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "isc",
+            "poll": "fast",
+            "min": 0,
+            "max": 2,
+            "lowByte": true,
+            "requires": ["block:isc"],
+            "enum": {
+                "0": {
+                    "de": "Aus",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Betrieb",
+                    "en": "Operation"
+                },
+                "2": {
+                    "de": "Störung",
+                    "en": "Fault"
+                }
+            },
+            "label": {
+                "de": "Status ISC Kältespeicherpumpe",
+                "en": "ISC cold storage pump status"
+            }
+        },
+        {
+            "id": "isc_recooling_pump_status",
+            "address": 1517,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "isc",
+            "poll": "fast",
+            "min": 0,
+            "max": 2,
+            "lowByte": true,
+            "requires": ["block:isc"],
+            "enum": {
+                "0": {
+                    "de": "Aus",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Betrieb",
+                    "en": "Operation"
+                },
+                "2": {
+                    "de": "Störung",
+                    "en": "Fault"
+                }
+            },
+            "label": {
+                "de": "Status ISC Rückkühlpumpe",
+                "en": "ISC recooling pump status"
+            }
+        },
+        {
+            "id": "compressor_stages_heating",
+            "address": 1518,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 12,
+            "lowByte": true,
+            "label": {
+                "de": "Anzahl laufende Verdichterstufen Heizen gesamt",
+                "en": "Running compressor stages heating total"
+            }
+        },
+        {
+            "id": "compressor_stages_cooling",
+            "address": 1519,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 12,
+            "lowByte": true,
+            "label": {
+                "de": "Anzahl laufende Verdichterstufen Kühlen gesamt",
+                "en": "Running compressor stages cooling total"
+            }
+        },
+        {
+            "id": "compressor_stages_dhw",
+            "address": 1520,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "hp",
+            "poll": "fast",
+            "min": 0,
+            "max": 12,
+            "lowByte": true,
+            "label": {
+                "de": "Anzahl laufende Verdichterstufen Vorrang gesamt",
+                "en": "Running compressor stages priority total"
+            }
+        },
+        {
+            "id": "cascade_mode",
+            "address": 1521,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "cascade",
+            "poll": "medium",
+            "min": 0,
+            "max": 8,
+            "lowByte": true,
+            "requires": ["block:cascade"],
+            "label": {
+                "de": "Betriebsart Kaskade",
+                "en": "Cascade operating mode"
+            }
+        },
+        {
+            "id": "solar_mode",
+            "address": 1522,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "solar",
+            "poll": "medium",
+            "min": 0,
+            "max": 17,
+            "lowByte": true,
+            "requires": ["block:solar"],
+            "label": {
+                "de": "Betriebsart Solar",
+                "en": "Solar operating mode"
+            }
+        },
+        {
+            "id": "smart_grid_status",
+            "address": 1523,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "system",
+            "poll": "medium",
+            "min": 0,
+            "max": 3,
+            "lowByte": true,
+            "label": {
+                "de": "Smart Grid Status",
+                "en": "Smart grid status"
+            }
+        },
+        {
+            "id": "isc_mode",
+            "address": 1524,
+            "pdfType": "UCHAR",
+            "access": "R",
+            "group": "isc",
+            "poll": "medium",
+            "min": 0,
+            "max": 8,
+            "lowByte": true,
+            "requires": ["block:isc"],
+            "label": {
+                "de": "IDM Systemkühlung (ISC) Modus",
+                "en": "ISC mode"
+            }
+        },
+        {
+            "id": "system_mode_17",
+            "address": 2000,
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "group": "system",
+            "poll": "config",
+            "min": 0,
+            "max": 3,
+            "default": 1,
+            "enum": {
+                "0": {
+                    "de": "System AUS",
+                    "en": "System off"
+                },
+                "1": {
+                    "de": "Automatik",
+                    "en": "Automatic"
+                },
+                "2": {
+                    "de": "Nur Warmwasser",
+                    "en": "Hot water only"
+                },
+                "3": {
+                    "de": "Einmalige Brauchwasserladung",
+                    "en": "One-time hot water charge"
+                }
+            },
+            "label": {
+                "de": "Betriebsart System",
+                "en": "System operating mode"
+            }
+        },
+        {
+            "id": "hc_{i:l}_operating_mode",
+            "address": 2002,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 0,
+            "max": 4,
+            "default": 1,
+            "requires": ["hc:{i}"],
+            "enum": {
+                "0": {
+                    "de": "AUS",
+                    "en": "Off"
+                },
+                "1": {
+                    "de": "Zeitprogramm",
+                    "en": "Time program"
+                },
+                "2": {
+                    "de": "Normal",
+                    "en": "Normal"
+                },
+                "3": {
+                    "de": "ECO",
+                    "en": "Eco"
+                },
+                "4": {
+                    "de": "Manuell Heizen",
+                    "en": "Manual heating"
+                }
+            },
+            "label": {
+                "de": "Betriebsart Heizkreis {i}",
+                "en": "Heating circuit {i} operating mode"
+            }
+        },
+        {
+            "id": "hc_{i:l}_room_setpoint_heat_normal",
+            "address": 2016,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 15,
+            "max": 30,
+            "default": 22,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Raumsolltemperatur Heizen Normal Heizkreis {i}",
+                "en": "Heating circuit {i} room setpoint heating normal"
+            }
+        },
+        {
+            "id": "hc_{i:l}_room_setpoint_heat_eco",
+            "address": 2030,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 10,
+            "max": 25,
+            "default": 18,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Raumsolltemperatur Heizen ECO Heizkreis {i}",
+                "en": "Heating circuit {i} room setpoint heating eco"
+            }
+        },
+        {
+            "id": "hc_{i:l}_heating_curve",
+            "address": 2044,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "eeprom": true,
+            "unit": null,
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 0.1,
+            "max": 3.5,
+            "default": 0.8,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Heizkurve Heizkreis {i}",
+                "en": "Heating circuit {i} heating curve"
+            }
+        },
+        {
+            "id": "hc_{i:l}_heating_limit",
+            "address": 2058,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 0,
+            "max": 50,
+            "default": 25,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Heizgrenze Heizkreis {i}",
+                "en": "Heating circuit {i} heating limit"
+            }
+        },
+        {
+            "id": "hc_{i:l}_setpoint_flow_constant",
+            "address": 2072,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 20,
+            "max": 90,
+            "default": 45,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Sollvorlauftemperatur Heizen Heizkreis {i} (nur Konstantheizkreis)",
+                "en": "Heating circuit {i} flow setpoint heating (constant circuits only)"
+            }
+        },
+        {
+            "id": "hc_{i:l}_room_setpoint_cool_normal",
+            "address": 2086,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 15,
+            "max": 30,
+            "default": 23,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Raumsolltemperatur Kühlen Normal Heizkreis {i}",
+                "en": "Heating circuit {i} room setpoint cooling normal"
+            }
+        },
+        {
+            "id": "hc_{i:l}_room_setpoint_cool_eco",
+            "address": 2100,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 15,
+            "max": 30,
+            "default": 25,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Raumsolltemperatur Kühlen ECO Heizkreis {i}",
+                "en": "Heating circuit {i} room setpoint cooling eco"
+            }
+        },
+        {
+            "id": "hc_{i:l}_cooling_limit",
+            "address": 2114,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 0,
+            "max": 36,
+            "default": 25,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Kühlgrenze Heizkreis {i} (0 = keine Kühlgrenze)",
+                "en": "Heating circuit {i} cooling limit (0 = no limit)"
+            }
+        },
+        {
+            "id": "hc_{i:l}_setpoint_flow_cooling",
+            "address": 2128,
+            "repeat": [
+                {
+                    "name": "i",
+                    "values": ["A", "B", "C", "D", "E", "F", "G"],
+                    "stride": 2
+                }
+            ],
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "hc",
+            "instance": "{i}",
+            "poll": "config",
+            "min": 8,
+            "max": 30,
+            "default": 18,
+            "requires": ["hc:{i}"],
+            "label": {
+                "de": "Sollvorlauftemperatur Kühlen Heizkreis {i}",
+                "en": "Heating circuit {i} flow setpoint cooling"
+            }
+        },
+        {
+            "id": "external_demand_temp_heating",
+            "address": 2142,
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "glt",
+            "poll": "config",
+            "min": 20,
+            "max": 65,
+            "default": 40,
+            "label": {
+                "de": "Externe Anforderungstemperatur Heizen",
+                "en": "External demand temperature heating"
+            }
+        },
+        {
+            "id": "external_demand_temp_cooling",
+            "address": 2144,
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "glt",
+            "poll": "config",
+            "min": 10,
+            "max": 25,
+            "default": 16,
+            "label": {
+                "de": "Externe Anforderungstemperatur Kühlen",
+                "en": "External demand temperature cooling"
+            }
+        },
+        {
+            "id": "bivalence_point_1_17",
+            "address": 2146,
+            "pdfType": "WORD",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "bivalence",
+            "poll": "config",
+            "min": -20,
+            "max": 20,
+            "default": 0,
+            "label": {
+                "de": "Bivalenzpunkt 1",
+                "en": "Bivalence point 1"
+            }
+        },
+        {
+            "id": "bivalence_point_2_17",
+            "address": 2148,
+            "pdfType": "WORD",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "bivalence",
+            "poll": "config",
+            "min": -20,
+            "max": 20,
+            "default": -10,
+            "label": {
+                "de": "Bivalenzpunkt 2",
+                "en": "Bivalence point 2"
+            }
+        },
+        {
+            "id": "solar_operating_mode_17",
+            "address": 2150,
+            "pdfType": "UCHAR",
+            "access": "RW",
+            "eeprom": true,
+            "group": "solar",
+            "poll": "config",
+            "min": 0,
+            "max": 4,
+            "default": 0,
+            "requires": ["block:solar"],
+            "enum": {
+                "0": {
+                    "de": "Automatik",
+                    "en": "Automatic"
+                },
+                "1": {
+                    "de": "Trinkwassererwärmer",
+                    "en": "Hot water heater"
+                },
+                "2": {
+                    "de": "Wärmespeicher",
+                    "en": "Heat storage"
+                },
+                "3": {
+                    "de": "TW-Erwärmer+Wärmespeicher",
+                    "en": "Hot water heater + heat storage"
+                },
+                "4": {
+                    "de": "Wärmequelle/Pool",
+                    "en": "Heat source/pool"
+                }
+            },
+            "label": {
+                "de": "Betriebsart Solar",
+                "en": "Solar operating mode"
+            }
+        },
+        {
+            "id": "dhw_setpoint",
+            "address": 2152,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "eeprom": true,
+            "unit": "°C",
+            "group": "dhw",
+            "poll": "config",
+            "min": 35,
+            "max": 60,
+            "default": 46,
+            "label": {
+                "de": "Frischwasser-Solltemperatur",
+                "en": "Fresh water setpoint"
+            }
+        },
+        {
+            "id": "pv_surplus",
+            "address": 74,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "idmSensorRo": false,
+            "unit": "kW",
+            "group": "pv",
+            "poll": "fast",
+            "default": 0,
+            "verified": "community",
+            "note": "pv-supplement-post-2016",
+            "label": {
+                "de": "Aktueller PV-Überschuss",
+                "en": "Current PV surplus"
+            }
+        },
+        {
+            "id": "electric_heater_power",
+            "address": 76,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "idmSensorRo": false,
+            "unit": "kW",
+            "group": "pv",
+            "poll": "fast",
+            "default": 0,
+            "verified": "community",
+            "note": "pv-supplement-post-2016",
+            "label": {
+                "de": "Leistung E-Heizstab",
+                "en": "Electric heater power"
+            }
+        },
+        {
+            "id": "pv_production",
+            "address": 78,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "idmSensorRo": false,
+            "unit": "kW",
+            "group": "pv",
+            "poll": "fast",
+            "default": 0,
+            "verified": "community",
+            "note": "pv-supplement-post-2016",
+            "label": {
+                "de": "Aktuelle PV Produktion",
+                "en": "Current PV production"
+            }
+        },
+        {
+            "id": "house_consumption",
+            "address": 82,
+            "pdfType": "FLOAT",
+            "access": "RW",
+            "idmSensorRo": false,
+            "unit": "kW",
+            "group": "pv",
+            "poll": "fast",
+            "default": 0,
+            "verified": "community",
+            "note": "pv-supplement-post-2016",
+            "label": {
+                "de": "Hausverbrauch",
+                "en": "House consumption"
+            }
+        },
+        {
+            "id": "power_consumption_hp",
+            "address": 4122,
+            "pdfType": "FLOAT",
+            "access": "R",
+            "unit": "kW",
+            "group": "energy",
+            "poll": "fast",
+            "sentinel": [-1],
+            "verified": "community",
+            "note": "pv-supplement-post-2016",
+            "label": {
+                "de": "Aktuelle Leistungsaufnahme Wärmepumpe",
+                "en": "Current heat pump power consumption"
+            }
+        }
+    ]
+}

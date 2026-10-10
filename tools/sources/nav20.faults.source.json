@@ -1,0 +1,705 @@
+{
+    "$comment": "Fault numbers of the IDM Navigator 2.0 (operating manual, chapter 4 'Störungen', docs/sources/IDM_Navigator_2.0_Bedienungsanleitung_2019-01.pdf): names only, without the descriptions. Sensor faults come in pairs (even code = short circuit, next code = interruption). Codes 996-999 are events of the fault log. The Navigator reports the current number in the internal message register (1004); 020-999.",
+    "document": "IDM Navigator 2.0 Bedienungsanleitung, chapter 4, 2019-01",
+    "sensors": [
+        {
+            "code": 100,
+            "de": "Außenfühler (B32)",
+            "en": "Outdoor sensor (B32)"
+        },
+        {
+            "code": 102,
+            "de": "Wärmepumpenvorlauffühler (B33)",
+            "en": "Heat pump flow sensor (B33)"
+        },
+        {
+            "code": 104,
+            "de": "HGL- Vorlauffühler (B35)",
+            "en": "HGL flow sensor (B35)"
+        },
+        {
+            "code": 106,
+            "de": "Wärmequellenaustrittsfühler (B36)",
+            "en": "Heat source outlet sensor (B36)"
+        },
+        {
+            "code": 108,
+            "de": "Wärmespeicherfühler (B38)",
+            "en": "Heat storage sensor (B38)"
+        },
+        {
+            "code": 110,
+            "de": "Kältespeicherfühler (B40)",
+            "en": "Cold storage sensor (B40)"
+        },
+        {
+            "code": 112,
+            "de": "Trinkwassererwärmerfühler unten (B41)",
+            "en": "Hot water heater sensor bottom (B41)"
+        },
+        {
+            "code": 114,
+            "de": "Fühler Frischwasserstation (B42)",
+            "en": "Fresh water station sensor (B42)"
+        },
+        {
+            "code": 116,
+            "de": "Vorlauffühler HK A (B51)",
+            "en": "Flow sensor heating circuit A (B51)"
+        },
+        {
+            "code": 118,
+            "de": "Vorlauffühler HK B (B52)",
+            "en": "Flow sensor heating circuit B (B52)"
+        },
+        {
+            "code": 120,
+            "de": "Raumfühler HK A (B61)",
+            "en": "Room sensor heating circuit A (B61)"
+        },
+        {
+            "code": 122,
+            "de": "Raumfühler HK B (B62)",
+            "en": "Room sensor heating circuit B (B62)"
+        },
+        {
+            "code": 124,
+            "de": "Heißgasfühler (B71)",
+            "en": "Hot gas sensor (B71)"
+        },
+        {
+            "code": 126,
+            "de": "Raum- Feuchtesensor (B31)",
+            "en": "Room humidity sensor (B31)"
+        },
+        {
+            "code": 128,
+            "de": "Niederdrucksensor",
+            "en": "Low pressure sensor"
+        },
+        {
+            "code": 130,
+            "de": "Vorlauffühler HK C (B53)",
+            "en": "Flow sensor heating circuit C (B53)"
+        },
+        {
+            "code": 132,
+            "de": "Vorlauffühler HK D (B54)",
+            "en": "Flow sensor heating circuit D (B54)"
+        },
+        {
+            "code": 134,
+            "de": "Raumfühler HK C (B63)",
+            "en": "Room sensor heating circuit C (B63)"
+        },
+        {
+            "code": 136,
+            "de": "Raumfühler HK D (B64)",
+            "en": "Room sensor heating circuit D (B64)"
+        },
+        {
+            "code": 138,
+            "de": "Vorlauffühler HK E (B55)",
+            "en": "Flow sensor heating circuit E (B55)"
+        },
+        {
+            "code": 140,
+            "de": "Vorlauffühler HK F (B56)",
+            "en": "Flow sensor heating circuit F (B56)"
+        },
+        {
+            "code": 142,
+            "de": "Vorlauffühler HK G (B57)",
+            "en": "Flow sensor heating circuit G (B57)"
+        },
+        {
+            "code": 144,
+            "de": "Raumfühler HK E (B65)",
+            "en": "Room sensor heating circuit E (B65)"
+        },
+        {
+            "code": 146,
+            "de": "Raumfühler HK F (B66)",
+            "en": "Room sensor heating circuit F (B66)"
+        },
+        {
+            "code": 148,
+            "de": "Raumfühler HK G (B67)",
+            "en": "Room sensor heating circuit G (B67)"
+        },
+        {
+            "code": 150,
+            "de": "Sauggasfühler Verdampferaustritt (B79)",
+            "en": "Suction gas sensor evaporator outlet (B79)"
+        },
+        {
+            "code": 152,
+            "de": "Niederdrucktransmitter (B78)",
+            "en": "Low pressure transmitter (B78)"
+        },
+        {
+            "code": 154,
+            "de": "Solarkollektor Fühler (B73)",
+            "en": "Solar collector sensor (B73)"
+        },
+        {
+            "code": 156,
+            "de": "Solarladefühler (B74)",
+            "en": "Solar charging sensor (B74)"
+        },
+        {
+            "code": 158,
+            "de": "Solarkollektorrücklauffühler (B75)",
+            "en": "Solar collector return sensor (B75)"
+        },
+        {
+            "code": 160,
+            "de": "Solar- Wärmequellenreferenzfühler (B76)",
+            "en": "Solar heat source reference sensor (B76)"
+        },
+        {
+            "code": 162,
+            "de": "Ansaugluftfühler (B37)",
+            "en": "Air intake sensor (B37)"
+        },
+        {
+            "code": 164,
+            "de": "Luftwärmetauscherfühler (B72)",
+            "en": "Air heat exchanger sensor (B72)"
+        },
+        {
+            "code": 166,
+            "de": "Hochdrucktransmitter (B86)",
+            "en": "High pressure transmitter (B86)"
+        },
+        {
+            "code": 168,
+            "de": "Flüssigkeitsleitungsfühler (B87)",
+            "en": "Liquid line sensor (B87)"
+        },
+        {
+            "code": 170,
+            "de": "Wärmepumpenrücklauffühler (B34)",
+            "en": "Heat pump return sensor (B34)"
+        },
+        {
+            "code": 172,
+            "de": "Wärmequelleneintrittsfühler (B43)",
+            "en": "Heat source inlet sensor (B43)"
+        },
+        {
+            "code": 178,
+            "de": "Ladefühler (B45)",
+            "en": "Charging sensor (B45)"
+        },
+        {
+            "code": 196,
+            "de": "Trinkwassererwärmerfühler oben (B48)",
+            "en": "Hot water heater sensor top (B48)"
+        }
+    ],
+    "faults": [
+        {
+            "code": 20,
+            "de": "Wärmepumpenvorlauf Maximaltemperatur",
+            "en": "Heat pump flow maximum temperature"
+        },
+        {
+            "code": 21,
+            "de": "Wärmepumpenvorlauf Minimaltemperatur",
+            "en": "Heat pump flow minimum temperature"
+        },
+        {
+            "code": 22,
+            "de": "Niederdruckstörung",
+            "en": "Low pressure fault"
+        },
+        {
+            "code": 23,
+            "de": "Niederdruckstörung - Verriegelung",
+            "en": "Low pressure fault - lockout"
+        },
+        {
+            "code": 24,
+            "de": "Hochdruckstörung",
+            "en": "High pressure fault"
+        },
+        {
+            "code": 25,
+            "de": "Hochdruckstörung - Verriegelung",
+            "en": "High pressure fault - lockout"
+        },
+        {
+            "code": 26,
+            "de": "Strömungsüberwachung / Drucküberwachung",
+            "en": "Flow monitoring / pressure monitoring"
+        },
+        {
+            "code": 27,
+            "de": "Strömungsverriegelung / Drucküberwachung - Verriegelung",
+            "en": "Flow lockout / pressure monitoring - lockout"
+        },
+        {
+            "code": 28,
+            "de": "Anlaufstrombegrenzer 1 (siehe LED)",
+            "en": "Soft starter 1 (see LED)"
+        },
+        {
+            "code": 29,
+            "de": "Anlaufstrombegrenzer 1 - Verriegelung",
+            "en": "Soft starter 1 - lockout"
+        },
+        {
+            "code": 30,
+            "de": "Motorschutz Wärmequellenpumpe",
+            "en": "Motor protection heat source pump"
+        },
+        {
+            "code": 31,
+            "de": "Motorschutz Wärmequellenpumpe - Verriegelung",
+            "en": "Motor protection heat source pump - lockout"
+        },
+        {
+            "code": 32,
+            "de": "Maximale Abtauzeit überschritten",
+            "en": "Maximum defrost time exceeded"
+        },
+        {
+            "code": 33,
+            "de": "Minimale Kondensatortemperatur unterschritten",
+            "en": "Minimum condenser temperature undershot"
+        },
+        {
+            "code": 34,
+            "de": "Störung Ventilator",
+            "en": "Fan fault"
+        },
+        {
+            "code": 35,
+            "de": "Minimale Wärmespeichertemperatur unterschritten",
+            "en": "Minimum heat storage temperature undershot"
+        },
+        {
+            "code": 36,
+            "de": "E-Heizstab Überhitzung",
+            "en": "Electric heater overheating"
+        },
+        {
+            "code": 37,
+            "de": "Störung Ladepumpe",
+            "en": "Charging pump fault"
+        },
+        {
+            "code": 38,
+            "de": "Störung Ventilator - Verriegelung",
+            "en": "Fan fault - lockout"
+        },
+        {
+            "code": 42,
+            "de": "Heißgastemperatur zu niedrig",
+            "en": "Hot gas temperature too low"
+        },
+        {
+            "code": 43,
+            "de": "Heißgastemperatur zu niedrig - Verriegelung",
+            "en": "Hot gas temperature too low - lockout"
+        },
+        {
+            "code": 44,
+            "de": "Durchflussüberwachung Heizungsseite",
+            "en": "Flow monitoring heating side"
+        },
+        {
+            "code": 46,
+            "de": "Heißgastemperatur zu hoch",
+            "en": "Hot gas temperature too high"
+        },
+        {
+            "code": 47,
+            "de": "Heißgastemperatur zu hoch - Verriegelung",
+            "en": "Hot gas temperature too high - lockout"
+        },
+        {
+            "code": 50,
+            "de": "Taupunktwächter angesprochen",
+            "en": "Dew point monitor triggered"
+        },
+        {
+            "code": 51,
+            "de": "Taupunktwächter permanent angesprochen",
+            "en": "Dew point monitor permanently triggered"
+        },
+        {
+            "code": 60,
+            "de": "Wärmequellentemperatur",
+            "en": "Heat source temperature"
+        },
+        {
+            "code": 61,
+            "de": "Wärmequellentemperatur nähert sich kritischem Wert",
+            "en": "Heat source temperature approaching critical value"
+        },
+        {
+            "code": 62,
+            "de": "Wicklungsschutz",
+            "en": "Winding protection"
+        },
+        {
+            "code": 63,
+            "de": "Wicklungsschutz - Verriegelung",
+            "en": "Winding protection - lockout"
+        },
+        {
+            "code": 67,
+            "de": "Wärmequellentemperatur - Verriegelung",
+            "en": "Heat source temperature - lockout"
+        },
+        {
+            "code": 70,
+            "de": "Störung EIB/KNX Modul",
+            "en": "EIB/KNX module fault"
+        },
+        {
+            "code": 74,
+            "de": "Anlaufstrombegrenzer 2 (siehe LED)",
+            "en": "Soft starter 2 (see LED)"
+        },
+        {
+            "code": 75,
+            "de": "Anlaufstrombegrenzer 2 - Verriegelung",
+            "en": "Soft starter 2 - lockout"
+        },
+        {
+            "code": 80,
+            "de": "Summenstörung Stufe 1",
+            "en": "Common fault stage 1"
+        },
+        {
+            "code": 81,
+            "de": "Summenstörung Stufe 1 - Verriegelung",
+            "en": "Common fault stage 1 - lockout"
+        },
+        {
+            "code": 82,
+            "de": "Summenstörung Stufe 2",
+            "en": "Common fault stage 2"
+        },
+        {
+            "code": 83,
+            "de": "Summenstörung Stufe 2 - Verriegelung",
+            "en": "Common fault stage 2 - lockout"
+        },
+        {
+            "code": 84,
+            "de": "Summenstörung Stufe 3",
+            "en": "Common fault stage 3"
+        },
+        {
+            "code": 85,
+            "de": "Summenstörung Stufe 3 - Verriegelung",
+            "en": "Common fault stage 3 - lockout"
+        },
+        {
+            "code": 86,
+            "de": "Summenstörung Stufe 4",
+            "en": "Common fault stage 4"
+        },
+        {
+            "code": 87,
+            "de": "Summenstörung Stufe 4 - Verriegelung",
+            "en": "Common fault stage 4 - lockout"
+        },
+        {
+            "code": 88,
+            "de": "Expansionsventil 1",
+            "en": "Expansion valve 1"
+        },
+        {
+            "code": 89,
+            "de": "Expansionsventil 2",
+            "en": "Expansion valve 2"
+        },
+        {
+            "code": 90,
+            "de": "Zentraleinheit 1 nicht online",
+            "en": "Central unit 1 not online"
+        },
+        {
+            "code": 91,
+            "de": "Zentraleinheit 2 nicht online",
+            "en": "Central unit 2 not online"
+        },
+        {
+            "code": 95,
+            "de": "Einsatzgrenze überschritten",
+            "en": "Operating limit exceeded"
+        },
+        {
+            "code": 96,
+            "de": "Einsatzgrenze MOP",
+            "en": "Operating limit MOP"
+        },
+        {
+            "code": 200,
+            "de": "Einsatzgrenze erreicht",
+            "en": "Operating limit reached"
+        },
+        {
+            "code": 221,
+            "de": "Niederdruckstörung 2 (zweiter Kältekreis)",
+            "en": "Low pressure fault 2 (second refrigerant circuit)"
+        },
+        {
+            "code": 231,
+            "de": "Niederdruckstörung 2 - Verriegelung (zweiter Kältekreis)",
+            "en": "Low pressure fault 2 - lockout (second refrigerant circuit)"
+        },
+        {
+            "code": 236,
+            "de": "Sicherheitsabtauintervall 0,1 - 0,5 eingestellt",
+            "en": "Safety defrost interval set to 0.1 - 0.5"
+        },
+        {
+            "code": 237,
+            "de": "Ladepumpe Störung bei Bivalenzbetrieb",
+            "en": "Charging pump fault in bivalent operation"
+        },
+        {
+            "code": 241,
+            "de": "Hochdruckstörung 2 (zweiter Kältekreis)",
+            "en": "High pressure fault 2 (second refrigerant circuit)"
+        },
+        {
+            "code": 244,
+            "de": "Durchflussüberwachung Heizungsseite im Bivalenzbetrieb",
+            "en": "Flow monitoring heating side in bivalent operation"
+        },
+        {
+            "code": 251,
+            "de": "Hochdruckstörung 2 - Verriegelung (zweiter Kältekreis)",
+            "en": "High pressure fault 2 - lockout (second refrigerant circuit)"
+        },
+        {
+            "code": 270,
+            "de": "Stufen längerfristig blockiert",
+            "en": "Stages blocked for a longer time"
+        },
+        {
+            "code": 271,
+            "de": "Bivalenz manuell aktiviert",
+            "en": "Bivalence activated manually"
+        },
+        {
+            "code": 272,
+            "de": "Bivalenz mit reduzierter Temperatur",
+            "en": "Bivalence with reduced temperature"
+        },
+        {
+            "code": 280,
+            "de": "Kollektor Maximaltemperatur",
+            "en": "Collector maximum temperature"
+        },
+        {
+            "code": 281,
+            "de": "Trinkwassererwärmer Maximaltemperatur",
+            "en": "Hot water heater maximum temperature"
+        },
+        {
+            "code": 282,
+            "de": "Wärmespeicher Maximaltemperatur",
+            "en": "Heat storage maximum temperature"
+        },
+        {
+            "code": 283,
+            "de": "Wärmequellen Maximaltemperatur",
+            "en": "Heat source maximum temperature"
+        },
+        {
+            "code": 284,
+            "de": "Solarmodul nicht vorhanden",
+            "en": "Solar module not present"
+        },
+        {
+            "code": 301,
+            "de": "Boostfunktion - Temperatur nicht erreicht",
+            "en": "Boost function - temperature not reached"
+        },
+        {
+            "code": 302,
+            "de": "Legionellenfunktion - Temperatur nicht erreicht",
+            "en": "Legionella function - temperature not reached"
+        },
+        {
+            "code": 500,
+            "de": "Außengerät Ansaugfühler defekt",
+            "en": "Outdoor unit intake sensor defective"
+        },
+        {
+            "code": 501,
+            "de": "Außengerät Sauggasfühler defekt",
+            "en": "Outdoor unit suction gas sensor defective"
+        },
+        {
+            "code": 502,
+            "de": "Außengerät Heißgasfühler defekt",
+            "en": "Outdoor unit hot gas sensor defective"
+        },
+        {
+            "code": 503,
+            "de": "Außengerät Niederdrucksensor defekt",
+            "en": "Outdoor unit low pressure sensor defective"
+        },
+        {
+            "code": 504,
+            "de": "Außengerät Hochdrucksensor defekt",
+            "en": "Outdoor unit high pressure sensor defective"
+        },
+        {
+            "code": 505,
+            "de": "Außengerät Hochdruck",
+            "en": "Outdoor unit high pressure"
+        },
+        {
+            "code": 506,
+            "de": "Außengerät Niederdruck",
+            "en": "Outdoor unit low pressure"
+        },
+        {
+            "code": 507,
+            "de": "Heißgastemperatur",
+            "en": "Hot gas temperature"
+        },
+        {
+            "code": 508,
+            "de": "Differenzdruck zu klein",
+            "en": "Differential pressure too small"
+        },
+        {
+            "code": 509,
+            "de": "Außengerät - Start-up error",
+            "en": "Outdoor unit - start-up error"
+        },
+        {
+            "code": 510,
+            "de": "Einsatzgrenze überschritten",
+            "en": "Operating limit exceeded"
+        },
+        {
+            "code": 511,
+            "de": "Überhitzung zu gering",
+            "en": "Superheat too low"
+        },
+        {
+            "code": 512,
+            "de": "Störung MOP",
+            "en": "MOP fault"
+        },
+        {
+            "code": 513,
+            "de": "Sauggastemperatur zu gering",
+            "en": "Suction gas temperature too low"
+        },
+        {
+            "code": 514,
+            "de": "EEV-Regelung",
+            "en": "EEV control"
+        },
+        {
+            "code": 515,
+            "de": "Störung Inverterkommunikation",
+            "en": "Inverter communication fault"
+        },
+        {
+            "code": 516,
+            "de": "Kommunikation Außengerät",
+            "en": "Outdoor unit communication"
+        },
+        {
+            "code": 517,
+            "de": "Inverterstörung",
+            "en": "Inverter fault"
+        },
+        {
+            "code": 520,
+            "de": "Software Außengerät",
+            "en": "Outdoor unit software"
+        },
+        {
+            "code": 521,
+            "de": "Zeitüberschreitung Ein- und Ausgänge",
+            "en": "Timeout inputs and outputs"
+        },
+        {
+            "code": 522,
+            "de": "Zeitüberschreitung Umrichter",
+            "en": "Timeout inverter"
+        },
+        {
+            "code": 523,
+            "de": "Zeitüberschreitung Ventilator",
+            "en": "Timeout fan"
+        },
+        {
+            "code": 524,
+            "de": "Außengerät Notstop K1",
+            "en": "Outdoor unit emergency stop circuit 1"
+        },
+        {
+            "code": 525,
+            "de": "Außengerät Notstop K2",
+            "en": "Outdoor unit emergency stop circuit 2"
+        },
+        {
+            "code": 526,
+            "de": "Außengerät Notstop K1 - Verriegelung",
+            "en": "Outdoor unit emergency stop circuit 1 - lockout"
+        },
+        {
+            "code": 527,
+            "de": "Außengerät Notstop K2 - Verriegelung",
+            "en": "Outdoor unit emergency stop circuit 2 - lockout"
+        },
+        {
+            "code": 530,
+            "de": "Inverterstörung - Verriegelung",
+            "en": "Inverter fault - lockout"
+        },
+        {
+            "code": 550,
+            "de": "Differenzdruck zu hoch",
+            "en": "Differential pressure too high"
+        },
+        {
+            "code": 551,
+            "de": "Expansionsventil Kühlen",
+            "en": "Expansion valve cooling"
+        },
+        {
+            "code": 552,
+            "de": "Expansionsventil Heizen",
+            "en": "Expansion valve heating"
+        }
+    ],
+    "events": [
+        {
+            "code": 996,
+            "de": "Regelung von User ausgeschalten",
+            "en": "Control switched off by user"
+        },
+        {
+            "code": 997,
+            "de": "Neustart",
+            "en": "Restart"
+        },
+        {
+            "code": 998,
+            "de": "Fehlerprotokoll wurde gelöscht",
+            "en": "Fault log cleared"
+        },
+        {
+            "code": 999,
+            "de": "Störung wurde quittiert",
+            "en": "Fault acknowledged"
+        }
+    ]
+}

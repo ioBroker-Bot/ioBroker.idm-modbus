@@ -1,0 +1,39 @@
+{
+    "adapterName": "idm-modbus",
+    "title": "IDM Modbus",
+    "description": "Connects IDM heat pumps with Navigator control to ioBroker locally via Modbus TCP: read, control and feed room, PV and building-automation values",
+    "keywords": "idm,heatpump,modbus,navigator,pv",
+    "contributors": "",
+    "expert": "yes",
+    "features": [
+        "adapter"
+    ],
+    "adminFeatures": [],
+    "type": "climate-control",
+    "startMode": "daemon",
+    "connectionType": "local",
+    "dataSource": "poll",
+    "connectionIndicator": "yes",
+    "language": "TypeScript",
+    "nodeVersion": "22",
+    "adminUi": "json",
+    "tools": [
+        "ESLint"
+    ],
+    "eslintConfig": "official",
+    "releaseScript": "yes",
+    "devServer": "local",
+    "devServerPort": 8084,
+    "indentation": "Space (4)",
+    "quotes": "single",
+    "authorName": "SeaSpotter",
+    "authorGithub": "seaspotter",
+    "authorEmail": "seatowage@gmail.com",
+    "gitRemoteProtocol": "HTTPS",
+    "gitCommit": "no",
+    "defaultBranch": "main",
+    "license": "MIT License",
+    "dependabot": "yes",
+    "creatorVersion": "3.1.5",
+    "replay": "/tmp/claude-1000/-home-seaspotter-github-iobroker-idm/98f2d68e-e2a3-42af-9b42-b247dfd1f2d8/scratchpad/answers.json"
+}

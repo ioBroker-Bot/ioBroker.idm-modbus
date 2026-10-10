@@ -1,0 +1,605 @@
+{
+    "common": {
+        "name": "idm-modbus",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "IDM Modbus",
+            "de": "IDM Modbus",
+            "ru": "ИДМ Modbus",
+            "pt": "Modbus IDM",
+            "nl": "IDM Modbus",
+            "fr": "IDM Modbus",
+            "it": "IDMModbus",
+            "es": "Modbus IDM",
+            "pl": "Modbus IDM",
+            "uk": "IDM Modbus",
+            "zh-cn": "IDM Modbus"
+        },
+        "desc": {
+            "en": "Connects IDM heat pumps with Navigator control to ioBroker locally via Modbus TCP: read, control and feed room, PV and building-automation values",
+            "de": "Verbindet IDM-Wärmepumpen mit Navigator-Steuerung lokal über Modbus TCP mit ioBroker: Lesen, Steuern und Zuführen von Raum-, PV- und Gebäudeautomationswerten",
+            "ru": "Подключает тепловые насосы IDM с управлением Navigator к ioBroker локально через Modbus TCP: считывание, управление и подача значений для помещений, фотоэлектрических систем и автоматизации здания.",
+            "pt": "Conecta bombas de calor IDM com controle Navigator ao ioBroker localmente via Modbus TCP: leitura, controle e alimentação de sala, valores fotovoltaicos e de automação predial",
+            "nl": "Verbindt IDM-warmtepompen met Navigator-besturing lokaal met ioBroker via Modbus TCP: waarden voor ruimte, PV en gebouwautomatisering lezen, regelen en voeden",
+            "fr": "Connecte localement les pompes à chaleur IDM avec contrôle Navigator à ioBroker via Modbus TCP : lecture, contrôle et alimentation des valeurs de la pièce, du PV et de l'automatisation du bâtiment.",
+            "it": "Collega le pompe di calore IDM con controllo Navigator a ioBroker localmente tramite Modbus TCP: lettura, controllo e alimentazione dei valori di stanza, FV e automazione degli edifici",
+            "es": "Conecta bombas de calor IDM con control Navigator a ioBroker localmente a través de Modbus TCP: lee, controla y alimenta valores de automatización de edificios, PV y habitaciones.",
+            "pl": "Łączy pompy ciepła IDM ze sterowaniem Navigatorem z ioBrokerem lokalnie poprzez Modbus TCP: odczyt, sterowanie i zasilanie pomieszczenia, PV i wartości automatyki budynku",
+            "uk": "Підключає теплові насоси IDM із керуванням Navigator до ioBroker локально через Modbus TCP: зчитування, керування та подача значень кімнати, PV та автоматизації будівель",
+            "zh-cn": "通过 Modbus TCP 将带有 Navigator 控制的 IDM 热泵本地连接到 ioBroker：读取、控制和馈送室、PV 和楼宇自动化值"
+        },
+        "authors": ["SeaSpotter <seatowage@gmail.com>"],
+        "keywords": ["idm", "heatpump", "modbus", "navigator", "pv"],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "idm-modbus.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/seaspotter/ioBroker.idm-modbus/main/admin/idm-modbus.png",
+        "readme": "https://github.com/seaspotter/ioBroker.idm-modbus/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "nogit": true,
+        "type": "climate-control",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=7.2.2"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=8.0.14"
+            }
+        ],
+        "messagebox": true,
+        "localLinks": {
+            "_default": {
+                "link": "http://%ip%:%diagramPort%/",
+                "name": {
+                    "en": "Heat pump diagram",
+                    "de": "Wärmepumpen-Diagramm",
+                    "ru": "Схема теплового насоса",
+                    "pt": "Diagrama da bomba de calor",
+                    "nl": "Warmtepompschema",
+                    "fr": "Schéma de la pompe à chaleur",
+                    "it": "Schema della pompa di calore",
+                    "es": "Esquema de la bomba de calor",
+                    "pl": "Schemat pompy ciepła",
+                    "uk": "Схема теплового насоса",
+                    "zh-cn": "热泵示意图"
+                },
+                "color": "#0b5fa5",
+                "order": 1
+            }
+        }
+    },
+    "native": {
+        "host": "",
+        "port": 502,
+        "unitId": 1,
+        "family": "nav20",
+        "floatWordOrder": "lowFirst",
+        "requestTimeoutMs": 3000,
+        "requestPauseMs": 100,
+        "intervalFastS": 30,
+        "intervalMediumS": 60,
+        "intervalSlowS": 300,
+        "hcA": false,
+        "hcB": false,
+        "hcC": false,
+        "hcD": false,
+        "hcE": false,
+        "hcF": false,
+        "hcG": false,
+        "hcNameA": "",
+        "hcNameB": "",
+        "hcNameC": "",
+        "hcNameD": "",
+        "hcNameE": "",
+        "hcNameF": "",
+        "hcNameG": "",
+        "zoneModules": 0,
+        "roomsPerZone": 8,
+        "blockSolar": false,
+        "blockIsc": false,
+        "blockCascade": false,
+        "blockBivalence": false,
+        "blockPv": false,
+        "blockBooster": false,
+        "hideUnavailable": true,
+        "removeInactiveStates": false,
+        "intervalConfigS": 3600,
+        "statsEnabled": true,
+        "extElecCounterId": "",
+        "extElecCounterUnit": "auto",
+        "extElecPowerId": "",
+        "extElecPowerUnit": "auto",
+        "extHeatCounterId": "",
+        "extHeatCounterUnit": "auto",
+        "extHeatPowerId": "",
+        "extHeatPowerUnit": "auto",
+        "thermalSource": "navigator",
+        "pricePerKwh": 0.3,
+        "priceStateId": "",
+        "currency": "EUR",
+        "co2StateId": "",
+        "co2GramsPerKwh": 350,
+        "externalMaxAgeS": 120,
+        "writeSystem": false,
+        "writeDhw": false,
+        "writeHcA": false,
+        "writeHcB": false,
+        "writeHcC": false,
+        "writeHcD": false,
+        "writeHcE": false,
+        "writeHcF": false,
+        "writeHcG": false,
+        "writeExpert": false,
+        "writeSolar": false,
+        "pvEnabled": false,
+        "pvIntervalS": 30,
+        "pvMaxAgeS": 120,
+        "pvSurplusMode": "direct",
+        "pvSources": [],
+        "roomsEnabled": false,
+        "roomSources": [],
+        "gltEnabled": false,
+        "gltSources": [],
+        "boostEnabled": false,
+        "boostTargetC": 55,
+        "boostMaxMinutes": 60,
+        "diagramEnabled": true,
+        "diagramPort": 8183,
+        "diagramBind": "0.0.0.0",
+        "diagramHidden": "",
+        "webEnabled": false,
+        "webPin": "",
+        "webPort": 80,
+        "webIntervalS": 60,
+        "webStatisticsIntervalS": 900,
+        "eepromMinIntervalS": 60,
+        "dailyWriteWarn": 24,
+        "writeZones": false
+    },
+    "encryptedNative": ["webPin"],
+    "protectedNative": ["webPin"],
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information",
+                    "de": "Information",
+                    "ru": "Информация",
+                    "pt": "Informação",
+                    "nl": "Informatie",
+                    "fr": "Informations",
+                    "it": "Informazioni",
+                    "es": "Información",
+                    "pl": "Informacje",
+                    "uk": "Інформація",
+                    "zh-cn": "信息"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": {
+                    "en": "Device or service connected",
+                    "de": "Gerät oder Dienst verbunden",
+                    "ru": "Устройство или служба подключены",
+                    "pt": "Dispositivo ou serviço ligado",
+                    "nl": "Apparaat of service verbonden",
+                    "fr": "Appareil ou service connecté",
+                    "it": "Dispositivo o servizio connesso",
+                    "es": "Dispositivo o servicio conectado",
+                    "pl": "Urządzenie lub usługa połączone",
+                    "uk": "Пристрій або служба підключені",
+                    "zh-cn": "设备或服务已连接"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.lastSuccess",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last successful read",
+                    "de": "Letzte erfolgreiche Abfrage",
+                    "ru": "Последний успешный опрос",
+                    "pt": "Última leitura bem-sucedida",
+                    "nl": "Laatste geslaagde uitlezing",
+                    "fr": "Dernière lecture réussie",
+                    "it": "Ultima lettura riuscita",
+                    "es": "Última lectura correcta",
+                    "pl": "Ostatni udany odczyt",
+                    "uk": "Останнє успішне опитування",
+                    "zh-cn": "最近一次成功读取"
+                },
+                "type": "number",
+                "role": "value.time",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.family",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Register family",
+                    "de": "Registerfamilie",
+                    "ru": "Семейство регистров",
+                    "pt": "Família de registos",
+                    "nl": "Registerfamilie",
+                    "fr": "Famille de registres",
+                    "it": "Famiglia di registri",
+                    "es": "Familia de registros",
+                    "pl": "Rodzina rejestrów",
+                    "uk": "Родина регістрів",
+                    "zh-cn": "寄存器系列"
+                },
+                "type": "string",
+                "role": "text",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.errors",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Request errors since start",
+                    "de": "Anfragefehler seit Start",
+                    "ru": "Ошибки запросов с момента запуска",
+                    "pt": "Erros de pedido desde o arranque",
+                    "nl": "Aanvraagfouten sinds start",
+                    "fr": "Erreurs de requête depuis le démarrage",
+                    "it": "Errori di richiesta dall'avvio",
+                    "es": "Errores de solicitud desde el inicio",
+                    "pl": "Błędy żądań od uruchomienia",
+                    "uk": "Помилки запитів від запуску",
+                    "zh-cn": "启动以来的请求错误"
+                },
+                "type": "number",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Diagnostics",
+                    "de": "Diagnose",
+                    "ru": "Диагностика",
+                    "pt": "Diagnóstico",
+                    "nl": "Diagnose",
+                    "fr": "Diagnostic",
+                    "it": "Diagnostica",
+                    "es": "Diagnóstico",
+                    "pl": "Diagnostyka",
+                    "uk": "Діагностика",
+                    "zh-cn": "诊断"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.requestsPerMinute",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Requests per minute",
+                    "de": "Anfragen pro Minute",
+                    "ru": "Запросов в минуту",
+                    "pt": "Pedidos por minuto",
+                    "nl": "Aanvragen per minuut",
+                    "fr": "Requêtes par minute",
+                    "it": "Richieste al minuto",
+                    "es": "Solicitudes por minuto",
+                    "pl": "Żądań na minutę",
+                    "uk": "Запитів на хвилину",
+                    "zh-cn": "每分钟请求数"
+                },
+                "type": "number",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.avgResponseMs",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Average response time",
+                    "de": "Mittlere Antwortzeit",
+                    "ru": "Среднее время ответа",
+                    "pt": "Tempo médio de resposta",
+                    "nl": "Gemiddelde responstijd",
+                    "fr": "Temps de réponse moyen",
+                    "it": "Tempo di risposta medio",
+                    "es": "Tiempo de respuesta medio",
+                    "pl": "Średni czas odpowiedzi",
+                    "uk": "Середній час відповіді",
+                    "zh-cn": "平均响应时间"
+                },
+                "type": "number",
+                "role": "value",
+                "read": true,
+                "write": false,
+                "unit": "ms",
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.lastError",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last error",
+                    "de": "Letzter Fehler",
+                    "ru": "Последняя ошибка",
+                    "pt": "Último erro",
+                    "nl": "Laatste fout",
+                    "fr": "Dernière erreur",
+                    "it": "Ultimo errore",
+                    "es": "Último error",
+                    "pl": "Ostatni błąd",
+                    "uk": "Остання помилка",
+                    "zh-cn": "最近的错误"
+                },
+                "type": "string",
+                "role": "text",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.invalid",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Invalid readings per register",
+                    "de": "Ungültige Werte je Register",
+                    "ru": "Недопустимые значения по регистрам",
+                    "pt": "Leituras inválidas por registo",
+                    "nl": "Ongeldige waarden per register",
+                    "fr": "Valeurs invalides par registre",
+                    "it": "Valori non validi per registro",
+                    "es": "Valores no válidos por registro",
+                    "pl": "Nieprawidłowe wartości na rejestr",
+                    "uk": "Недійсні значення за регістрами",
+                    "zh-cn": "各寄存器的无效读数"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "scans",
+            "type": "meta",
+            "common": {
+                "name": {
+                    "en": "Scan files",
+                    "de": "Scan-Dateien",
+                    "ru": "Файлы сканирования",
+                    "pt": "Ficheiros de análise",
+                    "nl": "Scanbestanden",
+                    "fr": "Fichiers de scan",
+                    "it": "File di scansione",
+                    "es": "Archivos de escaneo",
+                    "pl": "Pliki skanowania",
+                    "uk": "Файли сканування",
+                    "zh-cn": "扫描文件"
+                },
+                "type": "meta.user"
+            },
+            "native": {}
+        },
+        {
+            "_id": "support",
+            "type": "meta",
+            "common": {
+                "name": {
+                    "en": "Support files",
+                    "de": "Support-Dateien",
+                    "ru": "Файлы поддержки",
+                    "pt": "Ficheiros de suporte",
+                    "nl": "Supportbestanden",
+                    "fr": "Fichiers de support",
+                    "it": "File di supporto",
+                    "es": "Archivos de soporte",
+                    "pl": "Pliki wsparcia",
+                    "uk": "Файли підтримки",
+                    "zh-cn": "支持文件"
+                },
+                "type": "meta.user"
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.scan",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last scan result",
+                    "de": "Ergebnis des letzten Scans",
+                    "ru": "Результат последнего сканирования",
+                    "pt": "Resultado da última análise",
+                    "nl": "Resultaat van de laatste scan",
+                    "fr": "Résultat du dernier scan",
+                    "it": "Risultato dell'ultima scansione",
+                    "es": "Resultado del último escaneo",
+                    "pl": "Wynik ostatniego skanowania",
+                    "uk": "Результат останнього сканування",
+                    "zh-cn": "最近一次扫描结果"
+                },
+                "type": "string",
+                "role": "json",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.scanRunning",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Scan running",
+                    "de": "Scan läuft",
+                    "ru": "Сканирование выполняется",
+                    "pt": "Análise em curso",
+                    "nl": "Scan bezig",
+                    "fr": "Scan en cours",
+                    "it": "Scansione in corso",
+                    "es": "Escaneo en curso",
+                    "pl": "Skanowanie w toku",
+                    "uk": "Триває сканування",
+                    "zh-cn": "正在扫描"
+                },
+                "type": "boolean",
+                "role": "indicator",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "stats",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Statistics",
+                    "de": "Statistik",
+                    "ru": "Статистика",
+                    "pt": "Estatística",
+                    "nl": "Statistiek",
+                    "fr": "Statistiques",
+                    "it": "Statistiche",
+                    "es": "Estadísticas",
+                    "pl": "Statystyka",
+                    "uk": "Статистика",
+                    "zh-cn": "统计"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "stats.data",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Statistics data (internal)",
+                    "de": "Statistikdaten (intern)",
+                    "ru": "Данные статистики (служебные)",
+                    "pt": "Dados da estatística (internos)",
+                    "nl": "Statistiekgegevens (intern)",
+                    "fr": "Données statistiques (internes)",
+                    "it": "Dati statistici (interni)",
+                    "es": "Datos de estadística (internos)",
+                    "pl": "Dane statystyczne (wewnętrzne)",
+                    "uk": "Дані статистики (службові)",
+                    "zh-cn": "统计数据（内部）"
+                },
+                "type": "string",
+                "role": "json",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.writes",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Write counters per register",
+                    "de": "Schreibzähler je Register",
+                    "ru": "Счётчики записей по регистрам",
+                    "pt": "Contadores de escrita por registo",
+                    "nl": "Schrijftellers per register",
+                    "fr": "Compteurs d'écriture par registre",
+                    "it": "Contatori di scrittura per registro",
+                    "es": "Contadores de escritura por registro",
+                    "pl": "Liczniki zapisów na rejestr",
+                    "uk": "Лічильники записів за регістрами",
+                    "zh-cn": "各寄存器的写入计数"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "diag.writesData",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Write counter data (internal)",
+                    "de": "Schreibzähler-Daten (intern)",
+                    "ru": "Данные счётчиков записи (служебные)",
+                    "pt": "Dados dos contadores de escrita (internos)",
+                    "nl": "Schrijftellergegevens (intern)",
+                    "fr": "Données des compteurs d'écriture (internes)",
+                    "it": "Dati dei contatori di scrittura (interni)",
+                    "es": "Datos de los contadores de escritura (internos)",
+                    "pl": "Dane liczników zapisów (wewnętrzne)",
+                    "uk": "Дані лічильників запису (службові)",
+                    "zh-cn": "写入计数数据（内部）"
+                },
+                "type": "string",
+                "role": "json",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        }
+    ]
+}

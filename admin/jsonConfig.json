@@ -1,0 +1,1720 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "connection": {
+            "type": "panel",
+            "label": "tabConnection",
+            "items": {
+                "prerequisites": {
+                    "type": "staticText",
+                    "text": "prereqText",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "host": {
+                    "type": "text",
+                    "label": "host",
+                    "help": "hostHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "family": {
+                    "type": "select",
+                    "label": "family",
+                    "options": [
+                        {
+                            "label": "Navigator 2.0",
+                            "value": "nav20"
+                        },
+                        {
+                            "label": "Navigator 1.7",
+                            "value": "nav17"
+                        },
+                        {
+                            "label": "Navigator 10",
+                            "value": "nav10"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3,
+                    "newLine": false
+                },
+                "testConnection": {
+                    "type": "sendTo",
+                    "command": "testConnection",
+                    "jsonData": "{\"config\":{\"host\":\"${data.host}\",\"port\":${Number(data.port) || 502},\"unitId\":${Number(data.unitId) || 1},\"requestTimeoutMs\":${Number(data.requestTimeoutMs) || 3000},\"floatWordOrder\":\"${data.floatWordOrder}\",\"family\":\"${data.family}\"}}",
+                    "label": "testConnection",
+                    "variant": "contained",
+                    "color": "primary",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "error": {
+                        "testNoHost": "testNoHost",
+                        "testConnectFailed": "testConnectFailed",
+                        "testReadFailed": "testReadFailed"
+                    },
+                    "result": {
+                        "testOk": "testOk",
+                        "testOkMismatch": "testOkMismatch",
+                        "testOkUnknown": "testOkUnknown"
+                    }
+                },
+                "hdrWebConnection": {
+                    "type": "header",
+                    "text": "hdrWebConnection",
+                    "size": 3,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "webPrerequisites": {
+                    "type": "staticText",
+                    "text": "webPrereq",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "webEnabled": {
+                    "type": "checkbox",
+                    "label": "webEnabled",
+                    "help": "webEnabledHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "webPin": {
+                    "type": "password",
+                    "label": "webPin",
+                    "visible": true,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "hidden": "!data.webEnabled"
+                },
+                "hdrDiagram": {
+                    "type": "header",
+                    "text": "hdrDiagram",
+                    "size": 3,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "diagramEnabled": {
+                    "type": "checkbox",
+                    "label": "diagramEnabled",
+                    "help": "diagramEnabledHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "diagramPort": {
+                    "type": "number",
+                    "label": "diagramPort",
+                    "min": 1,
+                    "max": 65535,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "hidden": "!data.diagramEnabled",
+                    "expertMode": true
+                },
+                "diagramBind": {
+                    "type": "text",
+                    "label": "diagramBind",
+                    "help": "diagramBindHelp",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "hidden": "!data.diagramEnabled",
+                    "expertMode": true
+                },
+                "hdrExpert": {
+                    "type": "header",
+                    "text": "hdrExpert",
+                    "size": 3,
+                    "expertMode": true,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "port": {
+                    "type": "number",
+                    "label": "port",
+                    "min": 1,
+                    "max": 65535,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true
+                },
+                "unitId": {
+                    "type": "number",
+                    "label": "unitId",
+                    "min": 0,
+                    "max": 247,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true,
+                    "newLine": false
+                },
+                "requestTimeoutMs": {
+                    "type": "number",
+                    "label": "requestTimeoutMs",
+                    "min": 500,
+                    "max": 60000,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true
+                },
+                "requestPauseMs": {
+                    "type": "number",
+                    "label": "requestPauseMs",
+                    "help": "requestPauseHelp",
+                    "min": 100,
+                    "max": 10000,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true,
+                    "newLine": false
+                },
+                "intervalFastS": {
+                    "type": "number",
+                    "label": "intervalFastS",
+                    "help": "intervalFastHelp",
+                    "min": 10,
+                    "max": 86400,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true
+                },
+                "intervalMediumS": {
+                    "type": "number",
+                    "label": "intervalMediumS",
+                    "min": 10,
+                    "max": 86400,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true,
+                    "newLine": false
+                },
+                "intervalSlowS": {
+                    "type": "number",
+                    "label": "intervalSlowS",
+                    "min": 10,
+                    "max": 86400,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true,
+                    "newLine": false
+                },
+                "intervalConfigS": {
+                    "type": "number",
+                    "label": "intervalConfigS",
+                    "help": "intervalConfigHelp",
+                    "min": 60,
+                    "max": 86400,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2,
+                    "expertMode": true,
+                    "newLine": false
+                },
+                "webPort": {
+                    "type": "number",
+                    "label": "webPort",
+                    "min": 1,
+                    "max": 65535,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "expertMode": true,
+                    "hidden": "!data.webEnabled",
+                    "newLine": true
+                },
+                "webIntervalS": {
+                    "type": "number",
+                    "label": "webIntervalS",
+                    "min": 30,
+                    "max": 86400,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "expertMode": true,
+                    "hidden": "!data.webEnabled",
+                    "newLine": false
+                },
+                "webStatisticsIntervalS": {
+                    "type": "number",
+                    "label": "webStatisticsIntervalS",
+                    "help": "webStatisticsHelp",
+                    "min": 0,
+                    "max": 604800,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6,
+                    "expertMode": true,
+                    "hidden": "!data.webEnabled"
+                }
+            }
+        },
+        "plant": {
+            "type": "panel",
+            "label": "tabPlant",
+            "items": {
+                "scanHeader": {
+                    "type": "header",
+                    "text": "scanHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "scanButton": {
+                    "type": "sendTo",
+                    "command": "scan",
+                    "jsonData": "{\"config\":{\"host\":\"${data.host}\",\"port\":${Number(data.port) || 502},\"unitId\":${Number(data.unitId) || 1},\"family\":\"${data.family}\",\"requestTimeoutMs\":${Number(data.requestTimeoutMs) || 3000},\"requestPauseMs\":${Number(data.requestPauseMs) || 100},\"floatWordOrder\":\"${data.floatWordOrder}\"}}",
+                    "label": "scanButton",
+                    "variant": "contained",
+                    "color": "primary",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "error": {
+                        "scanNoHost": "scanNoHost",
+                        "scanAlreadyRunning": "scanAlreadyRunning",
+                        "scanFamilyUnavailable": "scanFamilyUnavailable"
+                    },
+                    "result": {
+                        "scanStarted": "scanStarted"
+                    }
+                },
+                "scanProgress": {
+                    "type": "state",
+                    "oid": "diag.scanProgress",
+                    "control": "text",
+                    "label": "scanProgressLabel",
+                    "unit": "%",
+                    "blinkOnUpdate": true,
+                    "addColon": true,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "scanStatus": {
+                    "type": "state",
+                    "oid": "diag.scanStatus",
+                    "control": "text",
+                    "label": "scanStatusLabel",
+                    "addColon": true,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "scanResultButton": {
+                    "type": "sendTo",
+                    "command": "scanResult",
+                    "label": "scanResultButton",
+                    "variant": "outlined",
+                    "color": "primary",
+                    "newLine": false,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "error": {
+                        "scanNone": "scanNone"
+                    },
+                    "result": {
+                        "scanResult": "scanResult"
+                    }
+                },
+                "scanApplyButton": {
+                    "type": "sendTo",
+                    "command": "scanApply",
+                    "label": "scanApplyButton",
+                    "variant": "outlined",
+                    "color": "primary",
+                    "useNative": true,
+                    "showProcess": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "error": {
+                        "scanNone": "scanNone"
+                    },
+                    "result": {
+                        "scanApplied": "scanApplied"
+                    },
+                    "newLine": false
+                },
+                "scanHelp": {
+                    "type": "staticText",
+                    "text": "scanHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "hcHeader": {
+                    "type": "header",
+                    "text": "hcHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "hcA": {
+                    "type": "checkbox",
+                    "label": "hcLabelA",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameA": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcA",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hcB": {
+                    "type": "checkbox",
+                    "label": "hcLabelB",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameB": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcB",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hcC": {
+                    "type": "checkbox",
+                    "label": "hcLabelC",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameC": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcC",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hcD": {
+                    "type": "checkbox",
+                    "label": "hcLabelD",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameD": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcD",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hcE": {
+                    "type": "checkbox",
+                    "label": "hcLabelE",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameE": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcE",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hcF": {
+                    "type": "checkbox",
+                    "label": "hcLabelF",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameF": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcF",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hcG": {
+                    "type": "checkbox",
+                    "label": "hcLabelG",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "hcNameG": {
+                    "type": "text",
+                    "label": "hcName",
+                    "disabled": "!data.hcG",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "zoneHeader": {
+                    "type": "header",
+                    "text": "zoneHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "zoneModules": {
+                    "type": "number",
+                    "label": "zoneModules",
+                    "help": "zoneModulesHelp",
+                    "min": 0,
+                    "max": 10,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2
+                },
+                "roomsPerZone": {
+                    "type": "number",
+                    "label": "roomsPerZone",
+                    "help": "roomsPerZoneHelp",
+                    "min": 1,
+                    "max": 8,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2
+                },
+                "blockHeader": {
+                    "type": "header",
+                    "text": "blockHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "blockSolar": {
+                    "type": "checkbox",
+                    "label": "blockSolar",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "blockIsc": {
+                    "type": "checkbox",
+                    "label": "blockIsc",
+                    "newLine": false,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "blockCascade": {
+                    "type": "checkbox",
+                    "label": "blockCascade",
+                    "newLine": false,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "blockBivalence": {
+                    "type": "checkbox",
+                    "label": "blockBivalence",
+                    "newLine": false,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "blockPv": {
+                    "type": "checkbox",
+                    "label": "blockPv",
+                    "newLine": false,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "blockBooster": {
+                    "type": "checkbox",
+                    "label": "blockBooster",
+                    "newLine": false,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "cleanupHeader": {
+                    "type": "header",
+                    "text": "cleanupHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "hideUnavailable": {
+                    "type": "checkbox",
+                    "label": "hideUnavailable",
+                    "help": "hideUnavailableHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "removeInactiveStates": {
+                    "type": "checkbox",
+                    "label": "removeInactiveStates",
+                    "help": "removeInactiveStatesHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                }
+            }
+        },
+        "stats": {
+            "type": "panel",
+            "label": "tabStats",
+            "items": {
+                "statsEnabled": {
+                    "type": "checkbox",
+                    "label": "statsEnabled",
+                    "help": "statsEnabledHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "hdrElec": {
+                    "type": "header",
+                    "text": "extElecHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "helpElec": {
+                    "type": "staticText",
+                    "text": "extElecHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "extElecCounterId": {
+                    "type": "objectId",
+                    "types": "state",
+                    "label": "counterId",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "extElecCounterUnit": {
+                    "type": "select",
+                    "label": "counterUnit",
+                    "options": [
+                        {
+                            "label": "unitAuto",
+                            "value": "auto"
+                        },
+                        {
+                            "label": "kWh",
+                            "value": "kWh"
+                        },
+                        {
+                            "label": "Wh",
+                            "value": "Wh"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "help": "unitHelp"
+                },
+                "extElecPowerId": {
+                    "type": "objectId",
+                    "types": "state",
+                    "label": "powerId",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "extElecPowerUnit": {
+                    "type": "select",
+                    "label": "powerUnit",
+                    "options": [
+                        {
+                            "label": "unitAuto",
+                            "value": "auto"
+                        },
+                        {
+                            "label": "kW",
+                            "value": "kW"
+                        },
+                        {
+                            "label": "W",
+                            "value": "W"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "help": "unitHelp"
+                },
+                "hdrHeat": {
+                    "type": "header",
+                    "text": "extHeatHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "extHeatCounterId": {
+                    "type": "objectId",
+                    "types": "state",
+                    "label": "counterId",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "extHeatCounterUnit": {
+                    "type": "select",
+                    "label": "counterUnit",
+                    "options": [
+                        {
+                            "label": "unitAuto",
+                            "value": "auto"
+                        },
+                        {
+                            "label": "kWh",
+                            "value": "kWh"
+                        },
+                        {
+                            "label": "Wh",
+                            "value": "Wh"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "help": "unitHelp"
+                },
+                "extHeatPowerId": {
+                    "type": "objectId",
+                    "types": "state",
+                    "label": "powerId",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "extHeatPowerUnit": {
+                    "type": "select",
+                    "label": "powerUnit",
+                    "options": [
+                        {
+                            "label": "unitAuto",
+                            "value": "auto"
+                        },
+                        {
+                            "label": "kW",
+                            "value": "kW"
+                        },
+                        {
+                            "label": "W",
+                            "value": "W"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "help": "unitHelp"
+                },
+                "thermalSource": {
+                    "type": "select",
+                    "label": "thermalSource",
+                    "options": [
+                        {
+                            "label": "thermalNavigator",
+                            "value": "navigator"
+                        },
+                        {
+                            "label": "thermalExternal",
+                            "value": "external"
+                        }
+                    ],
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "hdrCost": {
+                    "type": "header",
+                    "text": "costHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "pricePerKwh": {
+                    "type": "number",
+                    "label": "pricePerKwh",
+                    "min": 0,
+                    "step": 0.01,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "priceStateId": {
+                    "type": "objectId",
+                    "types": "state",
+                    "label": "priceStateId",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "xl": 6,
+                    "newLine": false
+                },
+                "co2GramsPerKwh": {
+                    "type": "number",
+                    "label": "co2GramsPerKwh",
+                    "min": 0,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "co2StateId": {
+                    "type": "objectId",
+                    "types": "state",
+                    "label": "co2StateId",
+                    "help": "co2StateHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "xl": 6,
+                    "newLine": false
+                },
+                "currency": {
+                    "type": "text",
+                    "label": "currency",
+                    "maxLength": 8,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3,
+                    "newLine": true
+                },
+                "externalMaxAgeS": {
+                    "type": "number",
+                    "label": "externalMaxAgeS",
+                    "help": "externalMaxAgeHelp",
+                    "min": 10,
+                    "max": 3600,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3,
+                    "newLine": true
+                },
+                "resetStats": {
+                    "type": "sendTo",
+                    "command": "resetStatistics",
+                    "jsonData": "{}",
+                    "label": "resetStats",
+                    "variant": "outlined",
+                    "color": "secondary",
+                    "newLine": true,
+                    "confirm": {
+                        "text": "resetStatsConfirm",
+                        "type": "warning",
+                        "ok": "OK",
+                        "cancel": "Cancel"
+                    },
+                    "error": {
+                        "statsOff": "statsOff"
+                    },
+                    "result": {
+                        "statsReset": "statsReset"
+                    },
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                }
+            }
+        },
+        "control": {
+            "type": "panel",
+            "label": "tabControl",
+            "items": {
+                "controlHeader": {
+                    "type": "header",
+                    "text": "controlHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "controlWarning": {
+                    "type": "staticText",
+                    "text": "controlWarning",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeSystem": {
+                    "type": "checkbox",
+                    "label": "writeSystem",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeDhw": {
+                    "type": "checkbox",
+                    "label": "writeDhw",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcA": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelA",
+                    "newLine": true,
+                    "disabled": "!data.hcA",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcB": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelB",
+                    "newLine": true,
+                    "disabled": "!data.hcB",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcC": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelC",
+                    "newLine": true,
+                    "disabled": "!data.hcC",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcD": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelD",
+                    "newLine": true,
+                    "disabled": "!data.hcD",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcE": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelE",
+                    "newLine": true,
+                    "disabled": "!data.hcE",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcF": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelF",
+                    "newLine": true,
+                    "disabled": "!data.hcF",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeHcG": {
+                    "type": "checkbox",
+                    "label": "writeHcLabelG",
+                    "newLine": true,
+                    "disabled": "!data.hcG",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeZones": {
+                    "type": "checkbox",
+                    "label": "writeZones",
+                    "help": "writeZonesHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeSolar": {
+                    "type": "checkbox",
+                    "label": "writeSolar",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "writeExpert": {
+                    "type": "checkbox",
+                    "label": "writeExpert",
+                    "help": "writeExpertHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "eepromMinIntervalS": {
+                    "type": "number",
+                    "label": "eepromMinIntervalS",
+                    "help": "eepromMinIntervalHelp",
+                    "min": 10,
+                    "max": 86400,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "dailyWriteWarn": {
+                    "type": "number",
+                    "label": "dailyWriteWarn",
+                    "min": 1,
+                    "max": 1000,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "boostEnabled": {
+                    "type": "checkbox",
+                    "label": "boostEnabled",
+                    "help": "boostEnabledHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "boostTargetC": {
+                    "type": "number",
+                    "label": "boostTargetC",
+                    "min": 40,
+                    "max": 65,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "boostMaxMinutes": {
+                    "type": "number",
+                    "label": "boostMaxMinutes",
+                    "min": 5,
+                    "max": 240,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                }
+            }
+        },
+        "pv": {
+            "type": "panel",
+            "label": "tabPv",
+            "items": {
+                "pvEnabled": {
+                    "type": "checkbox",
+                    "label": "pvEnabled",
+                    "help": "pvEnabledHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "pvIntervalS": {
+                    "type": "number",
+                    "label": "pvIntervalS",
+                    "min": 10,
+                    "max": 3600,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "pvMaxAgeS": {
+                    "type": "number",
+                    "label": "pvMaxAgeS",
+                    "help": "pvMaxAgeHelp",
+                    "min": 10,
+                    "max": 86400,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "pvSurplusMode": {
+                    "type": "select",
+                    "label": "pvSurplusMode",
+                    "help": "pvModeHelp",
+                    "newLine": true,
+                    "options": [
+                        {
+                            "label": "pvModeDirect",
+                            "value": "direct"
+                        },
+                        {
+                            "label": "pvModeCalculated",
+                            "value": "calculated"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "pvSources": {
+                    "type": "table",
+                    "label": "pvSources",
+                    "help": "pvSourcesHelp",
+                    "newLine": true,
+                    "showSecondAddAt": 5,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "attr": "register",
+                            "type": "select",
+                            "title": "colRegister",
+                            "width": "20%",
+                            "default": "pv_surplus",
+                            "options": [
+                                {
+                                    "label": "pvRegSurplus",
+                                    "value": "pv_surplus"
+                                },
+                                {
+                                    "label": "pvRegHeater",
+                                    "value": "electric_heater_power"
+                                },
+                                {
+                                    "label": "pvRegProduction",
+                                    "value": "pv_production"
+                                },
+                                {
+                                    "label": "pvRegHouse",
+                                    "value": "house_consumption"
+                                },
+                                {
+                                    "label": "pvRegBatteryPower",
+                                    "value": "battery_discharge"
+                                },
+                                {
+                                    "label": "pvRegBatterySoc",
+                                    "value": "battery_soc"
+                                }
+                            ]
+                        },
+                        {
+                            "attr": "stateId",
+                            "type": "objectId",
+                            "types": "state",
+                            "title": "colState",
+                            "width": "35%"
+                        },
+                        {
+                            "attr": "factor",
+                            "type": "number",
+                            "title": "colFactor",
+                            "width": "8%",
+                            "default": 1
+                        },
+                        {
+                            "attr": "invert",
+                            "type": "checkbox",
+                            "title": "colInvert",
+                            "width": "7%",
+                            "default": false
+                        },
+                        {
+                            "attr": "min",
+                            "type": "number",
+                            "title": "colMin",
+                            "width": "8%"
+                        },
+                        {
+                            "attr": "max",
+                            "type": "number",
+                            "title": "colMax",
+                            "width": "8%"
+                        }
+                    ]
+                }
+            }
+        },
+        "rooms": {
+            "type": "panel",
+            "label": "tabRooms",
+            "items": {
+                "roomsEnabled": {
+                    "type": "checkbox",
+                    "label": "roomsEnabled",
+                    "help": "roomsEnabledHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "roomSources": {
+                    "type": "table",
+                    "label": "roomSources",
+                    "help": "roomSourcesHelp",
+                    "newLine": true,
+                    "showSecondAddAt": 5,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "attr": "circuit",
+                            "type": "select",
+                            "title": "colCircuit",
+                            "width": "8%",
+                            "default": "A",
+                            "options": [
+                                {
+                                    "label": "A",
+                                    "value": "A"
+                                },
+                                {
+                                    "label": "B",
+                                    "value": "B"
+                                },
+                                {
+                                    "label": "C",
+                                    "value": "C"
+                                },
+                                {
+                                    "label": "D",
+                                    "value": "D"
+                                },
+                                {
+                                    "label": "E",
+                                    "value": "E"
+                                },
+                                {
+                                    "label": "F",
+                                    "value": "F"
+                                },
+                                {
+                                    "label": "G",
+                                    "value": "G"
+                                }
+                            ]
+                        },
+                        {
+                            "attr": "stateId",
+                            "type": "objectId",
+                            "types": "state",
+                            "title": "colState",
+                            "width": "24%"
+                        },
+                        {
+                            "attr": "factor",
+                            "type": "number",
+                            "title": "colFactor",
+                            "width": "6%",
+                            "default": 1
+                        },
+                        {
+                            "attr": "offset",
+                            "type": "number",
+                            "title": "colOffset",
+                            "width": "6%",
+                            "default": 0
+                        },
+                        {
+                            "attr": "heartbeatS",
+                            "type": "number",
+                            "title": "colHeartbeat",
+                            "width": "9%",
+                            "default": 300
+                        },
+                        {
+                            "attr": "toleranceC",
+                            "type": "number",
+                            "title": "colTolerance",
+                            "width": "9%",
+                            "default": 0.2
+                        },
+                        {
+                            "attr": "min",
+                            "type": "number",
+                            "title": "colMin",
+                            "width": "6%",
+                            "default": 15
+                        },
+                        {
+                            "attr": "max",
+                            "type": "number",
+                            "title": "colMax",
+                            "width": "6%",
+                            "default": 30
+                        },
+                        {
+                            "attr": "maxAgeS",
+                            "type": "number",
+                            "title": "colMaxAge",
+                            "width": "8%",
+                            "default": 900
+                        },
+                        {
+                            "attr": "onStale",
+                            "type": "select",
+                            "title": "colOnStale",
+                            "width": "12%",
+                            "default": "stop",
+                            "options": [
+                                {
+                                    "label": "onStaleStop",
+                                    "value": "stop"
+                                },
+                                {
+                                    "label": "onStaleFixed",
+                                    "value": "fixed"
+                                }
+                            ]
+                        },
+                        {
+                            "attr": "fixedValue",
+                            "type": "number",
+                            "title": "colFixedValue",
+                            "width": "8%"
+                        }
+                    ]
+                }
+            }
+        },
+        "glt": {
+            "type": "panel",
+            "label": "tabGlt",
+            "items": {
+                "gltEnabled": {
+                    "type": "checkbox",
+                    "label": "gltEnabled",
+                    "help": "gltEnabledHelp",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "gltSources": {
+                    "type": "table",
+                    "label": "gltSources",
+                    "help": "gltSourcesHelp",
+                    "newLine": true,
+                    "showSecondAddAt": 5,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "attr": "function",
+                            "type": "select",
+                            "title": "colFunction",
+                            "width": "26%",
+                            "default": "outdoor_temp",
+                            "options": [
+                                {
+                                    "label": "gltOutdoor",
+                                    "value": "outdoor_temp"
+                                },
+                                {
+                                    "label": "gltHumidity",
+                                    "value": "humidity"
+                                },
+                                {
+                                    "label": "gltTempHeating",
+                                    "value": "temp_demand_heating"
+                                },
+                                {
+                                    "label": "gltTempCooling",
+                                    "value": "temp_demand_cooling"
+                                },
+                                {
+                                    "label": "gltDemandHeating",
+                                    "value": "demand_heating"
+                                },
+                                {
+                                    "label": "gltDemandCooling",
+                                    "value": "demand_cooling"
+                                },
+                                {
+                                    "label": "gltDemandDhw",
+                                    "value": "demand_dhw"
+                                },
+                                {
+                                    "label": "gltHeatStorage",
+                                    "value": "heat_storage_temp"
+                                },
+                                {
+                                    "label": "gltColdStorage",
+                                    "value": "cold_storage_temp"
+                                },
+                                {
+                                    "label": "gltDhwBottom",
+                                    "value": "dhw_temp_bottom"
+                                },
+                                {
+                                    "label": "gltDhwTop",
+                                    "value": "dhw_temp_top"
+                                }
+                            ]
+                        },
+                        {
+                            "attr": "stateId",
+                            "type": "objectId",
+                            "types": "state",
+                            "title": "colState",
+                            "width": "30%"
+                        },
+                        {
+                            "attr": "factor",
+                            "type": "number",
+                            "title": "colFactor",
+                            "width": "7%",
+                            "default": 1
+                        },
+                        {
+                            "attr": "offset",
+                            "type": "number",
+                            "title": "colOffset",
+                            "width": "7%",
+                            "default": 0
+                        },
+                        {
+                            "attr": "heartbeatS",
+                            "type": "number",
+                            "title": "colHeartbeat",
+                            "width": "9%"
+                        },
+                        {
+                            "attr": "min",
+                            "type": "number",
+                            "title": "colMin",
+                            "width": "7%"
+                        },
+                        {
+                            "attr": "max",
+                            "type": "number",
+                            "title": "colMax",
+                            "width": "7%"
+                        },
+                        {
+                            "attr": "maxAgeS",
+                            "type": "number",
+                            "title": "colMaxAge",
+                            "width": "9%"
+                        }
+                    ]
+                }
+            }
+        },
+        "diag": {
+            "type": "panel",
+            "label": "tabDiag",
+            "items": {
+                "supportHeader": {
+                    "type": "header",
+                    "text": "supportHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "supportHelp": {
+                    "type": "staticText",
+                    "text": "supportHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "supportButton": {
+                    "type": "sendTo",
+                    "command": "supportExport",
+                    "label": "supportButton",
+                    "variant": "contained",
+                    "color": "primary",
+                    "openUrl": true,
+                    "showProcess": true,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3,
+                    "error": {
+                        "supportFailed": "supportFailed"
+                    },
+                    "result": {
+                        "supportCreated": "supportCreated"
+                    }
+                }
+            }
+        }
+    }
+}
