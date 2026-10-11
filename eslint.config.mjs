@@ -20,7 +20,7 @@ export default [
             'admin/admin.d.ts',
             'admin/blockly.js',
             '**/adapter-config.d.ts',
-            'widgets/**/*.js'
+            'widgets/**/*.js',
         ],
     },
     {
@@ -37,7 +37,16 @@ export default [
     {
         // The diagram page runs in the browser and is plain ES5 so that it needs no build step
         files: ['www/**/*.js'],
-        languageOptions: { sourceType: 'script', globals: { document: 'readonly', fetch: 'readonly', EventSource: 'readonly' } },
+        languageOptions: {
+            sourceType: 'script',
+            globals: {
+                document: 'readonly',
+                fetch: 'readonly',
+                location: 'readonly',
+                DiagramModel: 'readonly',
+                DiagramData: 'readonly',
+            },
+        },
         rules: { 'jsdoc/require-jsdoc': 'off', 'no-var': 'off', 'prefer-const': 'off', 'prefer-arrow-callback': 'off' },
     },
     {

@@ -1,7 +1,7 @@
 import * as utils from '@iobroker/adapter-core';
-import * as path from 'node:path';
 import {
     readBoostSettings,
+    readDiagramSettings,
     readControlSettings,
     readGltSettings,
     readWebSettings,
@@ -40,16 +40,12 @@ import { stateIdFor, toStateValue } from './lib/state-model';
 import { PvRunner } from './lib/pv/runner';
 import { RoomRunner } from './lib/rooms/runner';
 import { WebClient } from './lib/web/client';
-import type { WebSensor } from './lib/web/io';
 import { Nav10Client } from './lib/web/nav10-client';
 import { Nav10Runner } from './lib/web/nav10-runner';
 import { WebRunner } from './lib/web/runner';
 import { localDateKey, StatsRunner, type Sample } from './lib/stats/runner';
 import { clampTimerMs } from './lib/timers';
-import { ValueHub } from './lib/diagram/hub';
-import { createModelSource } from './lib/diagram/plant';
-import { modbusTagRegisters } from './lib/diagram/sensors';
-import { DiagramServer } from './lib/diagram/server';
+import { modbusTagRegisters } from './lib/web/tags';
 import { localized, textIn } from './lib/translations';
 
 /** ioBroker quality code "sensor reports error" for invalid values (sentinel / out of range). */
@@ -114,11 +110,6 @@ class IdmModbus extends utils.Adapter {
     private web: WebRunner | null = null;
     private nav10: Nav10Runner | null = null;
     private boost: BoostRunner | null = null;
-    /** latest value of every state, for the heat pump diagram */
-    private readonly hub = new ValueHub();
-    private diagram: DiagramServer | null = null;
-    /** the sensors the web interface told about (for the diagram) */
-    private webSensors: WebSensor[] = [];
     /** latest reading of every register, for the statistics */
     private readonly samples = new Map<string, Sample>();
     private unloading = false;
@@ -167,6 +158,8 @@ class IdmModbus extends utils.Adapter {
             },
             native: {},
         });
+
+        await this.publishDiagramSettings();
 
         const settings = readPlantSettings(this.config);
         settings.warnings.forEach(warning => this.log.warn(warning));
@@ -248,51 +241,32 @@ class IdmModbus extends utils.Adapter {
         await this.startFeeds(registers);
         await this.startWeb(settings.family, settings.heatingCircuitNames, registers);
         await this.startBoost(registers, settings.intervalsMs.medium);
-        await this.startDiagram(registers, settings.heatingCircuitNames, settings.plant.heatingCircuits);
     }
 
     /**
-     * Start the read-only web page with the heat pump diagram (spec Modul I). A port that is taken is a warning, never a crash.
-     *
-     * @param registers all registers of the family (texts of the operating modes)
-     * @param circuitNames names the user gave the heating circuits
-     * @param circuits enabled heating circuit letters
+     * Publish the diagram settings as JSON in `diagram.settings`: the diagram page runs in the browser, reads them through the
+     * web adapter and follows a change at once.
      */
-    private async startDiagram(
-        registers: readonly RegisterEntry[],
-        circuitNames: Record<string, string>,
-        circuits: string[],
-    ): Promise<void> {
-        if (this.config.diagramEnabled === false) {
-            return;
-        }
-        const server = new DiagramServer({
-            port: this.config.diagramPort || 8183,
-            bind: this.config.diagramBind || '0.0.0.0',
-            wwwDir: path.join(__dirname, '..', 'www'),
-            hub: this.hub,
-            model: createModelSource({
-                registers,
-                language: this.language,
-                circuits,
-                circuitNames,
-                hidden: this.config.diagramHidden ?? [],
-                hub: this.hub,
-                webSensors: () => this.webSensors,
-            }),
-            timers: {
-                setInterval: (cb, ms) => this.setInterval(cb, ms),
-                clearInterval: handle => this.clearInterval(handle as ioBroker.Interval),
-            },
-            log: this.log,
+    private async publishDiagramSettings(): Promise<void> {
+        const { settings, warnings } = readDiagramSettings(this.config);
+        warnings.forEach(warning => this.log.warn(warning));
+        await this.extendObject('diagram', {
+            type: 'channel',
+            common: { name: localized('Heat pump diagram') },
+            native: {},
         });
-        const result = await server.start();
-        if (result.ok) {
-            this.diagram = server;
-            this.log.info(`Heat pump diagram is available on port ${result.value}`);
-        } else {
-            this.log.warn(`Heat pump diagram not started: ${result.error.message}`);
-        }
+        await this.extendObject('diagram.settings', {
+            type: 'state',
+            common: {
+                name: localized('Diagram settings'),
+                type: 'string',
+                role: 'json',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        await this.setState('diagram.settings', JSON.stringify(settings), true);
     }
 
     /**
@@ -477,7 +451,6 @@ class IdmModbus extends utils.Adapter {
             },
             removeObjects: async (ids: string[]) => {
                 for (const id of ids) {
-                    this.hub.delete(id);
                     await this.delObjectAsync(id).catch(() => undefined);
                     await this.delStateAsync(id).catch(() => undefined);
                 }
@@ -487,9 +460,6 @@ class IdmModbus extends utils.Adapter {
                 return registerId !== undefined && this.validSeen.has(registerId);
             },
             publish: (id: string, value: string | number | boolean | null) => this.put(id, { val: value, ack: true }),
-            setSensors: (sensors: WebSensor[]) => {
-                this.webSensors = sensors;
-            },
         };
         if (family === 'nav10') {
             const client = new Nav10Client({
@@ -924,10 +894,6 @@ class IdmModbus extends utils.Adapter {
      * @param ack acknowledge flag when `state` is a plain value
      */
     private put(id: string, state: ioBroker.StateValue | ioBroker.SettableState, ack?: boolean): void {
-        const shown = typeof state === 'object' && state !== null ? state.val : state;
-        if (typeof shown === 'number' || typeof shown === 'string' || typeof shown === 'boolean' || shown === null) {
-            this.hub.set(id, shown);
-        }
         const result = ack === undefined ? this.setState(id, state) : this.setState(id, state, ack);
         result.catch((error: Error) => this.log.debug(`Could not write ${id}: ${error.message}`));
     }
@@ -1584,8 +1550,6 @@ class IdmModbus extends utils.Adapter {
     private onUnload(callback: () => void): void {
         const finish = (): void => {
             try {
-                void this.diagram?.stop();
-                this.diagram = null;
                 this.web?.stop();
                 this.web = null;
                 this.nav10?.stop();

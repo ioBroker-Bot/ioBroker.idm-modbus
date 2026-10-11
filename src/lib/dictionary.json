@@ -1055,6 +1055,18 @@
         "uk": "Діагностика",
         "zh-cn": "诊断"
     },
+    "Diagram settings": {
+        "de": "Diagramm-Einstellungen",
+        "ru": "Настройки схемы",
+        "pt": "Definições do diagrama",
+        "nl": "Diagraminstellingen",
+        "fr": "Paramètres du schéma",
+        "it": "Impostazioni dello schema",
+        "es": "Ajustes del esquema",
+        "pl": "Ustawienia schematu",
+        "uk": "Налаштування схеми",
+        "zh-cn": "示意图设置"
+    },
     "Eco": {
         "de": "Eco",
         "ru": "Эко",

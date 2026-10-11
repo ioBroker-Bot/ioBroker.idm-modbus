@@ -1,9 +1,9 @@
-/* Heat pump diagram: draws the plant the adapter reports (api/model) and keeps the values live (events). Read only. */
+/* Heat pump diagram: draws the plant the adapter reports (model.js) and keeps the values live (data.js). Read only. */
 (function () {
     'use strict';
 
     var SVG_NS = 'http://www.w3.org/2000/svg';
-    var MODEL_REFRESH_MS = 10000;
+    var REBUILD_DELAY_MS = 500;
     var NARROW_SPACE = String.fromCharCode(0x202f);
     var IDLE_COLOR = '#9aa5b1';
     /* flow pipes and their sensors are always warm, return ones always cold; anything else follows its temperature */
@@ -55,7 +55,6 @@
     var state = {}; // latest value per state id
     var bindings = {}; // state id -> functions that show the value
     var view = null; // what the current render draws into: model, layers, colours of the flow and return sensors
-    var source = null;
 
     /* ---------- values and bindings ---------- */
 
@@ -548,11 +547,11 @@
         return hasTank;
     }
 
-    /* the rooms of zone module N stand next to heating circuit N (the last circuit takes the rest) */
+    /* the rooms next to each heating circuit (model.js assigns them from the zone modules and the settings) */
     function roomsOfCircuits(m) {
-        return m.circuits.map(function (c, i) {
+        return m.circuits.map(function (c) {
             return m.rooms.filter(function (room) {
-                return Math.min(Math.max(room.zone, 1), m.circuits.length) - 1 === i;
+                return room.circuit === c.letter;
             });
         });
     }
@@ -851,56 +850,84 @@
         if (!model) {
             return;
         }
-        var connected = state[model.ids.connection] === true;
+        var connected = socketUp && state[model.ids.connection] === true;
         var labels = model.labels;
         document.getElementById('dot').classList.toggle('on', connected);
         document.getElementById('statusText').textContent = `${
             connected ? labels.connected : labels.disconnected
         } · ${labels.updated} ${new Date().toLocaleTimeString(model.language)}`;
     }
-    /* the server sends the changes of the states of the current model only, so a new model needs a new snapshot */
-    function connect() {
-        if (source) {
-            source.close();
+    /* ---------- data ---------- */
+
+    var snapshot = null; // states, objects, settings and language of the last snapshot
+    var rebuildTimer = null;
+    var socketUp = false; // the connection to the web adapter; info.connection is the one to the heat pump
+    var labelTexts = null;
+
+    /* Work out the plant from the data; draw again only when the plant itself changed, not just a value. */
+    function rebuild() {
+        rebuildTimer = null;
+        if (!snapshot || !labelTexts) {
+            return;
         }
-        source = new EventSource('events');
-        source.addEventListener('snapshot', function (e) {
-            state = JSON.parse(e.data);
-            applyAll();
+        var m = DiagramModel.buildModel({
+            language: snapshot.language,
+            states: state,
+            objects: snapshot.objects,
+            labels: labelTexts,
+            settings: snapshot.settings,
         });
-        source.addEventListener('update', function (e) {
-            var changed = JSON.parse(e.data);
-            Object.keys(changed).forEach(function (id) {
-                state[id] = changed[id];
-                fire(id);
-            });
+        var json = JSON.stringify(m);
+        if (json !== modelJson) {
+            modelJson = json;
+            model = m;
+            document.title = m.labels.title;
+            document.getElementById('title').textContent = m.labels.title;
+            document.documentElement.lang = m.language;
+            render(m);
+        } else {
             updateStatus();
-        });
+        }
     }
-    function loadModel() {
-        return fetch('api/model', { cache: 'no-store' })
-            .then(function (r) {
-                return r.json();
-            })
-            .then(function (m) {
-                var json = JSON.stringify(m);
-                if (json !== modelJson) {
-                    modelJson = json;
-                    model = m;
-                    render(m);
-                    connect();
-                }
-            })
-            .catch(function () {
-                /* the next try follows */
-            });
+    function scheduleRebuild() {
+        if (rebuildTimer === null) {
+            rebuildTimer = setTimeout(rebuild, REBUILD_DELAY_MS);
+        }
+    }
+    function onState(id, value) {
+        var appeared = (state[id] === undefined || state[id] === null) !== (value === undefined || value === null);
+        state[id] = value;
+        fire(id);
+        updateStatus();
+        if (appeared) {
+            scheduleRebuild(); // a part of the plant may have started to report
+        }
     }
 
-    loadModel();
-    /* the plant may report more parts after the first polls, so look again now and then */
-    setInterval(function () {
-        if (!document.hidden) {
-            loadModel();
-        }
-    }, MODEL_REFRESH_MS);
+    function parameter(name) {
+        return new URLSearchParams(location.search).get(name);
+    }
+    /* the parameters: instance (default 0) and iob (address of the web adapter, only when the page is not served by it) */
+    fetch('labels.json')
+        .then(function (r) {
+            return r.json();
+        })
+        .then(function (texts) {
+            labelTexts = texts;
+            DiagramData.connect(
+                { instance: Number(parameter('instance')) || 0, origin: parameter('iob') || '' },
+                {
+                    onSnapshot: function (data) {
+                        snapshot = data;
+                        state = data.states;
+                        rebuild();
+                    },
+                    onState: onState,
+                    onConnection: function (connected) {
+                        socketUp = connected;
+                        updateStatus();
+                    },
+                },
+            );
+        });
 })();

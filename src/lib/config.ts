@@ -1,5 +1,7 @@
 import {
     DEFAULT_CO2_G_PER_KWH,
+    DIAGRAM_PARTS,
+    MAX_DIAGRAM_ZONE,
     DEFAULT_DAILY_WRITE_WARN,
     DEFAULT_EEPROM_MIN_INTERVAL_S,
     DEFAULT_EXTERNAL_MAX_AGE_S,
@@ -745,6 +747,57 @@ export function readBoostSettings(config: Partial<ioBroker.AdapterConfig>): Boos
             'Boost maximum duration',
             warnings,
         ),
+        warnings,
+    };
+}
+
+/** What the heat pump diagram page reads from the state `diagram.settings`. */
+export interface DiagramSettings {
+    /** 'air' or 'ground'; left out for automatic detection */
+    heatSource?: 'air' | 'ground';
+    /** parts the user does not want to see */
+    hidden: string[];
+    /** which heating circuit the rooms of a zone module stand next to (a zone without an entry follows its number) */
+    zoneCircuit: { zone: number; circuit: string }[];
+}
+
+/**
+ * Read the diagram settings. Unknown parts, zones and circuits are dropped with a warning (CLAUDE.md rule 18).
+ *
+ * @param config adapter configuration
+ */
+export function readDiagramSettings(config: Partial<ioBroker.AdapterConfig>): {
+    settings: DiagramSettings;
+    warnings: string[];
+} {
+    const warnings: string[] = [];
+    const hidden = (Array.isArray(config.diagramHidden) ? config.diagramHidden : []).filter(part => {
+        const known = (DIAGRAM_PARTS as readonly string[]).includes(part);
+        if (!known) {
+            warnings.push(`Diagram: unknown part "${String(part)}" ignored`);
+        }
+        return known;
+    });
+    const zoneCircuit: DiagramSettings['zoneCircuit'] = [];
+    for (const entry of Array.isArray(config.diagramZoneCircuit) ? config.diagramZoneCircuit : []) {
+        const zone = Number(entry?.zone);
+        const circuit = String(entry?.circuit ?? '').toUpperCase();
+        if (
+            !Number.isInteger(zone) ||
+            zone < 1 ||
+            zone > MAX_DIAGRAM_ZONE ||
+            !(HEATING_CIRCUITS as readonly string[]).includes(circuit)
+        ) {
+            warnings.push(`Diagram: row zone module ${String(entry?.zone)} -> circuit ${circuit} ignored`);
+        } else if (zoneCircuit.some(known => known.zone === zone)) {
+            warnings.push(`Diagram: zone module ${zone} is assigned twice, the first row counts`);
+        } else {
+            zoneCircuit.push({ zone, circuit });
+        }
+    }
+    const source = config.diagramHeatSource;
+    return {
+        settings: { ...(source === 'air' || source === 'ground' ? { heatSource: source } : {}), hidden, zoneCircuit },
         warnings,
     };
 }

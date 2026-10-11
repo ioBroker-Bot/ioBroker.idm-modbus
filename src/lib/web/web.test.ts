@@ -167,7 +167,6 @@ describe('WebRunner', () => {
             publish: (id, value) => void published.set(id, value),
             setRoomName: (zone, room, name) => void roomNames.push(`${zone}.${room}=${name}`),
             setCircuitName: (letter, name) => void circuitNames.push(`${letter}=${name}`),
-            setSensors: () => undefined,
             existingIds: prefix => Promise.resolve((modbus.existing ?? []).filter(id => id.startsWith(`${prefix}.`))),
             removeObjects: ids => {
                 removed.push(...ids);

@@ -31,7 +31,7 @@ Everything else is optional and off until you switch it on.
 | Navigator host / IP      | Address of the Navigator. Use a fixed address.                                                                                                                                                                                                                                                          |
 | Navigator generation     | 2.0 (also Pro), 1.7 or 10. The test button detects it for you.                                                                                                                                                                                                                                          |
 | Web interface (optional) | Also read data from the web interface: inputs and outputs (Navigator 2.0 / Pro and 10), plus room names, room data and statistics (Navigator 2.0 / Pro). Not for the Navigator 1.0/1.7. Needs the display's network PIN (stored encrypted, sent unencrypted over your local network like in a browser). |
-| Heat pump diagram        | Show the diagram as a web page, parts to leave out, port and listen address; see section 8a.                                                                                                                                                                                                            |
+| Diagram                  | Heat source, parts to leave out, rooms next to heating circuits; see section 8a.                                                                                                                                                                                                                        |
 | Expert settings          | Visible with the admin's expert mode: port (502), unit ID (1), request timeout, pause between requests (at least 100 ms: the Navigator stalls under hard polling), polling intervals fast/medium/slow/settings (30 s / 60 s / 300 s / 3600 s) and the web intervals.                                    |
 
 ### Installation
@@ -115,17 +115,17 @@ Modbus wins: a part that Modbus delivers (the adapter matches the IDM tag in the
 
 ## 8a. Heat pump diagram
 
-The adapter serves a live picture of your plant on a small web page. It is drawn from the values the adapter reads, it is read only and cannot change anything.
+The diagram is a live picture of your plant on a web page. It is drawn from the values the adapter reads, it is read only and cannot change anything. The page runs in your browser and gets its data through the ioBroker **web adapter**, so it needs one web instance (the usual port 8082) and no port of its own.
 
-**Opening it.** Click the link _Heat pump diagram_ next to the instance in the instances list, or open `http://<ioBroker computer>:8183/` in a browser (8183 is the default port). Two instances on the same computer need different ports (expert setting); the second one logs a warning and shows no diagram.
+**Opening it.** Click the link _Heat pump diagram_ next to the instance in the instances list, or open `http://<ioBroker computer>:8082/idm-modbus/index.html?instance=0` (the number is the instance of this adapter). The page follows the language of the ioBroker system settings.
 
-**Settings (Connection tab).**
+**Settings (Diagram tab).** They apply at once, the page redraws itself.
 
-| Setting                                | Meaning                                                                                                                                                                                         |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Show the heat pump diagram as web page | On by default. Switch it off if you do not want the page.                                                                                                                                       |
-| Parts to leave out of the diagram      | Buffer, hot water (tank and fresh water station), photovoltaics, solar thermal, bivalence. Parts the plant does not have are not drawn anyway.                                                  |
-| Diagram port, listen address (expert)  | Port 8183. Listen address `0.0.0.0` = reachable in the whole network, `127.0.0.1` = only on the ioBroker computer. Everyone who can reach the page sees the values; nobody can change anything. |
+| Setting                        | Meaning                                                                                                                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Heat source                    | Automatic, Air or Ground or groundwater. Automatic decides from the sensors the Navigator reports; choose by hand if it guesses wrong.                                           |
+| Parts to leave out             | Buffer, hot water tank, fresh water station, photovoltaics, solar thermal, bivalence. Parts the plant does not have are not drawn anyway.                                        |
+| Rooms next to heating circuits | By default the rooms of zone module 1 stand next to heating circuit A, those of module 2 next to circuit B, and so on. Add a row to place a zone module next to another circuit. |
 
 **What you see.** The diagram assembles itself: a part appears only when the adapter has a real value for it.
 
@@ -148,18 +148,18 @@ _Diagnostics_ tab → **Create support file**: a report for bug reports with the
 
 ## 10. Troubleshooting
 
-| Symptom                                                    | Cause / remedy                                                                                                                                                                      |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| _Test connection_ fails                                    | Modbus TCP not enabled on the Navigator, wrong IP, or another client blocks the port.                                                                                               |
-| Connected but no outdoor temperature                       | Unit ID other than 1 (expert settings).                                                                                                                                             |
-| Many empty states                                          | Hardware your plant does not have: keep _Hide states of hardware that reports no value_ on, or run the scan and apply the suggestion.                                               |
-| Wrong or missing values after changing the generation      | Select the generation the test button reports.                                                                                                                                      |
-| The Navigator becomes slow                                 | Polling intervals or the pause between requests too short; keep the defaults.                                                                                                       |
-| Scan stops at about 25 %                                   | The adapter was restarted during the scan (also by a configuration save); start it again and leave the adapter alone.                                                               |
-| `web.connected` is false                                   | Wrong PIN, web interface not reachable, or the PIN is not set on the Navigator.                                                                                                     |
-| The diagram does not open, the log says the port is in use | Another instance or program uses the diagram port; set a different port in the expert settings.                                                                                     |
-| A part is missing in the diagram                           | The adapter has no value for it: the plant does not have it, it is not enabled in the Installation tab, or (flow rate, pumps, fan voltage) the web interface is off.                |
-| A write has no effect                                      | Check the group is enabled in the Control tab; the log names the reason (range, equal value, interval, lock). Room setpoints only act while the room is in operating mode _Normal_. |
+| Symptom                                               | Cause / remedy                                                                                                                                                                      |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _Test connection_ fails                               | Modbus TCP not enabled on the Navigator, wrong IP, or another client blocks the port.                                                                                               |
+| Connected but no outdoor temperature                  | Unit ID other than 1 (expert settings).                                                                                                                                             |
+| Many empty states                                     | Hardware your plant does not have: keep _Hide states of hardware that reports no value_ on, or run the scan and apply the suggestion.                                               |
+| Wrong or missing values after changing the generation | Select the generation the test button reports.                                                                                                                                      |
+| The Navigator becomes slow                            | Polling intervals or the pause between requests too short; keep the defaults.                                                                                                       |
+| Scan stops at about 25 %                              | The adapter was restarted during the scan (also by a configuration save); start it again and leave the adapter alone.                                                               |
+| `web.connected` is false                              | Wrong PIN, web interface not reachable, or the PIN is not set on the Navigator.                                                                                                     |
+| The diagram does not open                             | Install and start a web adapter instance; the page is served by it (`/idm-modbus/`). Use the link next to the instance, it carries the instance number.                             |
+| A part is missing in the diagram                      | The adapter has no value for it: the plant does not have it, it is not enabled in the Installation tab, or (flow rate, pumps, fan voltage) the web interface is off.                |
+| A write has no effect                                 | Check the group is enabled in the Control tab; the log names the reason (range, equal value, interval, lock). Room setpoints only act while the room is in operating mode _Normal_. |
 
 ## 11. Known limits
 

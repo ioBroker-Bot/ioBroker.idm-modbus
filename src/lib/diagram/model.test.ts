@@ -1,0 +1,246 @@
+import { expect } from 'chai';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as vm from 'node:vm';
+import { buildDiagramLabels } from '../../../tools/build-diagram-labels';
+import { loadRegisters } from '../registers/plant';
+import type { RegisterEntry } from '../registers/types';
+import { stateIdFor } from '../state-model';
+import { DIAGRAM_PARTS } from '../constants';
+import { ioKey } from '../web/io';
+
+type Value = string | number | boolean | null;
+interface Model {
+    language: string;
+    heatSource: 'air' | 'ground';
+    parts: Record<string, boolean>;
+    ids: Record<string, string | null>;
+    circuits: { letter: string; name: string; flow: string; flowTag: string; roomTag: string }[];
+    rooms: { zone: number; circuit: string | null; name: string; temperature: string; target: string | null }[];
+    sensors: { id: string; tag: string; name: string; unit: string; group: string }[];
+    hpModes: Record<string, string>;
+    labels: Record<string, string>;
+}
+interface Settings {
+    heatSource?: string;
+    hidden?: string[];
+    zoneCircuit?: { zone: number; circuit: string }[];
+}
+// the page script runs in the browser and is plain JavaScript; the tests run the very same file
+const pageScript = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'www', 'model.js'), 'utf8');
+const exported: { module: { exports: unknown } } = { module: { exports: {} } };
+vm.runInNewContext(pageScript, exported);
+const diagram = exported.module.exports as {
+    buildModel(input: object): Model;
+    circuitTags(letter: string): { flow: string; room: string } | null;
+    STATE_IDS: Record<string, string[]>;
+    PARTS: string[];
+};
+const labels = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '..', '..', '..', 'www', 'labels.json'), 'utf8'),
+) as object;
+
+const build = (
+    states: Record<string, Value>,
+    extra: { language?: string; settings?: Settings; objects?: Record<string, object> } = {},
+): Model => diagram.buildModel({ language: 'en', labels, settings: {}, objects: {}, ...extra, states });
+
+const state = (unit: string, name: string | Record<string, string>): object => ({
+    type: 'state',
+    common: { unit, name },
+});
+
+describe('diagram model', () => {
+    it('shows only the parts whose states have values, and only circuits with a flow temperature', () => {
+        const model = build({
+            'system.outdoor_temp': 8.7,
+            'hp.hp_flow_temp': 31,
+            'dhw.storage_temp': 36,
+            'dhw.dhw_temp_top': 45,
+            'hc.A.flow_temp': 27,
+            'hc.B.flow_temp': null,
+            'pv.pv_production': 3.04,
+            'solar.solar_collector_temp': null,
+            'zones.1.rooms.1.temp': 23.2,
+            'zones.1.rooms.1.setpoint': 22.5,
+            'zones.1.rooms.1.name': 'Kid',
+            'zones.1.rooms.2.temp': null,
+        });
+        expect(model.parts).to.deep.equal({
+            buffer: true,
+            dhw: true,
+            freshwater: false,
+            pv: true,
+            solar: false,
+            bivalence: false,
+        });
+        expect(model.circuits.map(c => c.letter)).to.deep.equal(['A']); // B has no flow temperature
+        expect(model.circuits[0].name).to.equal('Heating circuit A');
+        expect(model.rooms).to.deep.equal([
+            {
+                zone: 1,
+                circuit: 'A',
+                name: 'Kid',
+                temperature: 'zones.1.rooms.1.temp',
+                target: 'zones.1.rooms.1.setpoint',
+            },
+        ]);
+        expect(model.ids.pvProduction).to.equal('pv.pv_production');
+        expect(model.ids.solarCollector).to.equal(null);
+    });
+
+    it("has no buffer or hot water part for a direct system, honours hidden parts and uses the user's language and names", () => {
+        const model = build(
+            { 'hp.hp_flow_temp': 31, 'pv.pv_surplus': 0, 'hc.B.flow_temp': 30, 'dhw.dhw_tapping_temp': 40 },
+            {
+                language: 'de',
+                settings: { hidden: ['pv', 'freshwater'] },
+                objects: { 'hc.B': { type: 'channel', common: { name: 'Upstairs' } } },
+            },
+        );
+        expect(model.parts).to.include({ buffer: false, dhw: false, pv: false, freshwater: false });
+        expect(model.circuits[0]).to.include({ letter: 'B', name: 'Upstairs', flowTag: 'B52', roomTag: 'B62' });
+        expect(model.labels.outdoor).to.equal('Außen');
+        expect(model.labels.heatPump).to.equal('Wärmepumpe');
+    });
+
+    it('names a circuit by its channel in the user language, else with the default text', () => {
+        const model = build(
+            { 'hc.A.flow_temp': 30, 'hc.C.flow_temp': 31 },
+            {
+                language: 'de',
+                objects: { 'hc.A': { type: 'channel', common: { name: { en: 'Ground floor', de: 'Erdgeschoss' } } } },
+            },
+        );
+        expect(model.circuits.map(c => c.name)).to.deep.equal(['Erdgeschoss', 'Heizkreis C']);
+    });
+
+    it('takes flow and return from the heat sink registers where the heat exchanger hides 1050/1052 (Navigator 10)', () => {
+        const model = build({ 'hp.heat_sink_flow_temp': 34, 'hp.heat_sink_return_temp': 29 });
+        expect(model.ids.hpFlow).to.equal('hp.heat_sink_flow_temp');
+        expect(model.ids.hpReturn).to.equal('hp.heat_sink_return_temp');
+    });
+
+    it('prefers the Modbus value of the charging pump and falls back to the web interface', () => {
+        expect(build({ 'web.io.analog_out.m73': -1 }).ids.pumpM73).to.equal('web.io.analog_out.m73');
+        expect(build({ 'hp.charging_pump_status': 30, 'web.io.analog_out.m73': 30 }).ids.pumpM73).to.equal(
+            'hp.charging_pump_status',
+        );
+    });
+
+    it('names the circuit sensors B51-B57 and B61-B67', () => {
+        expect(diagram.circuitTags('A')).to.deep.equal({ flow: 'B51', room: 'B61' });
+        expect(diagram.circuitTags('D')).to.deep.equal({ flow: 'B54', room: 'B64' }); // verified live at a Navigator 10 by Xerolux
+        expect(diagram.circuitTags('G')).to.deep.equal({ flow: 'B57', room: 'B67' });
+        expect(diagram.circuitTags('H')).to.equal(null);
+    });
+
+    it('lists the sensors with an IDM tag that are not drawn at a fixed place, sorted by tag', () => {
+        const model = build(
+            {
+                'hp.hp_flow_temp': 31,
+                'hp.air_intake_temp': 9.5,
+                'hp.heat_source_outlet_temp': 6,
+                'web.io.sensors.b2': 12.5,
+                'web.io.sensors.b78': 9.4,
+                'dhw.cold_storage_temp': 12,
+            },
+            {
+                objects: {
+                    'hp.hp_flow_temp': state('°C', 'Heat pump flow temperature (B33)'),
+                    'hp.air_intake_temp': state('°C', {
+                        en: 'Air intake temperature (B37)',
+                        de: 'Ansauglufttemperatur (B37)',
+                    }),
+                    'hp.heat_source_outlet_temp': state('°C', 'Heat source outlet temperature (B36)'),
+                    'web.io.sensors.b2': state('l/min', {
+                        en: 'B2 Heating flow sensor',
+                        de: 'B2 Durchflußsensor Heizung',
+                    }),
+                    'web.io.sensors.b78': state('bar', 'B78 Evaporation pressure 1'),
+                    'dhw.cold_storage_temp': state('°C', 'Cold storage temperature (B40)'),
+                },
+                language: 'de',
+            },
+        );
+        // B33 is drawn at a fixed place, the pressure and non-diagram web sensors are not listed
+        expect(model.sensors.map(s => `${s.tag}:${s.group}:${s.name}`)).to.deep.equal([
+            'B2:heatpump:Durchflußsensor Heizung',
+            'B36:source:Heat source outlet temperature',
+            'B37:source:Ansauglufttemperatur',
+            'B40:storage:Cold storage temperature',
+        ]);
+    });
+
+    it('tells an air heat pump from a ground one, unless the settings say which', () => {
+        const ground = { 'hp.heat_source_inlet_temp': 9.8, 'hp.brine_pump_status': 70 };
+        expect(build({ 'hp.hp_flow_temp': 31 }).heatSource).to.equal('air');
+        expect(build(ground).heatSource).to.equal('ground');
+        expect(build({ ...ground, 'hp.air_intake_temp': 8 }).heatSource).to.equal('air'); // an air intake sensor wins
+        expect(build({ 'hp.hp_flow_temp': 31 }, { settings: { heatSource: 'ground' } }).heatSource).to.equal('ground');
+        expect(build(ground, { settings: { heatSource: 'air' } }).heatSource).to.equal('air');
+        expect(build(ground, { settings: { heatSource: 'auto' } }).heatSource).to.equal('ground');
+    });
+
+    it('puts the rooms of zone N next to circuit N unless the settings choose a circuit', () => {
+        const states = {
+            'hc.A.flow_temp': 30,
+            'hc.B.flow_temp': 31,
+            'zones.1.rooms.1.temp': 22,
+            'zones.2.rooms.1.temp': 22,
+            'zones.3.rooms.1.temp': 22,
+        };
+        expect(build(states).rooms.map(r => r.circuit)).to.deep.equal(['A', 'B', 'B']); // the last circuit takes the rest
+        const chosen = build(states, {
+            settings: {
+                zoneCircuit: [
+                    { zone: 1, circuit: 'B' },
+                    { zone: 3, circuit: 'A' },
+                    { zone: 2, circuit: 'F' },
+                ],
+            },
+        });
+        expect(chosen.rooms.map(r => `${r.zone}>${r.circuit}`)).to.deep.equal(['1>B', '2>B', '3>A']);
+        expect(build({ 'zones.1.rooms.1.temp': 22 }).rooms[0].circuit).to.equal(null); // no circuit at all
+    });
+
+    it('takes the texts of the operating modes from the object', () => {
+        const model = build(
+            { 'hp.hp_operating_mode': 1 },
+            { objects: { 'hp.hp_operating_mode': { type: 'state', common: { states: { 0: 'Off', 1: 'Heating' } } } } },
+        );
+        expect(model.hpModes).to.deep.equal({ 0: 'Off', 1: 'Heating' });
+    });
+
+    it('only asks for states that the register files and the web module create', () => {
+        const known = new Set(
+            (['nav20', 'nav10', 'nav17'] as const).flatMap(family =>
+                (loadRegisters(family) as RegisterEntry[]).map(stateIdFor),
+            ),
+        );
+        for (const id of Object.values(diagram.STATE_IDS).flat()) {
+            if (id.startsWith('web.io.')) {
+                const key = id.split('.')[3];
+                expect(ioKey({ tag: key.toUpperCase(), name: '', value: 0, unit: '' }), id).to.equal(key);
+            } else if (!id.startsWith('calc.')) {
+                expect(known.has(id), `${id} is not a register state`).to.equal(true);
+            }
+        }
+    });
+});
+
+describe('diagram labels', () => {
+    it('are up to date in www/labels.json and exist in all 11 languages', () => {
+        expect(labels, 'run npm run build:diagram').to.deep.equal(buildDiagramLabels());
+        for (const [key, texts] of Object.entries(buildDiagramLabels())) {
+            expect(Object.keys(texts), key).to.have.length(11);
+            for (const text of Object.values(texts)) {
+                expect(text, key).to.be.a('string').and.not.equal('');
+            }
+        }
+    });
+
+    it('knows the same hideable parts as the adapter settings', () => {
+        expect(diagram.PARTS).to.deep.equal([...DIAGRAM_PARTS]);
+    });
+});

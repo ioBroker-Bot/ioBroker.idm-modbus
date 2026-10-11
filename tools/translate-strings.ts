@@ -57,13 +57,18 @@ function collectStrings(): Map<string, string> {
     };
     for (const file of fs.readdirSync(path.join(root, 'tools', 'sources')).filter(f => f.endsWith('.source.json'))) {
         const source = JSON.parse(fs.readFileSync(path.join(root, 'tools', 'sources', file), 'utf8')) as {
-            entries: { label: { en: string; de: string }; enum?: Record<string, { en: string; de: string }> }[];
+            entries?: { label: { en: string; de: string }; enum?: Record<string, { en: string; de: string }> }[];
         };
-        for (const entry of source.entries) {
+        // the fault texts have their own source and generator (build:faults)
+        for (const entry of source.entries ?? []) {
             add(entry.label.en, entry.label.de, file);
             Object.values(entry.enum ?? {}).forEach(t => add(t.en, t.de, file));
         }
     }
+    const diagram = JSON.parse(fs.readFileSync(path.join(root, 'tools', 'sources', 'diagram-labels.json'), 'utf8')) as {
+        labels: Record<string, { en: string; de: string }>;
+    };
+    Object.values(diagram.labels).forEach(text => add(text.en, text.de, 'diagram-labels.json'));
     const runtime = JSON.parse(fs.readFileSync(path.join(root, 'tools', 'sources', 'runtime-names.json'), 'utf8')) as {
         names: Record<string, string>;
     };

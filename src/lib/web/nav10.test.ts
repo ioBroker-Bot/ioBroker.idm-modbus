@@ -132,7 +132,6 @@ describe('Nav10Runner', () => {
             removeObjects: () => Promise.resolve(),
             publish: (id, value) => void published.set(id, value),
             hasModbusValue: tag => modbusTags.includes(tag),
-            setSensors: () => undefined,
         };
         return { runner: new Nav10Runner(host, client(behaviour), 60000), created, published, log };
     };

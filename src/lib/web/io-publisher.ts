@@ -1,5 +1,5 @@
 import { ManagedObjects, type ObjectHost } from './managed';
-import { buildIoStates, type IoGroup, type IoItem, type WebSensor } from './io';
+import { buildIoStates, type IoGroup, type IoItem } from './io';
 
 /** What the publisher needs from the adapter. */
 export interface IoHost extends ObjectHost {
@@ -7,8 +7,6 @@ export interface IoHost extends ObjectHost {
     publish(id: string, value: string | number | boolean | null): void;
     /** does Modbus deliver a value for the part with this IDM tag (B33, M73, ...)? The web copy is not needed then. */
     hasModbusValue(tag: string): boolean;
-    /** the tagged sensors of the sensor table (for the diagram), called when they change */
-    setSensors(sensors: WebSensor[]): void;
 }
 
 /**
@@ -18,7 +16,6 @@ export interface IoHost extends ObjectHost {
 export class IoPublisher {
     private readonly objects: ManagedObjects;
     private readonly values = new Map<string, number | string | boolean>();
-    private sensorsJson = '';
 
     /**
      * @param host adapter services
@@ -46,10 +43,5 @@ export class IoPublisher {
                 this.host.publish(id, value);
             }
         });
-        const json = JSON.stringify(states.sensors);
-        if (json !== this.sensorsJson) {
-            this.sensorsJson = json;
-            this.host.setSensors(states.sensors);
-        }
     }
 }

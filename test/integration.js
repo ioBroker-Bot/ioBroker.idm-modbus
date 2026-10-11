@@ -84,8 +84,6 @@ tests.integration(path.join(__dirname, '..'), {
                         port,
                         hcA: true,
                         hcNameA: 'Ground floor',
-                        diagramPort: 18183,
-                        diagramBind: '127.0.0.1',
                         intervalFastS: 10,
                         intervalMediumS: 10,
                         intervalSlowS: 10,
@@ -148,16 +146,9 @@ tests.integration(path.join(__dirname, '..'), {
                 expect(await harness.objects.getObjectAsync(`${NAMESPACE}.zones`)).to.equal(null);
                 expect(await harness.objects.getObjectAsync(`${NAMESPACE}.solar`)).to.equal(null);
 
-                // the heat pump diagram: page, model of the plant (only what has values) and read-only access
-                const page = await fetch('http://127.0.0.1:18183/');
-                expect(page.status).to.equal(200);
-                expect(await page.text()).to.contain('diagram.js');
-                const model = await (await fetch('http://127.0.0.1:18183/api/model')).json();
-                expect(model.ids.outdoor).to.equal('system.outdoor_temp');
-                expect(model.circuits.map(c => c.name)).to.deep.equal(['Ground floor']);
-                expect(model.parts).to.deep.include({ pv: false, solar: false, bivalence: false });
-                expect((await fetch('http://127.0.0.1:18183/', { method: 'POST' })).status).to.equal(405);
-                expect((await fetch('http://127.0.0.1:18183/package.json')).status).to.equal(404);
+                // the diagram settings the page reads: defaults, nothing else is served by the adapter
+                const diagram = await harness.states.getStateAsync(`${NAMESPACE}.diagram.settings`);
+                expect(JSON.parse(diagram.val)).to.deep.equal({ hidden: [], zoneCircuit: [] });
 
                 // the host never shows up in the log, and the adapter logged no errors
                 // the support file: created in the file area, without the host

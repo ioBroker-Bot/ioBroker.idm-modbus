@@ -1,5 +1,12 @@
 import { expect } from 'chai';
-import { readGltSettings, readPlantSettings, readRoomSettings, readStatsSettings, readWebSettings } from './config';
+import {
+    readDiagramSettings,
+    readGltSettings,
+    readPlantSettings,
+    readRoomSettings,
+    readStatsSettings,
+    readWebSettings,
+} from './config';
 
 describe('readPlantSettings', () => {
     it('uses the spec defaults for an empty configuration', () => {
@@ -206,5 +213,39 @@ describe('readWebSettings', () => {
         const settings = readWebSettings({ webEnabled: true, webPin: ' ' }, 'nav10');
         expect(settings.enabled).to.equal(false);
         expect(settings.warnings).to.have.length(1);
+    });
+});
+
+describe('readDiagramSettings', () => {
+    it('defaults to automatic detection with everything shown', () => {
+        const { settings, warnings } = readDiagramSettings({});
+        expect(settings).to.deep.equal({ hidden: [], zoneCircuit: [] });
+        expect(warnings).to.deep.equal([]);
+    });
+    it('keeps valid entries and drops unknown parts, bad zones and doubled rows with a warning', () => {
+        const { settings, warnings } = readDiagramSettings({
+            diagramHeatSource: 'ground',
+            diagramHidden: ['solar', 'freshwater', 'garden'],
+            diagramZoneCircuit: [
+                { zone: 1, circuit: 'b' },
+                { zone: 1, circuit: 'C' },
+                { zone: 11, circuit: 'A' },
+                { zone: 2, circuit: 'X' },
+            ],
+        });
+        expect(settings).to.deep.equal({
+            heatSource: 'ground',
+            hidden: ['solar', 'freshwater'],
+            zoneCircuit: [{ zone: 1, circuit: 'B' }],
+        });
+        expect(warnings).to.have.length(4);
+    });
+    it('survives values of the wrong type', () => {
+        const wrong = { diagramHidden: '', diagramZoneCircuit: 'x' } as unknown as Partial<ioBroker.AdapterConfig>;
+        expect(readDiagramSettings(wrong).settings).to.deep.equal({ hidden: [], zoneCircuit: [] });
+    });
+    it('treats auto and unknown heat sources as automatic', () => {
+        expect(readDiagramSettings({ diagramHeatSource: 'auto' }).settings.heatSource).to.equal(undefined);
+        expect(readDiagramSettings({ diagramHeatSource: 'steam' }).settings.heatSource).to.equal(undefined);
     });
 });

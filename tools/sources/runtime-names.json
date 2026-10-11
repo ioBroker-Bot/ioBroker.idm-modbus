@@ -142,6 +142,8 @@
         "Electric heating element 3 kW": "Elektroheizeinsatz 3kW",
         "Heating/cooling valve": "Ventil Heizen/Kühlen",
         "Heat/cold valve": "Ventil Wärme/Kälte",
-        "Heating/priority valve": "Ventil Heizen/Vorrang"
+        "Heating/priority valve": "Ventil Heizen/Vorrang",
+        "Heat pump diagram": "Wärmepumpen-Schema",
+        "Diagram settings": "Diagramm-Einstellungen"
     }
 }

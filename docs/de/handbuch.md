@@ -31,7 +31,7 @@ Alles Weitere ist optional und bleibt aus, bis Sie es einschalten.
 | Navigator Host / IP      | Adresse des Navigators. Eine feste Adresse verwenden.                                                                                                                                                                                                                                                                 |
 | Navigator-Generation     | 2.0 (auch Pro), 1.7 oder 10. Der Test-Button erkennt sie für Sie.                                                                                                                                                                                                                                                     |
 | Weboberfläche (optional) | Auch Daten aus der Weboberfläche lesen: Ein- und Ausgänge (Navigator 2.0 / Pro und 10), dazu Raumnamen, Raumdaten und Statistik (Navigator 2.0 / Pro). Nicht für den Navigator 1.0/1.7. Braucht die Netzwerk-PIN des Displays (verschlüsselt gespeichert, im lokalen Netz wie im Browser unverschlüsselt übertragen). |
-| Wärmepumpen-Diagramm     | Das Diagramm als Webseite anbieten, Teile weglassen, Port und Lauschadresse; siehe Abschnitt 8a.                                                                                                                                                                                                                      |
+| Diagramm                 | Wärmequelle, Teile weglassen, Räume neben Heizkreisen; siehe Abschnitt 8a.                                                                                                                                                                                                                                            |
 | Experteneinstellungen    | Sichtbar im Expertenmodus des Admins: Port (502), Unit-ID (1), Request-Timeout, Pause zwischen Requests (mindestens 100 ms: Der Navigator stockt bei hartem Polling), Abfrageintervalle schnell/mittel/langsam/Einstellungen (30 s / 60 s / 300 s / 3600 s) und die Intervalle der Weboberfläche.                     |
 
 ### Anlage
@@ -113,17 +113,17 @@ Modbus hat Vorrang: Was Modbus liefert (der Adapter erkennt das an der IDM-Bezei
 
 ## 8a. Wärmepumpen-Diagramm
 
-Der Adapter stellt ein Livebild Ihrer Anlage auf einer kleinen Webseite bereit. Es wird aus den Werten gezeichnet, die der Adapter liest, ist nur lesend und kann nichts verändern.
+Das Diagramm ist ein Livebild Ihrer Anlage auf einer Webseite. Es wird aus den Werten gezeichnet, die der Adapter liest, ist nur lesend und kann nichts verändern. Die Seite läuft in Ihrem Browser und bekommt ihre Daten über den **Web-Adapter** von ioBroker; sie braucht also eine Web-Instanz (üblicherweise Port 8082) und keinen eigenen Port.
 
-**Öffnen.** Auf den Link _Wärmepumpen-Diagramm_ neben der Instanz in der Instanzenliste klicken oder `http://<ioBroker-Rechner>:8183/` im Browser öffnen (8183 ist der Standard-Port). Zwei Instanzen auf demselben Rechner brauchen verschiedene Ports (Experteneinstellung); die zweite schreibt eine Warnung ins Log und zeigt kein Diagramm.
+**Öffnen.** Auf den Link _Wärmepumpen-Diagramm_ neben der Instanz in der Instanzenliste klicken oder `http://<ioBroker-Rechner>:8082/idm-modbus/index.html?instance=0` öffnen (die Zahl ist die Instanz dieses Adapters). Die Seite folgt der Sprache der ioBroker-Systemeinstellungen.
 
-**Einstellungen (Reiter Verbindung).**
+**Einstellungen (Reiter Diagramm).** Sie gelten sofort, die Seite zeichnet sich neu.
 
-| Einstellung                               | Bedeutung                                                                                                                                                                                     |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Diagramm als Webseite anbieten            | Standardmäßig an. Ausschalten, wenn Sie die Seite nicht möchten.                                                                                                                              |
-| Teile, die im Diagramm weggelassen werden | Pufferspeicher, Warmwasser (Tank und Frischwasserstation), Photovoltaik, Solar, Bivalenz. Teile, die die Anlage nicht hat, werden ohnehin nicht gezeichnet.                                   |
-| Port, Lauschadresse (Experte)             | Port 8183. Lauschadresse `0.0.0.0` = im ganzen Netzwerk erreichbar, `127.0.0.1` = nur auf dem ioBroker-Rechner. Jeder, der die Seite erreicht, sieht die Werte; verändern kann niemand etwas. |
+| Einstellung                   | Bedeutung                                                                                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wärmequelle                   | Automatisch, Luft oder Erdreich oder Grundwasser. „Automatisch“ entscheidet anhand der Fühler, die der Navigator meldet; von Hand wählen, wenn es falsch rät.                   |
+| Teile, die weggelassen werden | Pufferspeicher, Trinkwassererwärmer, Frischwasserstation, Photovoltaik, Solar, Bivalenz. Teile, die die Anlage nicht hat, werden ohnehin nicht gezeichnet.                      |
+| Räume neben Heizkreisen       | Standardmäßig stehen die Räume von Zonenmodul 1 neben Heizkreis A, die von Modul 2 neben Heizkreis B usw. Mit einer Zeile ordnen Sie ein Zonenmodul einem anderen Heizkreis zu. |
 
 **Was zu sehen ist.** Das Diagramm baut sich selbst auf: Ein Teil erscheint nur, wenn der Adapter einen echten Wert dafür hat.
 
@@ -146,18 +146,18 @@ Reiter _Diagnose_ → **Support-Datei erstellen**: ein Bericht für Fehlermeldun
 
 ## 10. Fehlersuche
 
-| Beobachtung                                                         | Ursache / Abhilfe                                                                                                                                                                                                       |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| „Verbindung testen“ schlägt fehl                                    | Modbus TCP am Navigator nicht eingeschaltet, falsche IP oder ein anderer Client blockiert den Port.                                                                                                                     |
-| Verbunden, aber keine Außentemperatur                               | Unit-ID ungleich 1 (Experteneinstellungen).                                                                                                                                                                             |
-| Viele leere Datenpunkte                                             | Hardware, die Ihre Anlage nicht hat: _Datenpunkte von Hardware ausblenden, die keinen Wert meldet_ eingeschaltet lassen oder den Scan ausführen und den Vorschlag übernehmen.                                           |
-| Falsche oder fehlende Werte nach Wechsel der Generation             | Die Generation wählen, die der Test-Button meldet.                                                                                                                                                                      |
-| Der Navigator wird langsam                                          | Abfrageintervalle oder Pause zwischen Requests zu kurz; die Standardwerte beibehalten.                                                                                                                                  |
-| Der Scan bricht bei etwa 25 % ab                                    | Der Adapter wurde während des Scans neu gestartet (auch durch Speichern der Konfiguration); erneut starten und den Adapter in Ruhe lassen.                                                                              |
-| `web.connected` ist false                                           | Falsche PIN, Weboberfläche nicht erreichbar oder am Navigator ist keine PIN gesetzt.                                                                                                                                    |
-| Das Diagramm öffnet sich nicht, das Log meldet, der Port sei belegt | Eine andere Instanz oder ein anderes Programm nutzt den Diagramm-Port; in den Experteneinstellungen einen anderen Port einstellen.                                                                                      |
-| Im Diagramm fehlt ein Teil                                          | Der Adapter hat dafür keinen Wert: Die Anlage hat es nicht, es ist im Reiter Anlage nicht eingeschaltet, oder (Durchfluss, Pumpen, Lüfterspannung) die Weboberfläche ist aus.                                           |
-| Ein Schreibvorgang bleibt ohne Wirkung                              | Prüfen, ob die Gruppe im Reiter Steuern freigegeben ist; das Log nennt den Grund (Bereich, gleicher Wert, Mindestabstand, Sperre). Raumsolltemperaturen wirken nur, solange der Raum in der Betriebsart _Normal_ steht. |
+| Beobachtung                                             | Ursache / Abhilfe                                                                                                                                                                                                       |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| „Verbindung testen“ schlägt fehl                        | Modbus TCP am Navigator nicht eingeschaltet, falsche IP oder ein anderer Client blockiert den Port.                                                                                                                     |
+| Verbunden, aber keine Außentemperatur                   | Unit-ID ungleich 1 (Experteneinstellungen).                                                                                                                                                                             |
+| Viele leere Datenpunkte                                 | Hardware, die Ihre Anlage nicht hat: _Datenpunkte von Hardware ausblenden, die keinen Wert meldet_ eingeschaltet lassen oder den Scan ausführen und den Vorschlag übernehmen.                                           |
+| Falsche oder fehlende Werte nach Wechsel der Generation | Die Generation wählen, die der Test-Button meldet.                                                                                                                                                                      |
+| Der Navigator wird langsam                              | Abfrageintervalle oder Pause zwischen Requests zu kurz; die Standardwerte beibehalten.                                                                                                                                  |
+| Der Scan bricht bei etwa 25 % ab                        | Der Adapter wurde während des Scans neu gestartet (auch durch Speichern der Konfiguration); erneut starten und den Adapter in Ruhe lassen.                                                                              |
+| `web.connected` ist false                               | Falsche PIN, Weboberfläche nicht erreichbar oder am Navigator ist keine PIN gesetzt.                                                                                                                                    |
+| Das Diagramm öffnet sich nicht                          | Eine Web-Adapter-Instanz installieren und starten; sie liefert die Seite aus (`/idm-modbus/`). Den Link neben der Instanz benutzen, er enthält die Instanznummer.                                                       |
+| Im Diagramm fehlt ein Teil                              | Der Adapter hat dafür keinen Wert: Die Anlage hat es nicht, es ist im Reiter Anlage nicht eingeschaltet, oder (Durchfluss, Pumpen, Lüfterspannung) die Weboberfläche ist aus.                                           |
+| Ein Schreibvorgang bleibt ohne Wirkung                  | Prüfen, ob die Gruppe im Reiter Steuern freigegeben ist; das Log nennt den Grund (Bereich, gleicher Wert, Mindestabstand, Sperre). Raumsolltemperaturen wirken nur, solange der Raum in der Betriebsart _Normal_ steht. |
 
 ## 11. Bekannte Grenzen
 

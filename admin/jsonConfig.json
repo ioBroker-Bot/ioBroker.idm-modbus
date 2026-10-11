@@ -123,88 +123,6 @@
                     "xl": 3,
                     "hidden": "data.family === 'nav17' || !data.webEnabled"
                 },
-                "hdrDiagram": {
-                    "type": "header",
-                    "text": "hdrDiagram",
-                    "size": 3,
-                    "newLine": true,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
-                },
-                "diagramEnabled": {
-                    "type": "checkbox",
-                    "label": "diagramEnabled",
-                    "help": "diagramEnabledHelp",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
-                },
-                "diagramHidden": {
-                    "type": "select",
-                    "multiple": true,
-                    "label": "diagramHidden",
-                    "help": "diagramHiddenHelp",
-                    "newLine": true,
-                    "options": [
-                        {
-                            "label": "diagramPartBuffer",
-                            "value": "buffer"
-                        },
-                        {
-                            "label": "diagramPartDhw",
-                            "value": "dhw"
-                        },
-                        {
-                            "label": "diagramPartPv",
-                            "value": "pv"
-                        },
-                        {
-                            "label": "diagramPartSolar",
-                            "value": "solar"
-                        },
-                        {
-                            "label": "diagramPartBivalence",
-                            "value": "bivalence"
-                        }
-                    ],
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 6,
-                    "xl": 6,
-                    "hidden": "!data.diagramEnabled"
-                },
-                "diagramPort": {
-                    "type": "number",
-                    "label": "diagramPort",
-                    "min": 1,
-                    "max": 65535,
-                    "newLine": true,
-                    "xs": 12,
-                    "sm": 6,
-                    "md": 4,
-                    "lg": 3,
-                    "xl": 3,
-                    "hidden": "!data.diagramEnabled",
-                    "expertMode": true
-                },
-                "diagramBind": {
-                    "type": "text",
-                    "label": "diagramBind",
-                    "help": "diagramBindHelp",
-                    "xs": 12,
-                    "sm": 6,
-                    "md": 4,
-                    "lg": 3,
-                    "xl": 3,
-                    "hidden": "!data.diagramEnabled",
-                    "expertMode": true
-                },
                 "hdrExpert": {
                     "type": "header",
                     "text": "hdrExpert",
@@ -1708,6 +1626,155 @@
                             "width": "9%"
                         }
                     ]
+                }
+            }
+        },
+        "diagram": {
+            "type": "panel",
+            "label": "tabDiagram",
+            "items": {
+                "diagramHeader": {
+                    "type": "header",
+                    "text": "diagramHeader",
+                    "size": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "diagramIntro": {
+                    "type": "staticText",
+                    "text": "diagramIntro",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "diagramHeatSource": {
+                    "type": "select",
+                    "label": "diagramHeatSource",
+                    "help": "diagramHeatSourceHelp",
+                    "newLine": true,
+                    "options": [
+                        {
+                            "label": "diagramHeatSourceAuto",
+                            "value": "auto"
+                        },
+                        {
+                            "label": "diagramHeatSourceAir",
+                            "value": "air"
+                        },
+                        {
+                            "label": "diagramHeatSourceGround",
+                            "value": "ground"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "diagramHidden": {
+                    "type": "select",
+                    "multiple": true,
+                    "label": "diagramHidden",
+                    "help": "diagramHiddenHelp",
+                    "newLine": true,
+                    "options": [
+                        {
+                            "label": "diagramPartBuffer",
+                            "value": "buffer"
+                        },
+                        {
+                            "label": "diagramPartDhw",
+                            "value": "dhw"
+                        },
+                        {
+                            "label": "diagramPartFreshwater",
+                            "value": "freshwater"
+                        },
+                        {
+                            "label": "diagramPartPv",
+                            "value": "pv"
+                        },
+                        {
+                            "label": "diagramPartSolar",
+                            "value": "solar"
+                        },
+                        {
+                            "label": "diagramPartBivalence",
+                            "value": "bivalence"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "diagramZoneCircuit": {
+                    "type": "table",
+                    "label": "diagramZoneCircuit",
+                    "help": "diagramZoneCircuitHelp",
+                    "newLine": true,
+                    "showSecondAddAt": 5,
+                    "items": [
+                        {
+                            "attr": "zone",
+                            "type": "number",
+                            "title": "colZoneModule",
+                            "width": "40%",
+                            "default": 1,
+                            "min": 1,
+                            "max": 10
+                        },
+                        {
+                            "attr": "circuit",
+                            "type": "select",
+                            "title": "colCircuit",
+                            "width": "60%",
+                            "default": "A",
+                            "options": [
+                                {
+                                    "label": "A",
+                                    "value": "A"
+                                },
+                                {
+                                    "label": "B",
+                                    "value": "B"
+                                },
+                                {
+                                    "label": "C",
+                                    "value": "C"
+                                },
+                                {
+                                    "label": "D",
+                                    "value": "D"
+                                },
+                                {
+                                    "label": "E",
+                                    "value": "E"
+                                },
+                                {
+                                    "label": "F",
+                                    "value": "F"
+                                },
+                                {
+                                    "label": "G",
+                                    "value": "G"
+                                }
+                            ]
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 }
             }
         },

@@ -105,3 +105,8 @@ export const MIN_WEB_STATISTICS_INTERVAL_S = 300;
 /** Hot water boost (spec Modul E): default target temperature and time limit. */
 export const DEFAULT_BOOST_TARGET_C = 55;
 export const DEFAULT_BOOST_MAX_MINUTES = 60;
+
+/** Parts of the heat pump diagram the user may hide (the page `www/model.js` knows the same names). */
+export const DIAGRAM_PARTS = ['buffer', 'dhw', 'freshwater', 'pv', 'solar', 'bivalence'] as const;
+/** Zone modules the diagram can place next to a heating circuit (the Navigator has up to ten). */
+export const MAX_DIAGRAM_ZONE = 10;

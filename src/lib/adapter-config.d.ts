@@ -148,12 +148,12 @@ declare global {
             webIntervalS: number;
             /** interval of the web statistics in seconds, 0 = not read */
             webStatisticsIntervalS: number;
-            /** heat pump diagram page (spec Modul I) */
-            diagramEnabled: boolean;
-            diagramPort: number;
-            diagramBind: string;
-            /** parts to leave out of the diagram (buffer, dhw, pv, solar, bivalence) */
+            /** heat pump diagram (spec Modul I): 'auto', 'air' or 'ground' */
+            diagramHeatSource: string;
+            /** parts to leave out of the diagram (buffer, dhw, freshwater, pv, solar, bivalence) */
             diagramHidden: string[];
+            /** the heating circuit next to the rooms of a zone module */
+            diagramZoneCircuit: { zone: number; circuit: string }[];
             /** create states when the Navigator reports the first real value and remove those of hardware that never does */
             hideUnavailable: boolean;
             /** delete states of registers the configuration no longer enables */

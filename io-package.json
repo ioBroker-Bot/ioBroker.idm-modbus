@@ -86,7 +86,7 @@
         "messagebox": true,
         "localLinks": {
             "_default": {
-                "link": "http://%ip%:%diagramPort%/",
+                "link": "%web_protocol%://%ip%:%web_port%/idm-modbus/index.html?instance=%instance%",
                 "name": {
                     "en": "Heat pump diagram",
                     "de": "Wärmepumpen-Diagramm",
@@ -180,10 +180,9 @@
         "boostEnabled": false,
         "boostTargetC": 55,
         "boostMaxMinutes": 60,
-        "diagramEnabled": true,
-        "diagramPort": 8183,
-        "diagramBind": "0.0.0.0",
+        "diagramHeatSource": "auto",
         "diagramHidden": [],
+        "diagramZoneCircuit": [],
         "webEnabled": false,
         "webPin": "",
         "webPort": 0,

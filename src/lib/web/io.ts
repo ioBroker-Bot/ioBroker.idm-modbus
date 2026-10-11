@@ -172,26 +172,12 @@ const ROLE_BY_UNIT: Record<string, string> = {
     V: 'value.voltage',
 };
 
-/** A sensor row of the web sensor table, for the diagram. */
-export interface WebSensor {
-    /** state id */
-    id: string;
-    /** IDM tag */
-    tag: string;
-    /** name in all languages for known parts, else as the device shows it */
-    name: LocalizedText | string;
-    /** unit */
-    unit: string;
-}
-
 /** The planned objects and current values of the input/output states. */
 export interface IoStates {
     /** channels and states */
     objects: PlannedObject[];
     /** value per state id */
     values: Map<string, number | string | boolean>;
-    /** the tagged sensors that got a state */
-    sensors: WebSensor[];
 }
 
 /**
@@ -246,7 +232,6 @@ function withTag(label: LocalizedText | string, tag: string): LocalizedText | st
 export function buildIoStates(io: Partial<Record<IoGroup, IoItem[]>>, isDuplicate: (tag: string) => boolean): IoStates {
     const objects: PlannedObject[] = [];
     const values = new Map<string, number | string | boolean>();
-    const sensors: WebSensor[] = [];
     for (const group of Object.keys(IO_GROUPS) as IoGroup[]) {
         const rows = (io[group] ?? []).filter(item => !item.tag || !isDuplicate(item.tag));
         if (!rows.length) {
@@ -290,10 +275,7 @@ export function buildIoStates(io: Partial<Record<IoGroup, IoItem[]>>, isDuplicat
                 },
             });
             values.set(id, type === 'boolean' ? item.value !== 0 : item.value);
-            if (group === 'sensors' && item.tag) {
-                sensors.push({ id, tag: item.tag, name: labelOf(item), unit: item.unit });
-            }
         }
     }
-    return { objects, values, sensors };
+    return { objects, values };
 }

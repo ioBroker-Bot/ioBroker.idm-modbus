@@ -1,0 +1,121 @@
+{
+    "$comment": "English texts of the heat pump diagram page by key, with the German wording. tools/build-diagram-labels.ts turns them into www/labels.json (11 languages, from src/lib/dictionary.json after npm run translate:strings).",
+    "labels": {
+        "title": {
+            "en": "Heat pump diagram",
+            "de": "Wärmepumpen-Schema"
+        },
+        "outdoor": {
+            "en": "Outdoor",
+            "de": "Außen"
+        },
+        "flow": {
+            "en": "Flow",
+            "de": "Vorlauf"
+        },
+        "power": {
+            "en": "Power",
+            "de": "Leistung"
+        },
+        "cop": {
+            "en": "COP",
+            "de": "Arbeitszahl (COP)"
+        },
+        "heatPump": {
+            "en": "Heat pump",
+            "de": "Wärmepumpe"
+        },
+        "buffer": {
+            "en": "Buffer",
+            "de": "Pufferspeicher"
+        },
+        "dhw": {
+            "en": "Hot water",
+            "de": "Warmwasser"
+        },
+        "setpoint": {
+            "en": "Setpoint",
+            "de": "Soll"
+        },
+        "pv": {
+            "en": "Photovoltaics",
+            "de": "Photovoltaik"
+        },
+        "house": {
+            "en": "House",
+            "de": "Haus"
+        },
+        "surplus": {
+            "en": "Surplus",
+            "de": "Überschuss"
+        },
+        "battery": {
+            "en": "Battery",
+            "de": "Batterie"
+        },
+        "solar": {
+            "en": "Solar thermal",
+            "de": "Solarthermie"
+        },
+        "collector": {
+            "en": "Collector",
+            "de": "Kollektor"
+        },
+        "bivalence": {
+            "en": "Bivalence",
+            "de": "Bivalenz"
+        },
+        "rooms": {
+            "en": "Rooms",
+            "de": "Räume"
+        },
+        "room": {
+            "en": "Room",
+            "de": "Raum"
+        },
+        "storage": {
+            "en": "Storage",
+            "de": "Speicher"
+        },
+        "isc": {
+            "en": "ISC",
+            "de": "ISC"
+        },
+        "other": {
+            "en": "Sensors",
+            "de": "Fühler"
+        },
+        "on": {
+            "en": "On",
+            "de": "Ein"
+        },
+        "off": {
+            "en": "Off",
+            "de": "Aus"
+        },
+        "freshwater": {
+            "en": "Fresh water station",
+            "de": "Frischwasserstation"
+        },
+        "coldWater": {
+            "en": "Cold water",
+            "de": "Kaltwasser"
+        },
+        "connected": {
+            "en": "Connected",
+            "de": "Verbunden"
+        },
+        "disconnected": {
+            "en": "Not connected",
+            "de": "Nicht verbunden"
+        },
+        "updated": {
+            "en": "Updated",
+            "de": "Aktualisiert"
+        },
+        "circuit": {
+            "en": "Heating circuit {i}",
+            "de": "Heizkreis {i}"
+        }
+    }
+}

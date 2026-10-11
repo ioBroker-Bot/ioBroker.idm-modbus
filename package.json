@@ -70,6 +70,7 @@
     "build:registers": "ts-node tools/build-registers.ts",
     "build:faults": "ts-node tools/build-faults.ts",
     "translate:strings": "ts-node tools/translate-strings.ts",
+    "build:diagram": "ts-node tools/build-diagram-labels.ts",
     "scan:device": "ts-node tools/scan-device.ts",
     "scan:reclassify": "ts-node tools/reclassify-scan.ts",
     "lint": "eslint -c eslint.config.mjs .",
