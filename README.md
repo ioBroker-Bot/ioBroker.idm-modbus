@@ -59,29 +59,9 @@ This is an independent community project. IDM and Navigator are trademarks of th
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.1.0 (2026-10-11)
 
-- (SeaSpotter) read-only adapter for Navigator 2.0: register files, Modbus TCP client, polling, object tree, device scan, 11-language texts
-- (SeaSpotter) support file with one click (Diagnostics tab): configuration without host, PIN and addresses, connection state, problem registers, latest readings; English and German manuals, a new logo, German texts aligned with the wording of the IDM manuals (Warmwasserladung, Konstantheizkreis, Trinkwassererwärmer, Datenpunkt)
-- (SeaSpotter) Navigator 10: the input/output tables of the web interface are read through its WebSocket (port 61220, protocol as documented by Xerolux; tested against a mock only); the Navigator 1.0/1.7 has no web interface, so its web option is hidden; circuit sensor tags follow the B51-B57 / B61-B67 sequence
-- (SeaSpotter) web interface: inputs and outputs of the Navigator (sensors not available by Modbus such as the heating flow rate B2 and the refrigerant circuit, digital inputs such as the hot water flow switch B1, pump and valve states such as M22, M31, M73, fan M13) as states `web.io.*`; the diagram shows them
-- (SeaSpotter) heat pump diagram: a read-only web page (link next to the instance, served by the web adapter) that draws heat pump, buffer, hot water, heating circuits, photovoltaics and rooms with live values, only for the parts the plant has; the Diagram tab sets the heat source, hidden parts and which rooms stand next to which heating circuit
-- (SeaSpotter) simpler settings: the web interface options sit in the Connection tab, ports, timeouts and intervals are expert settings, the float word order is no longer a setting
-- (SeaSpotter) CO₂ intensity can come from a state (accrued at the value valid when the energy was used), state `stats.co2.intensity` shows the factor in use
-- (SeaSpotter) temperatures, temperature differences and counters (energy, hours) show at most one decimal
-- (SeaSpotter) states appear when the Navigator reports a real value; hardware the plant does not have gets no empty states (option _Create states only when the Navigator reports a value_, on by default; leftovers are removed two minutes after the start)
-- (SeaSpotter) the device scan shows its progress in `diag.scanProgress`, announces its duration and warns when it is interrupted
-- (SeaSpotter) fault numbers of the Navigator 2.0 are translated into text (178 faults, 11 languages) in `system.internal_message_text`
-- (SeaSpotter) optional one-time hot water boost (`dhw.boost_start` / `dhw.boost_stop`) with target temperature and time limit; it always switches the demand off again
-- (SeaSpotter) defrost cycles and defrost hours in the statistics
-- (SeaSpotter) web statistics: runtime, heat quantity and electrical energy per operating state (today, month, year, total, history) and the COP from the Navigator's web pages
-- (SeaSpotter) optional web interface module: reads room names, heating circuit names and room data (temperature, target, humidity, mode) from the Navigator's local web pages with the display PIN (read only, off by default)
-- (SeaSpotter) the test-connection button detects the Navigator generation (2.0, 10 or 1.x) and warns when it differs from the selected one
-- (SeaSpotter) register files for Navigator 10 and Navigator 1.0/1.7 from the IDM documents (untested on real devices; 1.7 without coil registers), booster block for Navigator 10
-- (SeaSpotter) PV module: writes PV surplus, production, house consumption and battery values from ioBroker states to the Navigator, with scaling, limits and second-writer detection, off by default
-- (SeaSpotter) building automation values: outdoor temperature, humidity, demands and storage temperatures from ioBroker states to the Navigator (cyclic, range and age checks), off by default
-- (SeaSpotter) room temperature feeding: writes the temperature of an ioBroker state to the external room temperature of a heating circuit (tolerance, heartbeat, range, stale handling), off by default
-- (SeaSpotter) optional room control for zone modules: setpoint (0.5 °C steps, 10-30 °C) and operating mode per room, off by default
+- (SeaSpotter) initial release: reads the IDM Navigator over Modbus TCP (Navigator 2.0 / Pro verified on a device; Navigator 10 and 1.0/1.7 from the IDM documents, untested), with device scan, statistics, optional control, PV and room feeding, optional web interface values and a live heat pump diagram, texts in 11 languages
 
 ## License
 
