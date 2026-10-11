@@ -26,12 +26,13 @@ Everything else is optional and off until you switch it on.
 
 ### Connection
 
-| Setting                  | Meaning                                                                                                                                                                                                                                                              |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Navigator host / IP      | Address of the Navigator. Use a fixed address.                                                                                                                                                                                                                       |
-| Navigator generation     | 2.0 (also Pro), 1.7 or 10. The test button detects it for you.                                                                                                                                                                                                       |
-| Web interface (optional) | Also read room names, room data and statistics from the web interface. Needs the display's network PIN (stored encrypted, sent unencrypted over your local network like in a browser).                                                                               |
-| Expert settings          | Visible with the admin's expert mode: port (502), unit ID (1), request timeout, pause between requests (at least 100 ms: the Navigator stalls under hard polling), polling intervals fast/medium/slow/settings (30 s / 60 s / 300 s / 3600 s) and the web intervals. |
+| Setting                  | Meaning                                                                                                                                                                                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Navigator host / IP      | Address of the Navigator. Use a fixed address.                                                                                                                                                                                                                                                          |
+| Navigator generation     | 2.0 (also Pro), 1.7 or 10. The test button detects it for you.                                                                                                                                                                                                                                          |
+| Web interface (optional) | Also read data from the web interface: inputs and outputs (Navigator 2.0 / Pro and 10), plus room names, room data and statistics (Navigator 2.0 / Pro). Not for the Navigator 1.0/1.7. Needs the display's network PIN (stored encrypted, sent unencrypted over your local network like in a browser). |
+| Heat pump diagram        | Show the diagram as a web page, parts to leave out, port and listen address; see section 8a.                                                                                                                                                                                                            |
+| Expert settings          | Visible with the admin's expert mode: port (502), unit ID (1), request timeout, pause between requests (at least 100 ms: the Navigator stalls under hard polling), polling intervals fast/medium/slow/settings (30 s / 60 s / 300 s / 3600 s) and the web intervals.                                    |
 
 ### Installation
 
@@ -114,7 +115,32 @@ Modbus wins: a part that Modbus delivers (the adapter matches the IDM tag in the
 
 ## 8a. Heat pump diagram
 
-The adapter serves a read-only web page with a diagram of your plant and live values (port 8183 by default, Connection tab). It is the link next to the instance in the instances list. The diagram assembles itself: heat pump (outdoor, flow, return, power, COP, operating mode, a fan that turns while the compressor runs), buffer tank, hot water, every heating circuit, photovoltaics (production, house, surplus, battery) and all rooms appear only when the adapter has real values for them; pipes are coloured by temperature. Anyone in your network who knows the address can open the page, but it cannot change anything. Listen on 127.0.0.1 (expert setting) to keep it on the ioBroker computer, or switch the page off in the Connection tab.
+The adapter serves a live picture of your plant on a small web page. It is drawn from the values the adapter reads, it is read only and cannot change anything.
+
+**Opening it.** Click the link _Heat pump diagram_ next to the instance in the instances list, or open `http://<ioBroker computer>:8183/` in a browser (8183 is the default port). Two instances on the same computer need different ports (expert setting); the second one logs a warning and shows no diagram.
+
+**Settings (Connection tab).**
+
+| Setting                                | Meaning                                                                                                                                                                                         |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Show the heat pump diagram as web page | On by default. Switch it off if you do not want the page.                                                                                                                                       |
+| Parts to leave out of the diagram      | Buffer, hot water (tank and fresh water station), photovoltaics, solar thermal, bivalence. Parts the plant does not have are not drawn anyway.                                                  |
+| Diagram port, listen address (expert)  | Port 8183. Listen address `0.0.0.0` = reachable in the whole network, `127.0.0.1` = only on the ioBroker computer. Everyone who can reach the page sees the values; nobody can change anything. |
+
+**What you see.** The diagram assembles itself: a part appears only when the adapter has a real value for it.
+
+- **Heat pump** (left): power, COP, the heating flow rate (B2), sensors of the heat source (for example the air intake B37), pump status (M73), the operating mode, and the outdoor temperature (B32) to its left. The fan turns with the fan voltage M13, or while the compressor runs. A ground or groundwater heat pump (heat source sensors and pumps, no air intake) shows a pump symbol instead of the fan, with the source pumps M15 and M16.
+- **Storage** (middle): hot water at the top (B48) and in the middle (B41), the heat storage at the bottom (B38). Three pipes lead to the heat pump: hot gas line (B35), flow (B33) and return (B34). A storage with fewer sensors shows fewer levels.
+- **Fresh water station** (right of the storage, when the tapping temperature B42 is reported): the heat exchanger, the cold water inlet and a faucet with B42 and the hot water setpoint. The drop is bright while hot water is drawn (flow switch B1).
+- **Heating circuits** (right): one card per circuit with its flow temperature (B51 for circuit A, B52 for B and so on), setpoint, room temperature and, for circuit A, the pump M31. The rooms of zone module N stand next to circuit N; more circuits stack below each other.
+- **Solar thermal** (bottom left, when the plant has it): the collector (B73), a coil in the storage, charging (B74) and return (B75) on their pipes, further solar sensors in the box.
+- **Energy tiles** (bottom): photovoltaics, battery, surplus, house and heat pump power. They are not tied to the heat pump.
+
+**Colours and movement.** Flow pipes and their sensors are orange, return pipes and theirs are blue; the storage fades from hot (top) to cold (bottom). Pipes move while something runs: the heat pump pipes while the compressor runs, a circuit's pipes while it runs, the station while hot water is drawn.
+
+**Where the values come from.** Mostly from Modbus. A few exist only in the web interface (the flow rate B2, the hot water flow switch B1, the pump M22, the fan voltage M13, the pump M31): switch on _Web interface_ and enter the display PIN to see them. Where Modbus and the web interface both deliver a value, Modbus is used.
+
+**Good to know.** Rooms are assigned to circuits by zone module number (zone 1 to circuit A, zone 2 to circuit B and so on); this is an assumption. Heating circuits are numbered B51 to B57 (flow) and B61 to B67 (room) for circuits A to G. The ground and groundwater variant and the solar block have not been seen on a real plant yet.
 
 ## 9. Support
 
@@ -122,16 +148,18 @@ _Diagnostics_ tab → **Create support file**: a report for bug reports with the
 
 ## 10. Troubleshooting
 
-| Symptom                                               | Cause / remedy                                                                                                                                                                      |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| _Test connection_ fails                               | Modbus TCP not enabled on the Navigator, wrong IP, or another client blocks the port.                                                                                               |
-| Connected but no outdoor temperature                  | Unit ID other than 1 (expert settings).                                                                                                                                             |
-| Many empty states                                     | Hardware your plant does not have: keep _Hide states of hardware that reports no value_ on, or run the scan and apply the suggestion.                                               |
-| Wrong or missing values after changing the generation | Select the generation the test button reports.                                                                                                                                      |
-| The Navigator becomes slow                            | Polling intervals or the pause between requests too short; keep the defaults.                                                                                                       |
-| Scan stops at about 25 %                              | The adapter was restarted during the scan (also by a configuration save); start it again and leave the adapter alone.                                                               |
-| `web.connected` is false                              | Wrong PIN, web interface not reachable, or the PIN is not set on the Navigator.                                                                                                     |
-| A write has no effect                                 | Check the group is enabled in the Control tab; the log names the reason (range, equal value, interval, lock). Room setpoints only act while the room is in operating mode _Normal_. |
+| Symptom                                                    | Cause / remedy                                                                                                                                                                      |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _Test connection_ fails                                    | Modbus TCP not enabled on the Navigator, wrong IP, or another client blocks the port.                                                                                               |
+| Connected but no outdoor temperature                       | Unit ID other than 1 (expert settings).                                                                                                                                             |
+| Many empty states                                          | Hardware your plant does not have: keep _Hide states of hardware that reports no value_ on, or run the scan and apply the suggestion.                                               |
+| Wrong or missing values after changing the generation      | Select the generation the test button reports.                                                                                                                                      |
+| The Navigator becomes slow                                 | Polling intervals or the pause between requests too short; keep the defaults.                                                                                                       |
+| Scan stops at about 25 %                                   | The adapter was restarted during the scan (also by a configuration save); start it again and leave the adapter alone.                                                               |
+| `web.connected` is false                                   | Wrong PIN, web interface not reachable, or the PIN is not set on the Navigator.                                                                                                     |
+| The diagram does not open, the log says the port is in use | Another instance or program uses the diagram port; set a different port in the expert settings.                                                                                     |
+| A part is missing in the diagram                           | The adapter has no value for it: the plant does not have it, it is not enabled in the Installation tab, or (flow rate, pumps, fan voltage) the web interface is off.                |
+| A write has no effect                                      | Check the group is enabled in the Control tab; the log names the reason (range, equal value, interval, lock). Room setpoints only act while the room is in operating mode _Normal_. |
 
 ## 11. Known limits
 

@@ -27,7 +27,8 @@ Connects IDM heat pumps with Navigator control to ioBroker locally via Modbus TC
 - **Statistics:** COP and annual performance factor, energy per operating mode, cost and CO₂ (fixed or from a state), operating hours, starts and defrosts, optional external electricity and heat meters; plus runtime, heat and electricity statistics from the Navigator's web pages.
 - **Control** (off by default, per group): system mode, hot water, heating circuits, room setpoints and modes (Navigator Pro), solar, bivalence and cascade, and a one-time hot water charge. Every value is checked, limited, read back and counted, with EEPROM protection.
 - **Feeding from ioBroker** (off by default): PV values, room temperatures and building-automation values, with scaling, limits, age checks and second-writer detection.
-- **Web interface** (optional, PIN): room names, heating circuit names and room data.
+- **Web interface** (optional, PIN): the inputs and outputs of the Navigator (Navigator 2.0 / Pro through its PHP pages, Navigator 10 through its WebSocket) and, on the Navigator 2.0 / Pro, room names, heating circuit names and room data. Modbus values win; the Navigator 1.0/1.7 has no web interface.
+- **Heat pump diagram:** a read-only web page (a link next to the instance) with a live picture of your plant: heat pump (air or ground source), storage, fresh water station, heating circuits with their rooms, solar, photovoltaics. It assembles itself from the values the adapter has and shows the IDM measuring points (B33, B48, ...).
 - **Support file** with one click, without host, PIN or addresses.
 
 ### Requirements
