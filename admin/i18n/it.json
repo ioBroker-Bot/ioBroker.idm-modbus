@@ -148,7 +148,6 @@
     "scanResult": "Scansione del %s: %s registri hanno risposto, %s hanno risposto \"non disponibile\", %s non esistono. Impianto suggerito: circuiti di riscaldamento %s, moduli di zona %s (ambienti per modulo %s), blocchi %s.",
     "scanResultButton": "Mostra il risultato dell'ultima scansione",
     "scanStarted": "Scansione avviata - richiede circa %s minuti. Nel frattempo non riavviare l'adapter. L'avanzamento è nello stato diag.scanProgress e nel log, il risultato nel log e nello stato diag.scan.",
-    "scanStatusLabel": "Stato",
     "statsEnabled": "Calcola valori derivati e statistiche",
     "statsEnabledHelp": "COP, fattore di prestazione annuo, energia per modalità di funzionamento, costo, CO₂, ore di funzionamento e avvii. Solo lettura, nulla viene scritto nella pompa di calore.",
     "statsOff": "Le statistiche sono disattivate",

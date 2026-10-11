@@ -148,7 +148,6 @@
     "scanResult": "Scan du %s : %s registres ont répondu, %s ont répondu « non disponible », %s n'existent pas. Installation suggérée : circuits de chauffage %s, modules de zone %s (pièces par module %s), blocs %s.",
     "scanResultButton": "Afficher le résultat du dernier scan",
     "scanStarted": "Scan démarré - il dure environ %s minutes. Ne redémarrez pas l'adaptateur entre-temps. La progression est dans l'état diag.scanProgress et le journal, le résultat dans le journal et l'état diag.scan.",
-    "scanStatusLabel": "État",
     "statsEnabled": "Calculer les valeurs dérivées et les statistiques",
     "statsEnabledHelp": "COP, coefficient de performance annuel, énergie par mode de fonctionnement, coût, CO₂, heures de fonctionnement et démarrages. Lecture seule, rien n'est écrit dans la pompe à chaleur.",
     "statsOff": "Les statistiques sont désactivées",
