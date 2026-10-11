@@ -124,8 +124,9 @@ export interface DiagramModel {
  */
 export const DIAGRAM_STATE_IDS: Record<string, string[]> = {
     outdoor: ['system.outdoor_temp'],
-    hpFlow: ['hp.hp_flow_temp'],
-    hpReturn: ['hp.hp_return_temp'],
+    // with a separating heat exchanger the Navigator 10 does not answer 1050/1052 and reports 1068/1070 instead
+    hpFlow: ['hp.hp_flow_temp', 'hp.heat_sink_flow_temp'],
+    hpReturn: ['hp.hp_return_temp', 'hp.heat_sink_return_temp'],
     hgl: ['hp.hgl_flow_temp'],
     hpMode: ['hp.hp_operating_mode'],
     compressor: ['hp.compressor_status_1'],

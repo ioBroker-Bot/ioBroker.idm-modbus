@@ -32,7 +32,7 @@ const TAG_IN_LABEL = /\s*\(([BME]\d+v?)\)/;
 export const idmTag = (label: string): string | undefined => TAG_IN_LABEL.exec(label)?.[1];
 
 /**
- * Every temperature of the registers that carries an IDM tag, with its name in the user's language (the tag is cut from it).
+ * Every temperature and flow rate of the registers that carries an IDM tag, with its name in the user's language (the tag is cut from it).
  *
  * @param registers all registers of the family
  * @param language ioBroker system language
@@ -40,7 +40,7 @@ export const idmTag = (label: string): string | undefined => TAG_IN_LABEL.exec(l
 export function registerSensors(registers: readonly RegisterEntry[], language: string | undefined): SensorInput[] {
     return registers.flatMap(reg => {
         const tag = idmTag(reg.label.en);
-        return tag && reg.unit === '°C' && reg.access !== 'W'
+        return tag && (reg.unit === '°C' || reg.unit === 'l/min') && reg.access !== 'W'
             ? [
                   {
                       id: stateIdFor(reg),

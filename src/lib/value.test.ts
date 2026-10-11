@@ -34,6 +34,29 @@ describe('interpretWords', () => {
     });
 });
 
+describe('Navigator 10 "not available" words', () => {
+    // read-only capture at a Navigator 10 controller, published by Xerolux (idm-heatpump-api, docs/Register-Map-Invariants.md);
+    // the same raw words must never become values here
+    const nav10 = loadRegisters('nav10') as RegisterEntry[];
+    const captured: [number, number[]][] = [
+        [1006, [0xffff]], // variable input
+        [1650, [0x0000, 0xbf80]], // heating circuit A external room temperature (-1.0)
+        [1692, [0x0000, 0xbf80]], // external humidity (-1.0)
+        [1714, [0xfffe]], // external groundwater pump demand
+        [1715, [0xfffe]],
+        [86, [0xffff]], // battery state of charge
+        [4001, [0xffff]], // booster fault
+        [1392, [0x0000, 0xbf80]], // humidity sensor (-1.0)
+        [1147, [0xffff]], // cascade available for heating
+    ];
+    it('are all invalid', () => {
+        for (const [address, words] of captured) {
+            const entry = nav10.find(r => r.address === address) as RegisterEntry;
+            expect(interpretWords(entry, words, 'lowFirst').valid, `${address} ${entry.id}`).to.equal(false);
+        }
+    });
+});
+
 describe('shouldWrite', () => {
     const float = { type: 'FLOAT' } as const;
     const uchar = { type: 'UCHAR' } as const;

@@ -90,6 +90,12 @@ describe('diagram model', () => {
         expect(model.labels.heatPump).to.equal('Wärmepumpe');
     });
 
+    it('takes flow and return from the heat sink registers where the heat exchanger hides 1050/1052 (Navigator 10)', () => {
+        const model = buildDiagramModel(input({ 'hp.heat_sink_flow_temp': 34, 'hp.heat_sink_return_temp': 29 }));
+        expect(model.ids.hpFlow).to.equal('hp.heat_sink_flow_temp');
+        expect(model.ids.hpReturn).to.equal('hp.heat_sink_return_temp');
+    });
+
     it('finds the storage temperature where Navigator 1.x keeps it', () => {
         expect(buildDiagramModel(input({ 'hp.storage_temp': 35 })).ids.buffer).to.equal('hp.storage_temp');
     });
