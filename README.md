@@ -61,6 +61,12 @@ This is an independent community project. IDM and Navigator are trademarks of th
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.2 (2026-10-11)
+
+- (SeaSpotter) fix: texts the adapter writes into states (scan status, fault texts, operating modes) now follow the system language instead of always being English
+- (SeaSpotter) the unit of the price (currency or cent per kWh) and of the CO₂ factor (g or kg per kWh) can be chosen, for the fixed value and for the state
+- (SeaSpotter) the scan status text stands next to the progress
+
 ### 0.1.1 (2026-10-11)
 
 - (SeaSpotter) maintenance: the web adapter is listed as a requirement of the heat pump diagram, consistent German name of the diagram, safer translation tooling
