@@ -126,6 +126,9 @@ class IdmModbus extends utils.Adapter {
         super({
             ...options,
             name: 'idm-modbus',
+            // without this the js-controller never sets `this.language`, and every plain-text state (scan status, fault texts,
+            // enum texts) would stay English whatever the system language is
+            useFormatDate: true,
         });
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
