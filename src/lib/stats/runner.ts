@@ -221,11 +221,11 @@ export class StatsRunner {
         const number = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() !== '' ? Number(raw) : NaN;
         const value = Number.isFinite(number) ? number : null;
         if (kind === 'price') {
-            this.engine.setPrice(value);
+            this.engine.setPrice(value === null ? null : value * this.options.settings.priceStateFactor);
             return;
         }
         if (kind === 'co2') {
-            this.engine.setCo2Intensity(value);
+            this.engine.setCo2Intensity(value === null ? null : value * this.options.settings.co2StateFactor);
             return;
         }
         const scaled = value === null ? null : value * (this.factors.get(kind) ?? 1);

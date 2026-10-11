@@ -208,6 +208,10 @@ export interface StatsSettings {
     currency: string;
     /** CO2 factor in g/kWh */
     co2GramsPerKwh: number;
+    /** factor that turns a value of the price state into the currency per kWh (0.01 when the state is in cents) */
+    priceStateFactor: number;
+    /** factor that turns a value of the CO2 state into g/kWh (1000 when the state is in kg/kWh) */
+    co2StateFactor: number;
     /** age in ms after which an external value counts as stale */
     externalMaxAgeMs: number;
     /** problems found; each source with a problem is switched off, the adapter keeps running */
@@ -254,9 +258,12 @@ function externalSource(
  */
 export function readStatsSettings(config: Partial<ioBroker.AdapterConfig>): StatsSettings {
     const warnings: string[] = [];
+    // The units only say how the user types the numbers; everything inside the adapter is currency per kWh and g/kWh.
+    const priceFactor = config.priceUnit === 'cent' ? 0.01 : 1;
+    const co2Factor = config.co2Unit === 'kg' ? 1000 : 1;
     const price =
         typeof config.pricePerKwh === 'number' && Number.isFinite(config.pricePerKwh) && config.pricePerKwh >= 0
-            ? config.pricePerKwh
+            ? config.pricePerKwh * priceFactor
             : null;
     if (config.pricePerKwh !== undefined && config.pricePerKwh !== null && price === null) {
         warnings.push('Price per kWh must be a number of at least 0, no cost is calculated');
@@ -265,7 +272,7 @@ export function readStatsSettings(config: Partial<ioBroker.AdapterConfig>): Stat
         typeof config.co2GramsPerKwh === 'number' &&
         Number.isFinite(config.co2GramsPerKwh) &&
         config.co2GramsPerKwh >= 0
-            ? config.co2GramsPerKwh
+            ? config.co2GramsPerKwh * co2Factor
             : DEFAULT_CO2_G_PER_KWH;
     const maxAgeS =
         typeof config.externalMaxAgeS === 'number' &&
@@ -312,6 +319,8 @@ export function readStatsSettings(config: Partial<ioBroker.AdapterConfig>): Stat
         currency:
             typeof config.currency === 'string' && config.currency.trim() ? config.currency.trim().slice(0, 8) : 'EUR',
         co2GramsPerKwh: co2,
+        priceStateFactor: priceFactor,
+        co2StateFactor: co2Factor,
         externalMaxAgeMs: maxAgeS * 1000,
         warnings,
     };

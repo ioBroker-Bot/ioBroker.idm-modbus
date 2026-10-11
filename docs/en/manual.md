@@ -43,7 +43,7 @@ Heating circuits A–G (with optional names), number of zone modules and rooms p
 
 ### Statistics
 
-Derived values and statistics (see section 6): optional external electricity meter (counter and/or power) and heat meter, which heat source feeds the efficiency figures, price per kWh (fixed or from a state), currency, CO₂ per kWh (fixed or from a state), maximum age of external values, _Reset statistics_.
+Derived values and statistics (see section 6): optional external electricity meter (counter and/or power) and heat meter, which heat source feeds the efficiency figures, price per kWh (fixed or from a state, in currency or cent per kWh), currency, CO₂ factor (fixed or from a state, in g or kg per kWh), maximum age of external values, _Reset statistics_.
 
 ### Control
 
