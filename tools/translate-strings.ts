@@ -132,20 +132,18 @@ async function main(): Promise<void> {
     const dictionary: Dictionary = fs.existsSync(dictionaryPath)
         ? (JSON.parse(fs.readFileSync(dictionaryPath, 'utf8')) as Dictionary)
         : {};
+    // New texts are appended: the file keeps its order, so a run changes only what is new (no reordering noise in the diff).
     const save = (): void => {
-        const sorted = Object.fromEntries(
-            Object.keys(dictionary)
-                .sort()
-                .map(k => [k, dictionary[k]]),
-        );
-        fs.writeFileSync(dictionaryPath, `${JSON.stringify(sorted, null, 4)}\n`);
+        fs.writeFileSync(dictionaryPath, `${JSON.stringify(dictionary, null, 4)}\n`);
     };
 
     let done = 0;
     const failed: string[] = [];
     for (const [english, german] of strings) {
         const entry = (dictionary[english] ??= {});
-        entry.de = german;
+        // An existing German text wins: the dictionary is hand-curated (IDM wording), a source with another German for the same
+        // English text must not silently change what users see.
+        entry.de ??= german;
         // The languages are independent, so translate them in parallel (one text at a time keeps the request rate modest).
         const missing = LANGUAGES.filter(l => l !== 'en' && l !== 'de' && !entry[l]);
         const results: { lang: Language; text: string | null }[] = [];
@@ -168,11 +166,13 @@ async function main(): Promise<void> {
         }
         save();
     }
-    // Drop entries that no source uses any more.
-    for (const key of Object.keys(dictionary)) {
-        if (!strings.has(key)) {
-            delete dictionary[key];
-        }
+    // Entries that no source lists are only reported: code or io-package.json may still use them, and a translation that
+    // was dropped by mistake falls back to English without any error.
+    const unused = Object.keys(dictionary).filter(key => !strings.has(key));
+    if (unused.length) {
+        console.log(
+            `${unused.length} dictionary entries are in no source file (kept): ${unused.slice(0, 5).join('; ')} ...`,
+        );
     }
     save();
     console.log(`${strings.size} texts, ${done} new translations, ${failed.length} failed`);
@@ -184,22 +184,30 @@ async function main(): Promise<void> {
     }
 }
 
-/** Write the translated names into the instance objects of io-package.json. */
+/** Write the translated names into the instance objects of io-package.json (names without a translation stay as they are). */
 function syncIoPackage(): void {
     const file = path.join(root, 'io-package.json');
-    const ioPackage = JSON.parse(fs.readFileSync(file, 'utf8')) as {
+    const text = fs.readFileSync(file, 'utf8');
+    const indent = /^( +|\t)"/m.exec(text)?.[1] ?? '    ';
+    const ioPackage = JSON.parse(text) as {
         instanceObjects: { common?: { name?: { en?: string } | string } }[];
     };
+    const dictionary = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8')) as Dictionary;
     let changed = 0;
     for (const object of ioPackage.instanceObjects) {
         const name = object.common?.name;
         const english = typeof name === 'string' ? name : name?.en;
-        if (object.common && english) {
-            object.common.name = localized(english);
-            changed++;
+        if (!object.common || !english) {
+            continue;
         }
+        if (!dictionary[english]) {
+            console.warn(`io-package.json: no translation for "${english}", name left as it is`);
+            continue;
+        }
+        object.common.name = localized(english);
+        changed++;
     }
-    fs.writeFileSync(file, `${JSON.stringify(ioPackage, null, 2)}\n`);
+    fs.writeFileSync(file, `${JSON.stringify(ioPackage, null, indent)}\n`);
     console.log(`io-package.json: ${changed} instance object names synced`);
 }
 

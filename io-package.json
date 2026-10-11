@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
+            "0.1.1": {
+                "en": "maintenance: web adapter noted as requirement of the diagram, consistent German names, safer translation tooling",
+                "de": "Wartung: Web-Adapter als Anforderung des Diagramms vermerkt, konsistente deutsche Namen, sicherere Übersetzungstools",
+                "ru": "обслуживание: веб-адаптер отмечен как требование схемы, согласованные немецкие имена, более безопасные инструменты перевода",
+                "pt": "manutenção: adaptador web indicado como requisito do diagrama, nomes alemães consistentes, ferramentas de tradução mais seguras",
+                "nl": "onderhoud: webadapter vermeld als vereiste in het diagram, consistente Duitse namen, veiliger vertaaltools",
+                "fr": "maintenance : adaptateur Web noté comme exigence du diagramme, noms allemands cohérents, outils de traduction plus sûrs",
+                "it": "manutenzione: adattatore web indicato come requisito del diagramma, nomi tedeschi coerenti, strumenti di traduzione più sicuri",
+                "es": "mantenimiento: adaptador web indicado como requisito del diagrama, nombres alemanes consistentes, herramientas de traducción más seguras",
+                "pl": "konserwacja: adapter sieciowy wskazany jako wymóg diagramu, spójne nazwy niemieckie, bezpieczniejsze narzędzia do tłumaczenia",
+                "uk": "технічне обслуговування: веб-адаптер зазначено як вимогу до діаграми, послідовні німецькі назви, безпечніший інструмент перекладу",
+                "zh-cn": "维护：根据图表要求标注网络适配器、一致的德语名称、更安全的翻译工具"
+            },
             "0.1.0": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung",

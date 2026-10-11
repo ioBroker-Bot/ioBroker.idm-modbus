@@ -6348,7 +6348,7 @@
         "zh-cn": "当前电力的二氧化碳强度"
     },
     "Heat pump diagram": {
-        "de": "Wärmepumpen-Schema",
+        "de": "Wärmepumpen-Diagramm",
         "ru": "Схема теплового насоса",
         "pt": "Esquema da bomba de calor",
         "nl": "Schema warmtepomp",
@@ -7006,5 +7006,17 @@
         "pl": "Zawór grzewczy/priorytetowy",
         "uk": "Клапан опалення/пріоритет",
         "zh-cn": "加热/优先阀"
+    },
+    "Support files": {
+        "de": "Support-Dateien",
+        "ru": "Файлы поддержки",
+        "pt": "Ficheiros de suporte",
+        "nl": "Supportbestanden",
+        "fr": "Fichiers de support",
+        "it": "File di supporto",
+        "es": "Archivos de soporte",
+        "pl": "Pliki wsparcia",
+        "uk": "Файли підтримки",
+        "zh-cn": "支持文件"
     }
 }

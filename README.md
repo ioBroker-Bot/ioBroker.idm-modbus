@@ -40,6 +40,8 @@ Two things have to be set up on the Navigator once, usually at installer/service
 
 The adapter does not try to unlock installer functions or change these settings itself.
 
+The heat pump diagram is served by the ioBroker **web adapter**, so it needs one web adapter instance. Everything else works without it.
+
 ### Acknowledgements
 
 Big thanks to [Xerolux](https://github.com/Xerolux) for his extensive work on IDM Modbus, the
@@ -58,6 +60,10 @@ This is an independent community project. IDM and Navigator are trademarks of th
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.1.1 (2026-10-11)
+
+- (SeaSpotter) maintenance: the web adapter is listed as a requirement of the heat pump diagram, consistent German name of the diagram, safer translation tooling
 
 ### 0.1.0 (2026-10-11)
 
