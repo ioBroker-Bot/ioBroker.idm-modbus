@@ -43,7 +43,7 @@ Heizkreise A–G (mit optionalem Namen), Anzahl der Zonenmodule und Räume je Mo
 
 ### Statistik
 
-Abgeleitete Werte und Statistik (siehe Abschnitt 6): optionaler externer Stromzähler (Zählerstand und/oder Leistung) und Wärmemengenzähler, welche Wärmequelle die Effizienzwerte speist, Preis pro kWh (fest oder aus einem Datenpunkt), Währung, CO₂ pro kWh (fest oder aus einem Datenpunkt), maximales Alter externer Werte, _Statistik zurücksetzen_.
+Abgeleitete Werte und Statistik (siehe Abschnitt 6): optionaler externer Stromzähler (Zählerstand und/oder Leistung) und Wärmemengenzähler, welche Wärmequelle die Effizienzwerte speist, Preis pro kWh (fest oder aus einem Datenpunkt, in Währung oder Cent pro kWh), Währung, CO₂-Faktor (fest oder aus einem Datenpunkt, in g oder kg pro kWh), maximales Alter externer Werte, _Statistik zurücksetzen_.
 
 ### Steuern
 

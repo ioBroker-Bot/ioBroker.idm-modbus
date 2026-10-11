@@ -76,6 +76,8 @@ describe('readStatsSettings', () => {
             co2StateId: null,
             currency: 'EUR',
             co2GramsPerKwh: 350,
+            priceStateFactor: 1,
+            co2StateFactor: 1,
             externalMaxAgeMs: 120000,
         });
         expect(stats.warnings).to.deep.equal([]);
@@ -105,6 +107,23 @@ describe('readStatsSettings', () => {
         expect(stats.pricePerKwh).to.equal(null);
         expect(stats.thermalSource).to.equal('navigator'); // no heat counter configured
         expect(stats.warnings).to.have.length(4);
+    });
+});
+
+describe('price and CO2 units', () => {
+    it('turns cent and kg values into currency per kWh and g/kWh', () => {
+        const stats = readStatsSettings({ pricePerKwh: 28, priceUnit: 'cent', co2GramsPerKwh: 0.35, co2Unit: 'kg' });
+        expect(stats.pricePerKwh).to.be.closeTo(0.28, 1e-9);
+        expect(stats.co2GramsPerKwh).to.be.closeTo(350, 1e-9);
+        expect(stats.priceStateFactor).to.equal(0.01);
+        expect(stats.co2StateFactor).to.equal(1000);
+    });
+    it('keeps the values as they are for the default units and for unknown ones', () => {
+        const stats = readStatsSettings({ pricePerKwh: 0.28, priceUnit: 'euro', co2GramsPerKwh: 350, co2Unit: 'lb' });
+        expect(stats.pricePerKwh).to.equal(0.28);
+        expect(stats.co2GramsPerKwh).to.equal(350);
+        expect(stats.priceStateFactor).to.equal(1);
+        expect(stats.co2StateFactor).to.equal(1);
     });
 });
 

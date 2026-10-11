@@ -19,6 +19,8 @@ const settings = (overrides: Partial<StatsSettings> = {}): StatsSettings => ({
     co2StateId: null,
     currency: 'EUR',
     co2GramsPerKwh: 350,
+    priceStateFactor: 1,
+    co2StateFactor: 1,
     externalMaxAgeMs: 120000,
     warnings: [],
     ...overrides,
@@ -239,6 +241,21 @@ describe('StatsRunner', () => {
         runner.onForeignState('grid.co2', { val: 'n/a', ts: host.time }); // unusable: the fixed factor again
         host.advance(30000);
         expect(host.published.get('stats.co2.intensity')).to.equal(350);
+    });
+
+    it('converts a CO2 state in kg/kWh and a price state in cent/kWh', async () => {
+        const host = new FakeHost();
+        host.foreign.set('grid.co2', { val: 0.12, ts: T0 });
+        host.foreign.set('tariff.price', { val: 50, ts: T0 });
+        await start(host, {
+            co2StateId: 'grid.co2',
+            co2StateFactor: 1000,
+            pricePerKwh: null,
+            priceStateId: 'tariff.price',
+            priceStateFactor: 0.01,
+        });
+        host.advance(0);
+        expect(host.published.get('stats.co2.intensity')).to.equal(120);
     });
 
     it('persists and restores, ignores damaged data, and can be reset', async () => {

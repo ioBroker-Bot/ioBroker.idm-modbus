@@ -69,10 +69,14 @@ declare global {
             thermalSource: string;
             /** electricity price per kWh (fixed) or a state delivering it, and the currency shown on the cost states */
             pricePerKwh: number;
+            /** how the price (fixed and state) is given: 'currency' per kWh (default) or 'cent' */
+            priceUnit: string;
             priceStateId: string;
             currency: string;
             /** CO2 factor in g/kWh */
             co2GramsPerKwh: number;
+            /** how the CO2 factor (fixed and state) is given: 'g' per kWh (default) or 'kg' */
+            co2Unit: string;
             /** state with the current CO₂ intensity of the electricity in g/kWh (optional) */
             co2StateId: string;
             /** age in seconds after which an external value counts as stale */
