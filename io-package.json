@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "news": {
+            "0.1.2": {
+                "en": "plain-text states follow the system language (scan status, fault texts, operating modes), choose the unit of the price (currency or cent per kWh) and of the CO2 factor (g or kg per kWh), scan status next to the progress",
+                "de": "Klartextzustände folgen der Systemsprache (Scanstatus, Fehlertexte, Betriebsmodi), wählen Sie die Einheit des Preises (Währung oder Cent pro kWh) und des CO2-Faktors (g oder kg pro kWh), Scanstatus neben dem Fortschritt",
+                "ru": "текстовые состояния соответствуют языку системы (состояние сканирования, тексты неисправностей, режимы работы), выберите единицу измерения цены (валюта или цент за кВтч) и коэффициента CO2 (г или кг на кВтч), статус сканирования рядом с ходом выполнения",
+                "pt": "estados de texto simples seguem a linguagem do sistema (status de varredura, textos de falhas, modos de operação), escolhem a unidade do preço (moeda ou centavos por kWh) e do fator CO2 (g ou kg por kWh), status de varredura próximo ao progresso",
+                "nl": "statussen in platte tekst volgen de systeemtaal (scanstatus, storingsteksten, bedrijfsmodi), kies de eenheid van de prijs (valuta of cent per kWh) en van de CO2-factor (g of kg per kWh), scanstatus naast de voortgang",
+                "fr": "les états en texte clair suivent la langue du système (état du scan, textes d'erreur, modes de fonctionnement), choisissez l'unité du prix (devise ou centime par kWh) et du facteur CO2 (g ou kg par kWh), l'état du scan à côté de la progression",
+                "it": "gli stati del testo in chiaro seguono la lingua del sistema (stato di scansione, testi di errore, modalità operative), scelgono l'unità del prezzo (valuta o centesimi per kWh) e del fattore CO2 (g o kg per kWh), lo stato della scansione accanto all'avanzamento",
+                "es": "Los estados de texto plano siguen el idioma del sistema (estado de escaneo, textos de falla, modos de funcionamiento), eligen la unidad del precio (moneda o centavo por kWh) y del factor de CO2 (g o kg por kWh), el estado de escaneo junto al progreso",
+                "pl": "Stany w postaci zwykłego tekstu są zgodne z językiem systemu (status skanowania, teksty usterek, tryby pracy), wybierz jednostkę ceny (waluta lub cent za kWh) i współczynnika CO2 (g lub kg na kWh), status skanowania obok postępu",
+                "uk": "текстові стани слідують за системною мовою (статус сканування, тексти помилок, режими роботи), виберіть одиницю ціни (валюта або цент за кВт-год) і коефіцієнт CO2 (г або кг за кВт-год), статус сканування поруч із прогресом",
+                "zh-cn": "纯文本状态遵循系统语言（扫描状态、故障文本、操作模式），选择价格单位（货币或美分每千瓦时）和二氧化碳系数（克或千克每千瓦时），扫描进度旁边的状态"
+            },
             "0.1.1": {
                 "en": "maintenance: web adapter noted as requirement of the diagram, consistent German names, safer translation tooling",
                 "de": "Wartung: Web-Adapter als Anforderung des Diagramms vermerkt, konsistente deutsche Namen, sicherere Übersetzungstools",
