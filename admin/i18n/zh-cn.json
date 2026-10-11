@@ -148,7 +148,6 @@
     "scanResult": "%s 的扫描：%s 个寄存器有响应，%s 个响应“不可用”，%s 个不存在。建议的安装：供暖回路 %s，区域模块 %s（每模块房间数 %s），功能块 %s。",
     "scanResultButton": "显示上次扫描结果",
     "scanStarted": "扫描已开始 - 大约需要 %s 分钟。期间请勿重启适配器。进度见状态 diag.scanProgress 和日志，结果见日志和状态 diag.scan。",
-    "scanStatusLabel": "状态",
     "statsEnabled": "计算派生值和统计",
     "statsEnabledHelp": "COP、年性能系数、按运行模式统计的能量、费用、CO₂、运行小时与启动次数。仅读取，不会向热泵写入任何内容。",
     "statsOff": "统计已关闭",

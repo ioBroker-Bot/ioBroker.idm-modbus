@@ -148,7 +148,6 @@
     "scanResult": "Verificação de %s: %s registos responderam, %s responderam \"não disponível\", %s não existem. Instalação sugerida: circuitos de aquecimento %s, módulos de zona %s (divisões por módulo %s), blocos %s.",
     "scanResultButton": "Mostrar o resultado da última verificação",
     "scanStarted": "Verificação iniciada - demora cerca de %s minutos. Não reinicie o adaptador entretanto. O progresso está no estado diag.scanProgress e no registo, o resultado no registo e no estado diag.scan.",
-    "scanStatusLabel": "Estado",
     "statsEnabled": "Calcular valores derivados e estatística",
     "statsEnabledHelp": "COP, fator de desempenho anual, energia por modo de operação, custo, CO₂, horas de funcionamento e arranques. Apenas leitura, nada é escrito na bomba de calor.",
     "statsOff": "A estatística está desligada",

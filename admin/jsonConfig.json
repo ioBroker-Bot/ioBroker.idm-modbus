@@ -343,8 +343,6 @@
                     "type": "state",
                     "oid": "diag.scanStatus",
                     "control": "text",
-                    "label": "scanStatusLabel",
-                    "addColon": true,
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,

@@ -173,7 +173,6 @@
     "scanResultButton": "Show last scan result",
     "scanResult": "Scan of %s: %s registers answered, %s answered \"not available\", %s do not exist. Suggested installation: heating circuits %s, zone modules %s (rooms per module %s), blocks %s.",
     "scanNone": "No scan result yet - start a scan first",
-    "scanStatusLabel": "Status",
     "scanApplyButton": "Apply suggestion",
     "scanApplied": "Taken over into the form: heating circuits %s, zone modules %s, blocks %s. Check it and save the settings.",
     "hdrWebConnection": "Web interface (optional)",

@@ -148,7 +148,6 @@
     "scanResult": "Scan vom %s: %s Register antworteten, %s antworteten „nicht verfügbar“, %s existieren nicht. Vorschlag für die Anlage: Heizkreise %s, Zonenmodule %s (Räume je Modul %s), Blöcke %s.",
     "scanResultButton": "Letztes Scan-Ergebnis anzeigen",
     "scanStarted": "Scan gestartet - er dauert etwa %s Minuten. Den Adapter in der Zwischenzeit nicht neu starten. Der Fortschritt steht im Datenpunkt diag.scanProgress und im Log, das Ergebnis im Log und im Datenpunkt diag.scan.",
-    "scanStatusLabel": "Status",
     "statsEnabled": "Abgeleitete Werte und Statistik berechnen",
     "statsEnabledHelp": "COP, Jahresarbeitszahl, Energie je Betriebsart, Kosten, CO₂, Betriebsstunden und Starts. Nur lesend, an die Wärmepumpe wird nichts geschrieben.",
     "statsOff": "Die Statistik ist ausgeschaltet",

@@ -148,7 +148,6 @@
     "scanResult": "Skan z %s: %s rejestrów odpowiedziało, %s odpowiedziało \"niedostępny\", %s nie istnieje. Sugerowana instalacja: obiegi grzewcze %s, moduły strefowe %s (pomieszczeń na moduł %s), bloki %s.",
     "scanResultButton": "Pokaż wynik ostatniego skanowania",
     "scanStarted": "Skanowanie rozpoczęte - trwa około %s min. W tym czasie nie uruchamiaj adaptera ponownie. Postęp jest w stanie diag.scanProgress i w logu, wynik w logu i w stanie diag.scan.",
-    "scanStatusLabel": "Status",
     "statsEnabled": "Obliczaj wartości pochodne i statystykę",
     "statsEnabledHelp": "COP, roczny współczynnik wydajności, energia według trybu pracy, koszt, CO₂, godziny pracy i uruchomienia. Tylko odczyt, nic nie jest zapisywane do pompy ciepła.",
     "statsOff": "Statystyka jest wyłączona",

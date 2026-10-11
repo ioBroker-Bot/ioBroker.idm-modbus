@@ -148,7 +148,6 @@
     "scanResult": "Scan van %s: %s registers antwoordden, %s antwoordden \"niet beschikbaar\", %s bestaan niet. Voorgestelde installatie: verwarmingscircuits %s, zonemodules %s (ruimtes per module %s), blokken %s.",
     "scanResultButton": "Resultaat laatste scan tonen",
     "scanStarted": "Scan gestart - duurt ongeveer %s minuten. Start de adapter ondertussen niet opnieuw. De voortgang staat in de state diag.scanProgress en in het log, het resultaat in het log en in de state diag.scan.",
-    "scanStatusLabel": "Status",
     "statsEnabled": "Afgeleide waarden en statistiek berekenen",
     "statsEnabledHelp": "COP, jaarlijkse prestatiefactor, energie per bedrijfsmodus, kosten, CO₂, bedrijfsuren en starts. Alleen lezen, er wordt niets naar de warmtepomp geschreven.",
     "statsOff": "Statistiek staat uit",

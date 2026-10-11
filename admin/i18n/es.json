@@ -148,7 +148,6 @@
     "scanResult": "Escaneo del %s: %s registros respondieron, %s respondieron \"no disponible\", %s no existen. Instalación sugerida: circuitos de calefacción %s, módulos de zona %s (habitaciones por módulo %s), bloques %s.",
     "scanResultButton": "Mostrar el resultado del último escaneo",
     "scanStarted": "Escaneo iniciado - dura unos %s minutos. No reinicie el adaptador mientras tanto. El progreso está en el estado diag.scanProgress y en el registro, el resultado en el registro y en el estado diag.scan.",
-    "scanStatusLabel": "Estado",
     "statsEnabled": "Calcular valores derivados y estadísticas",
     "statsEnabledHelp": "COP, factor de rendimiento anual, energía por modo de funcionamiento, coste, CO₂, horas de funcionamiento y arranques. Solo lectura, no se escribe nada en la bomba de calor.",
     "statsOff": "Las estadísticas están desactivadas",
