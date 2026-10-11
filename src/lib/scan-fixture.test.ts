@@ -80,6 +80,7 @@ describe('scan fixture of the test device (IDM Navigator 2.0)', function () {
             pauseMs: 0,
             timers: {
                 setTimeout: (cb, ms) => setTimeout(cb, ms),
+                delay: ms => new Promise<void>(resolve => setTimeout(resolve, ms)),
                 clearTimeout: h => clearTimeout(h as NodeJS.Timeout),
             },
         });
@@ -125,6 +126,7 @@ describe('scan fixture of the test device (IDM Navigator 2.0)', function () {
             pauseMs: 0,
             timers: {
                 setTimeout: (cb, ms) => setTimeout(cb, ms),
+                delay: ms => new Promise<void>(resolve => setTimeout(resolve, ms)),
                 clearTimeout: h => clearTimeout(h as NodeJS.Timeout),
             },
         });

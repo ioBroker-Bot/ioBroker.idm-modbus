@@ -13,7 +13,11 @@ export interface ControlHost {
     /** log lines */
     log: { debug(message: string): void; info(message: string): void; warn(message: string): void };
     /** managed timers */
-    timers: { setTimeout: (cb: () => void, ms: number) => unknown; clearTimeout: (handle: unknown) => void };
+    timers: {
+        setTimeout: (cb: () => void, ms: number) => unknown;
+        clearTimeout: (handle: unknown) => void;
+        delay: (ms: number) => Promise<void>;
+    };
     /** connection to the Navigator */
     executor: WriteExecutor;
     /** latest value the poller read for a register (to restore a state after a refused write) */

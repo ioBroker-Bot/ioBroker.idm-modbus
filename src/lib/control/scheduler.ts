@@ -40,7 +40,11 @@ export interface SchedulerOptions {
     /** connection */
     executor: WriteExecutor;
     /** managed timers */
-    timers: { setTimeout: (cb: () => void, ms: number) => unknown; clearTimeout: (handle: unknown) => void };
+    timers: {
+        setTimeout: (cb: () => void, ms: number) => unknown;
+        clearTimeout: (handle: unknown) => void;
+        delay: (ms: number) => Promise<void>;
+    };
     /** clock in ms */
     now(): number;
     /** log lines */
@@ -175,13 +179,13 @@ export class WriteScheduler {
             return;
         }
         const now = this.options.now();
-        const wait = state.lastWriteAt + this.options.minEepromIntervalMs - now;
-        if (isLimited(reg) && state.lastWriteAt > 0 && wait > 0) {
+        const remainingMs = state.lastWriteAt + this.options.minEepromIntervalMs - now;
+        if (isLimited(reg) && state.lastWriteAt > 0 && remainingMs > 0) {
             // too early for this EEPROM register: keep the newest value and write it when the interval has passed
             this.options.log.debug(
-                `${reg.id}: next write allowed in ${Math.ceil(wait / 1000)} s, keeping the newest value`,
+                `${reg.id}: next write allowed in ${Math.ceil(remainingMs / 1000)} s, keeping the newest value`,
             );
-            state.timer = this.options.timers.setTimeout(() => void this.attempt(reg), wait);
+            state.timer = this.options.timers.setTimeout(() => void this.attempt(reg), remainingMs);
             return;
         }
         state.pending = null;
@@ -226,7 +230,7 @@ export class WriteScheduler {
                 state.failures = 0;
                 return { kind: 'written', value: pending.value };
             }
-            await new Promise<void>(resolve => this.options.timers.setTimeout(resolve, READBACK_DELAY_MS));
+            await this.options.timers.delay(READBACK_DELAY_MS);
             const back = await executor.read(reg);
             if (!back.ok) {
                 return this.failure(reg, state, `the value could not be read back (${back.error.kind})`);

@@ -12,6 +12,7 @@ export class ManualTimers {
     public clearTimeout = (handle: unknown): void => {
         this.timers.delete(handle as number);
     };
+    public delay = (ms: number): Promise<void> => new Promise<void>(resolve => this.setTimeout(resolve, ms));
     public now = (): number => this.time;
 
     /** Let pending promises settle. */

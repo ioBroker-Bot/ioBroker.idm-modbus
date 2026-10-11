@@ -5,6 +5,7 @@ import { decodeWords } from './codec';
 
 const timers: ClientTimers = {
     setTimeout: (cb, ms) => setTimeout(cb, ms),
+    delay: ms => new Promise<void>(resolve => setTimeout(resolve, ms)),
     clearTimeout: handle => clearTimeout(handle as NodeJS.Timeout),
 };
 

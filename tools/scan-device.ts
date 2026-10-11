@@ -38,6 +38,7 @@ async function main(): Promise<void> {
         pauseMs: 150,
         timers: {
             setTimeout: (cb, ms) => setTimeout(cb, ms),
+            delay: ms => new Promise<void>(resolve => setTimeout(resolve, ms)),
             clearTimeout: handle => clearTimeout(handle as NodeJS.Timeout),
         },
     });

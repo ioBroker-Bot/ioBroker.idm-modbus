@@ -13,7 +13,7 @@
 
 ## idm-modbus adapter for ioBroker
 
-Connects IDM heat pumps with Navigator control to ioBroker locally via Modbus TCP: read, control and feed room, PV and building-automation values. No cloud, one adapter instance per heat pump.
+Connects [IDM](https://www.idm-energie.at) heat pumps (iDM Energiesysteme) with Navigator control to ioBroker locally via Modbus TCP: read, control and feed room, PV and building-automation values. No cloud, one adapter instance per heat pump.
 
 **Manual:** [English](docs/en/manual.md) · [Deutsch](docs/de/handbuch.md)
 

@@ -8,6 +8,8 @@ export interface ClientTimers {
     setTimeout: (callback: () => void, ms: number) => unknown;
     /** cancel a timer returned by `setTimeout` */
     clearTimeout: (handle: unknown) => void;
+    /** wait `ms` (the adapter's `delay`) */
+    delay: (ms: number) => Promise<void>;
 }
 
 /** Connection settings. The host is only ever used to connect, never logged or put into an error. */
@@ -275,11 +277,11 @@ export class ModbusTcpClient {
     }
 
     private waitPause(): Promise<void> {
-        const wait = this.lastRequestEnd + this.options.pauseMs - Date.now();
-        if (this.lastRequestEnd === 0 || wait <= 0) {
+        const remainingMs = this.lastRequestEnd + this.options.pauseMs - Date.now();
+        if (this.lastRequestEnd === 0 || remainingMs <= 0) {
             return Promise.resolve();
         }
-        return new Promise(resolve => this.options.timers.setTimeout(resolve, wait));
+        return this.options.timers.delay(remainingMs);
     }
 
     /**

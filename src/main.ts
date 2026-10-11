@@ -464,7 +464,7 @@ class IdmModbus extends utils.Adapter {
                 setInterval: (cb: () => void, ms: number) => this.setInterval(cb, ms),
                 clearInterval: (handle: unknown) => this.clearInterval(handle as ioBroker.Interval | undefined),
             },
-            sleep: (ms: number) => new Promise<void>(resolve => void this.setTimeout(resolve, ms)),
+            sleep: (ms: number) => this.delay(ms),
             createObjects: async (planned: PlannedObject[]) => {
                 for (const { id, object } of planned) {
                     await this.extendObject(id, object);
@@ -823,10 +823,12 @@ class IdmModbus extends utils.Adapter {
     private managedTimers(): {
         setTimeout: (cb: () => void, ms: number) => unknown;
         clearTimeout: (handle: unknown) => void;
+        delay: (ms: number) => Promise<void>;
     } {
         return {
             setTimeout: (cb, ms) => this.setTimeout(cb, ms),
             clearTimeout: handle => this.clearTimeout(handle as ioBroker.Timeout | undefined),
+            delay: ms => this.delay(ms),
         };
     }
 
