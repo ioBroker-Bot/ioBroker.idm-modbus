@@ -104,7 +104,9 @@ Alle drei Module sind **standardmäßig aus**, schreiben nur, wenn etwas konfigu
 
 ## 8. Weboberfläche (optional)
 
-Mit der PIN des Displays liest der Adapter die lokalen Webseiten des Navigators (nur lesend): Raum- und Heizkreisnamen (als Namen im Objektbaum), Raumtemperatur, Solltemperatur, Feuchte und Betriebsart je Raum sowie die Statistik. Die Weboberfläche ist von IDM nicht dokumentiert und kann sich mit Firmware-Updates ändern. Abfrage alle 60 s (Räume) und 15 Minuten (Statistik), nie schneller als 30 s bzw. 5 Minuten.
+Mit der PIN des Displays liest der Adapter die lokalen Webseiten des Navigators (nur lesend): Raum- und Heizkreisnamen (als Namen im Objektbaum), Raumtemperatur, Solltemperatur, Feuchte und Betriebsart je Raum sowie die Statistik. Die Weboberfläche ist von IDM nicht dokumentiert und kann sich mit Firmware-Updates ändern. Abfrage alle 60 s (Räume, Ein- und Ausgänge) und 15 Minuten (Statistik), nie schneller als 30 s bzw. 5 Minuten.
+
+Die Ein- und Ausgänge aus dem Informationsmenü des Navigators (Fühler, Digitaleingänge, Analog- und Digitalausgänge) liegen unter `web.io`; die Namen bekannter Teile sind in allen Sprachen vorhanden, unbekannte stehen so, wie der Navigator sie zeigt. Modbus hat Vorrang: Was Modbus liefert (der Adapter erkennt das an der IDM-Bezeichnung in den Registernamen, z. B. B33, M64), wird aus diesen Tabellen nicht noch einmal angelegt, und für einen Raum, den Modbus liest, gibt es unter `web.rooms` keinen Eintrag (sein Name ist der Zustand `zones.<Zone>.rooms.<Raum>.name` und der Name des Kanals, seine Werte sind die Zonen-Zustände). Die Web-Variante erscheint nur, solange Modbus keinen Wert hat, zum Beispiel bei der Ladepumpe M73 im Stillstand. Reste früherer Versionen werden beim Start entfernt.
 
 ## 8a. Wärmepumpen-Diagramm
 

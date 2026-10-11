@@ -1,4 +1,5 @@
 import { localized, textIn } from '../translations';
+import { CIRCUIT_A_TAGS, type SensorInput } from './sensors';
 
 /** What the model needs to know about the installation. */
 export interface DiagramInput {
@@ -12,28 +13,25 @@ export interface DiagramInput {
     circuits: { letter: string; name: string | null }[];
     /** ids of all states the adapter has, to find the rooms */
     stateIds: Iterable<string>;
-    /** texts of the heat pump operating modes and of the heating circuit modes, by value, in the user's language */
-    enums: { hpMode: Record<string, string>; hcActive: Record<string, string> };
+    /** texts of the heat pump operating modes by value, in the user's language */
+    hpModes: Record<string, string>;
     /** parts the user switched off in the settings */
     hidden: string[];
-    /** every temperature sensor of the Navigator with its IDM sensor tag (B33, B48, ...), name in the user's language */
-    sensors?: { id: string; tag: string; name: string }[];
+    /** IDM tags of the flow and room sensors per circuit letter, as the Navigator's sensor table names them */
+    circuitTags?: Record<string, { flow?: string; room?: string }>;
+    /** the sensors with an IDM tag that the diagram may list */
+    sensors?: SensorInput[];
 }
 
-/** One more temperature sensor of the plant. */
-export interface DiagramSensor {
-    /** state id */
-    id: string;
-    /** sensor tag of the IDM plant diagrams, e.g. B43 */
-    tag: string;
-    /** name in the user's language */
-    name: string;
-    /** where it belongs: heat pump, heat source, storage, solar, isc or other */
+/** One more sensor of the plant. */
+export interface DiagramSensor extends SensorInput {
+    /** where it belongs: heatpump, source, storage, solar, isc or other */
     group: string;
 }
 
-/** Group of the sensors by their tag in the plant diagrams of IDM (B35 hot gas line, B43 heat source inlet, ...). */
+/** Group of the sensors by their IDM tag (B35 hot gas line, B43 heat source inlet, ...). */
 const SENSOR_GROUPS: Record<string, string> = {
+    B2: 'heatpump',
     B35: 'heatpump',
     B45: 'heatpump',
     B36: 'source',
@@ -65,10 +63,16 @@ export interface DiagramCircuit {
     active: string | null;
     /** state id of the room temperature the circuit reports */
     room: string | null;
+    /** IDM tag of its flow sensor, empty where unknown */
+    flowTag: string;
+    /** IDM tag of its room sensor, empty where unknown */
+    roomTag: string;
 }
 
 /** One room of the diagram. */
 export interface DiagramRoom {
+    /** zone module the room belongs to (the page puts the rooms of zone N next to heating circuit N) */
+    zone: number;
     /** name shown in the diagram */
     name: string;
     /** state id of the room temperature */
@@ -81,6 +85,8 @@ export interface DiagramRoom {
 export interface DiagramModel {
     /** language of the texts */
     language: string;
+    /** where the heat comes from: outside air (fan) or ground/groundwater (heat source sensors and pumps, no air intake) */
+    heatSource: 'air' | 'ground';
     /** which parts of the plant exist */
     parts: {
         /** buffer tank (the Navigator reports a storage temperature) */
@@ -95,12 +101,6 @@ export interface DiagramModel {
         solar: boolean;
         /** second or third heat generator */
         bivalence: boolean;
-        /** cascade of several heat pumps */
-        cascade: boolean;
-        /** ISC (waste heat use) */
-        isc: boolean;
-        /** booster heat pumps (Navigator 10) */
-        booster: boolean;
     };
     /** logical name -> state id, `null` where the installation does not have it */
     ids: Record<string, string | null>;
@@ -108,32 +108,66 @@ export interface DiagramModel {
     circuits: DiagramCircuit[];
     /** the rooms */
     rooms: DiagramRoom[];
-    /** the other temperature sensors that report a value */
+    /** the sensors that are not drawn at a fixed place, with their group */
     sensors: DiagramSensor[];
-    /** texts of the operating modes */
-    enums: DiagramInput['enums'];
+    /** texts of the heat pump operating modes by value */
+    hpModes: Record<string, string>;
     /** texts of the page by name */
     labels: Record<string, string>;
     /** all state ids the page listens to */
     watch: string[];
 }
 
+/**
+ * The state ids the diagram draws, by logical name, each with the candidates in order of preference. Register ids are the ones
+ * `stateIdFor` makes of them (a test checks that they exist); `web.io.*` ids are the keys of `buildIoStates`.
+ */
+export const DIAGRAM_STATE_IDS: Record<string, string[]> = {
+    outdoor: ['system.outdoor_temp'],
+    hpFlow: ['hp.hp_flow_temp'],
+    hpReturn: ['hp.hp_return_temp'],
+    hgl: ['hp.hgl_flow_temp'],
+    hpMode: ['hp.hp_operating_mode'],
+    compressor: ['hp.compressor_status_1'],
+    power: ['energy.power_consumption_hp'],
+    cop: ['calc.cop_internal'],
+    buffer: ['dhw.storage_temp', 'hp.storage_temp'],
+    dhwTop: ['dhw.dhw_temp_top', 'dhw.dhw_temp'],
+    dhwBottom: ['dhw.dhw_temp_bottom'],
+    dhwSetpoint: ['dhw.dhw_setpoint'],
+    dhwTap: ['dhw.dhw_tapping_temp'],
+    pvProduction: ['pv.pv_production'],
+    pvHouse: ['pv.house_consumption'],
+    pvSurplus: ['pv.pv_surplus'],
+    pvBattery: ['pv.battery_soc'],
+    pvBatteryPower: ['pv.battery_discharge'],
+    solarCollector: ['solar.solar_collector_temp'],
+    bivalence: ['bivalence.bivalence_state'],
+    pumpBrine: ['hp.brine_pump_status'],
+    pumpSource: ['hp.heat_source_pump_status'],
+    dhwFlow: ['web.io.digital_in.b1'],
+    pumpM22: ['web.io.analog_out.m22'],
+    pumpM73: ['hp.charging_pump_status', 'web.io.analog_out.m73'],
+    pumpM31: ['web.io.digital_out.m31'],
+    fanM13: ['web.io.analog_out.m13'],
+};
+
+/** States that tell where the heat comes from: an air intake means an air heat pump, source sensors and pumps a ground one. */
+const AIR_INTAKE_ID = 'hp.air_intake_temp';
+const GROUND_SOURCE_IDS = ['hp.heat_source_inlet_temp', 'hp.heat_source_outlet_temp'];
+
 /** Texts of the page (English keys of the dictionary). */
 const LABELS: Record<string, string> = {
     title: 'Heat pump diagram',
     outdoor: 'Outdoor',
     flow: 'Flow',
-    return: 'Return',
     power: 'Power',
     cop: 'COP',
     heatPump: 'Heat pump',
     buffer: 'Buffer',
     dhw: 'Hot water',
     setpoint: 'Setpoint',
-    top: 'Top',
-    bottom: 'Bottom',
     pv: 'Photovoltaics',
-    production: 'Production',
     house: 'House',
     surplus: 'Surplus',
     battery: 'Battery',
@@ -142,11 +176,11 @@ const LABELS: Record<string, string> = {
     bivalence: 'Bivalence',
     rooms: 'Rooms',
     room: 'Room',
-    source: 'Heat source',
     storage: 'Storage',
     isc: 'ISC',
     other: 'Sensors',
-    hgl: 'Hot gas line',
+    on: 'On',
+    off: 'Off',
     freshwater: 'Fresh water station',
     coldWater: 'Cold water',
     connected: 'Connected',
@@ -154,13 +188,7 @@ const LABELS: Record<string, string> = {
     updated: 'Updated',
 };
 
-/**
- * The first of the candidate state ids that has a value, else `null`.
- *
- * @param input what the adapter knows
- * @param candidates state ids in order of preference
- */
-const pick = (input: DiagramInput, candidates: string[]): string | null => candidates.find(id => input.has(id)) ?? null;
+const nonNull = (ids: (string | null)[]): string[] => ids.filter((id): id is string => id !== null);
 
 /**
  * Work out which parts of the diagram exist for this installation, from the states that have real values (so hardware the
@@ -169,94 +197,84 @@ const pick = (input: DiagramInput, candidates: string[]): string | null => candi
  * @param input what the adapter knows
  */
 export function buildDiagramModel(input: DiagramInput): DiagramModel {
+    const pick = (candidates: string[]): string | null => candidates.find(id => input.has(id)) ?? null;
     const show = (part: string): boolean => !input.hidden.includes(part);
-    const ids: Record<string, string | null> = {
-        connection: 'info.connection',
-        outdoor: pick(input, ['system.outdoor_temp']),
-        hpFlow: pick(input, ['hp.hp_flow_temp']),
-        hpReturn: pick(input, ['hp.hp_return_temp']),
-        hgl: pick(input, ['hp.hgl_flow_temp']),
-        dhwTap: pick(input, ['dhw.dhw_tapping_temp']),
-        hpMode: pick(input, ['hp.hp_operating_mode']),
-        compressor: pick(input, ['hp.compressor_status_1']),
-        power: pick(input, ['energy.power_consumption_hp']),
-        cop: pick(input, ['calc.cop_internal']),
-        buffer: pick(input, ['dhw.storage_temp', 'hp.storage_temp']),
-        dhwTop: pick(input, ['dhw.dhw_temp_top', 'dhw.dhw_temp']),
-        dhwBottom: pick(input, ['dhw.dhw_temp_bottom']),
-        dhwSetpoint: pick(input, ['dhw.dhw_setpoint']),
-        pvProduction: pick(input, ['pv.pv_production']),
-        pvHouse: pick(input, ['pv.house_consumption']),
-        pvSurplus: pick(input, ['pv.pv_surplus']),
-        pvBattery: pick(input, ['pv.battery_soc']),
-        pvBatteryPower: pick(input, ['pv.battery_discharge']),
-        solarCollector: pick(input, ['solar.solar_collector_temp']),
-        bivalence: pick(input, ['bivalence.bivalence_state']),
-    };
+    const ids: Record<string, string | null> = { connection: 'info.connection' };
+    for (const [name, candidates] of Object.entries(DIAGRAM_STATE_IDS)) {
+        ids[name] = pick(candidates);
+    }
+
     const circuits: DiagramCircuit[] = [];
-    for (const circuit of input.circuits) {
-        const flow = pick(input, [`hc.${circuit.letter}.flow_temp`]);
+    for (const { letter, name } of input.circuits) {
+        const flow = pick([`hc.${letter}.flow_temp`]);
         if (flow) {
+            const tags = input.circuitTags?.[letter];
+            const isA = letter === 'A';
             circuits.push({
-                letter: circuit.letter,
-                name: circuit.name ?? textIn(localized('Heating circuit {i}', { i: circuit.letter }), input.language),
+                letter,
+                name: name ?? textIn(localized('Heating circuit {i}', { i: letter }), input.language),
                 flow,
-                setpoint: pick(input, [`hc.${circuit.letter}.setpoint_flow_temp`]),
-                active: pick(input, [`hc.${circuit.letter}.active_mode`]),
-                room: pick(input, [`hc.${circuit.letter}.room_temp`]),
+                setpoint: pick([`hc.${letter}.setpoint_flow_temp`]),
+                active: pick([`hc.${letter}.active_mode`]),
+                room: pick([`hc.${letter}.room_temp`]),
+                flowTag: tags?.flow ?? (isA ? CIRCUIT_A_TAGS.flow : ''),
+                roomTag: tags?.room ?? (isA ? CIRCUIT_A_TAGS.room : ''),
             });
         }
     }
+
     const rooms: DiagramRoom[] = [];
     for (const id of input.stateIds) {
         const match = /^zones\.(\d+)\.rooms\.(\d+)\.temp$/.exec(id);
         if (match && input.has(id)) {
             const zone = Number(match[1]);
             const room = Number(match[2]);
-            const webName = input.value(`web.rooms.${zone * 100 + room}.name`);
+            const setpoint = `zones.${zone}.rooms.${room}.setpoint`;
+            const name = input.value(`zones.${zone}.rooms.${room}.name`);
             rooms.push({
-                name: typeof webName === 'string' && webName ? webName : `${zone}.${room}`,
+                zone,
+                name: typeof name === 'string' && name ? name : `${zone}.${room}`,
                 temperature: id,
-                target: input.has(`zones.${zone}.rooms.${room}.setpoint`)
-                    ? `zones.${zone}.rooms.${room}.setpoint`
-                    : null,
+                target: input.has(setpoint) ? setpoint : null,
             });
         }
     }
-    const used = new Set(Object.values(ids).filter((id): id is string => id !== null));
+    rooms.sort((a, b) => a.name.localeCompare(b.name));
+
+    const drawn = new Set(nonNull(Object.values(ids)));
     const sensors: DiagramSensor[] = (input.sensors ?? [])
-        .filter(sensor => input.has(sensor.id) && !used.has(sensor.id))
+        .filter(sensor => input.has(sensor.id) && !drawn.has(sensor.id))
         .map(sensor => ({ ...sensor, group: SENSOR_GROUPS[sensor.tag] ?? 'other' }))
-        .sort((a, b) => Number(a.tag.slice(1)) - Number(b.tag.slice(1)));
-    const parts = {
-        buffer: ids.buffer !== null && show('buffer'),
-        dhw: ids.dhwTop !== null && show('dhw'),
-        freshwater: ids.dhwTap !== null && show('dhw'),
-        pv: (ids.pvProduction !== null || ids.pvSurplus !== null) && show('pv'),
-        solar: ids.solarCollector !== null && show('solar'),
-        bivalence: ids.bivalence !== null && show('bivalence'),
-        cascade: input.has('cascade.cascade_available_heating') && show('cascade'),
-        isc: input.has('isc.isc_mode') && show('isc'),
-        booster: input.has('booster.booster_fault') && show('booster'),
-    };
-    const labels = Object.fromEntries(
-        Object.entries(LABELS).map(([key, text]) => [key, textIn(localized(text), input.language)]),
-    );
+        .sort((a, b) => parseInt(a.tag.slice(1), 10) - parseInt(b.tag.slice(1), 10) || a.tag.localeCompare(b.tag));
+
+    const ground =
+        !input.has(AIR_INTAKE_ID) &&
+        (GROUND_SOURCE_IDS.some(id => input.has(id)) || ids.pumpBrine !== null || ids.pumpSource !== null);
     const watch = [
-        ...Object.values(ids).filter((id): id is string => id !== null),
-        ...circuits.flatMap(c => [c.flow, c.setpoint, c.active, c.room].filter((id): id is string => id !== null)),
+        ...nonNull(Object.values(ids)),
+        ...circuits.flatMap(c => nonNull([c.flow, c.setpoint, c.active, c.room])),
+        ...rooms.flatMap(r => nonNull([r.temperature, r.target])),
         ...sensors.map(sensor => sensor.id),
-        ...rooms.flatMap(r => [r.temperature, r.target].filter((id): id is string => id !== null)),
     ];
     return {
         language: input.language,
-        parts,
-        ids: Object.fromEntries(Object.entries(ids).map(([key, id]) => [key, id])),
+        heatSource: ground ? 'ground' : 'air',
+        parts: {
+            buffer: ids.buffer !== null && show('buffer'),
+            dhw: ids.dhwTop !== null && show('dhw'),
+            freshwater: ids.dhwTap !== null && show('dhw'),
+            pv: (ids.pvProduction !== null || ids.pvSurplus !== null) && show('pv'),
+            solar: ids.solarCollector !== null && show('solar'),
+            bivalence: ids.bivalence !== null && show('bivalence'),
+        },
+        ids,
         circuits,
+        rooms,
         sensors,
-        rooms: rooms.sort((a, b) => a.name.localeCompare(b.name)),
-        enums: input.enums,
-        labels,
+        hpModes: input.hpModes,
+        labels: Object.fromEntries(
+            Object.entries(LABELS).map(([key, text]) => [key, textIn(localized(text), input.language)]),
+        ),
         watch: [...new Set(watch)],
     };
 }

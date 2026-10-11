@@ -47,6 +47,8 @@ export class DiagramServer {
     private readonly clients = new Set<http.ServerResponse>();
     private unsubscribe: (() => void) | null = null;
     private heartbeat: unknown;
+    /** the state ids of the model built last: only their changes are sent to the pages */
+    private watched = new Set<string>();
 
     /**
      * @param options settings and services
@@ -138,7 +140,7 @@ export class DiagramServer {
                     req.method === 'HEAD' ? undefined : file.body,
                 );
             } else if (url === '/api/model') {
-                const body = JSON.stringify(this.options.model());
+                const body = JSON.stringify(this.currentModel());
                 res.writeHead(200, { ...headers, 'Content-Type': 'application/json; charset=utf-8' }).end(
                     req.method === 'HEAD' ? undefined : body,
                 );
@@ -159,17 +161,27 @@ export class DiagramServer {
             return;
         }
         res.writeHead(200, { ...headers, 'Content-Type': 'text/event-stream', Connection: 'keep-alive' });
-        const watch = new Set(this.options.model().watch);
-        const snapshot = Object.fromEntries(
-            Object.entries(this.options.hub.snapshot()).filter(([id]) => watch.has(id)),
-        );
+        const snapshot: Record<string, unknown> = {};
+        for (const id of this.currentModel().watch) {
+            const value = this.options.hub.get(id);
+            if (value !== undefined) {
+                snapshot[id] = value;
+            }
+        }
         res.write(`event: snapshot\ndata: ${JSON.stringify(snapshot)}\n\n`);
         this.clients.add(res);
         req.on('close', () => this.clients.delete(res));
     }
 
+    /** Build the model and remember which states it listens to. */
+    private currentModel(): DiagramModel {
+        const model = this.options.model();
+        this.watched = new Set(model.watch);
+        return model;
+    }
+
     private broadcast(id: string, value: unknown): void {
-        if (!this.clients.size) {
+        if (!this.clients.size || !this.watched.has(id)) {
             return;
         }
         const message = `event: update\ndata: ${JSON.stringify({ [id]: value })}\n\n`;

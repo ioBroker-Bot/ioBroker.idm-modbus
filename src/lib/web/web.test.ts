@@ -126,13 +126,25 @@ describe('WebRunner', () => {
         created: string[];
         roomNames: string[];
         circuitNames: string[];
+        removed: string[];
     }
-    const make = (answer: () => ReturnType<WebHost['getData']>): Harness => {
+    /** What Modbus delivers (tags and zone rooms as `zone.room`) and what an earlier start left in the object tree. */
+    interface Modbus {
+        tags?: string[];
+        rooms?: string[];
+        existing?: string[];
+    }
+    const make = (
+        answer: () => ReturnType<WebHost['getData']>,
+        settings: unknown = {},
+        modbus: Modbus = {},
+    ): Harness => {
         const log: string[] = [];
         const published = new Map<string, unknown>();
         const created: string[] = [];
         const roomNames: string[] = [];
         const circuitNames: string[] = [];
+        const removed: string[] = [];
         const host: WebHost = {
             now: () => 0,
             log: {
@@ -141,7 +153,12 @@ describe('WebRunner', () => {
                 warn: m => log.push(`warn ${m}`),
             },
             timers: { setInterval: () => 1, clearInterval: () => undefined },
-            getData: name => (name === 'rooms' ? answer() : Promise.resolve(ok(heatpump))),
+            getData: name =>
+                name === 'rooms'
+                    ? answer()
+                    : name === 'settings'
+                      ? Promise.resolve(ok(settings))
+                      : Promise.resolve(ok(heatpump)),
             sleep: () => Promise.resolve(),
             createObjects: (objects: PlannedObject[]) => {
                 created.push(...objects.map(o => o.id));
@@ -150,6 +167,14 @@ describe('WebRunner', () => {
             publish: (id, value) => void published.set(id, value),
             setRoomName: (zone, room, name) => void roomNames.push(`${zone}.${room}=${name}`),
             setCircuitName: (letter, name) => void circuitNames.push(`${letter}=${name}`),
+            setWebFacts: () => undefined,
+            existingIds: prefix => Promise.resolve((modbus.existing ?? []).filter(id => id.startsWith(`${prefix}.`))),
+            removeObjects: ids => {
+                removed.push(...ids);
+                return Promise.resolve();
+            },
+            hasModbusValue: tag => (modbus.tags ?? []).includes(tag),
+            hasModbusRoom: (zone, room) => (modbus.rooms ?? []).includes(`${zone}.${room}`),
         };
         return {
             runner: new WebRunner(host, { intervalMs: 60000, statisticsIntervalMs: 0 }),
@@ -158,6 +183,7 @@ describe('WebRunner', () => {
             created,
             roomNames,
             circuitNames,
+            removed,
         };
     };
 
@@ -177,6 +203,56 @@ describe('WebRunner', () => {
         expect(t.published.get('web.connected')).to.equal(true);
         expect(t.roomNames).to.include('1.1=Room One').and.include('1.9=Room Nine');
         expect(t.circuitNames).to.deep.equal(['A=Circuit One']);
+    });
+
+    it('publishes the inputs and outputs of the settings tree and leaves out sensors Modbus has', async () => {
+        const table = (rows: string): string => `<table id="idm_info">${rows}</table>`;
+        const settings = [
+            {
+                id: 'INFOAIN',
+                value: table(
+                    '<tr><td>B32</td><td>Outdoor</td><td>8.5</td><td>°C</td></tr><tr><td>B2</td><td>Flow</td><td>1.5</td><td>l/min</td></tr>',
+                ),
+            },
+            { id: 'INFODIN', value: table('<tr><td>B1</td><td>DHW flow</td><td>1</td><td></td></tr>') },
+        ];
+        const t = make(() => Promise.resolve(ok(rooms)), settings, { tags: ['B32'] });
+        await t.runner.start();
+        await t.runner.tick();
+        expect(t.created).to.include.members(['web.io', 'web.io.sensors', 'web.io.sensors.b2', 'web.io.digital_in.b1']);
+        expect(t.created).to.not.include('web.io.sensors.b32');
+        expect(t.published.get('web.io.sensors.b2')).to.equal(1.5);
+        expect(t.published.get('web.io.digital_in.b1')).to.equal(true);
+        expect(t.created.filter(id => id === 'web.io.sensors.b2')).to.have.length(1);
+    });
+
+    it('creates nothing for a room that Modbus delivers, and removes what an earlier start left', async () => {
+        const t = make(
+            () => Promise.resolve(ok(rooms)),
+            {},
+            {
+                rooms: ['1.1'],
+                existing: ['web.rooms.101.temperature', 'web.rooms.109.temperature', 'web.io.sensors.b51'],
+            },
+        );
+        await t.runner.start();
+        await t.runner.tick();
+        expect(t.created.filter(id => id.startsWith('web.rooms.101'))).to.deep.equal([]); // Modbus reads it: nothing here
+        expect(t.created).to.include('web.rooms.109.humidity'); // not read by Modbus: all values from the web
+        expect(t.published.has('web.rooms.101.name')).to.equal(false);
+        expect(t.roomNames).to.include('1.1=Room One'); // the name goes to the channel of the zone room
+        expect(t.removed).to.have.members(['web.rooms.101.temperature', 'web.io.sensors.b51']);
+    });
+
+    it('gives a room that Modbus reads a name state, once, and the channel its name', async () => {
+        const t = make(() => Promise.resolve(ok(rooms)), {}, { rooms: ['1.1'] });
+        await t.runner.start();
+        await t.runner.tick();
+        await t.runner.tick();
+        expect(t.created.filter(id => id === 'zones.1.rooms.1.name')).to.have.length(1);
+        expect(t.published.get('zones.1.rooms.1.name')).to.equal('Room One');
+        expect(t.created).to.not.include('zones.1.rooms.9.name'); // Modbus does not read room 9: its name stays under web.rooms
+        expect(t.roomNames).to.include('1.1=Room One');
     });
 
     it('marks the interface unreachable with one warning and recovers', async () => {

@@ -40,11 +40,13 @@ import { stateIdFor, toStateValue } from './lib/state-model';
 import { PvRunner } from './lib/pv/runner';
 import { RoomRunner } from './lib/rooms/runner';
 import { WebClient } from './lib/web/client';
+import type { WebFacts } from './lib/web/io';
 import { WebRunner } from './lib/web/runner';
 import { localDateKey, StatsRunner, type Sample } from './lib/stats/runner';
 import { clampTimerMs } from './lib/timers';
 import { ValueHub } from './lib/diagram/hub';
-import { buildDiagramModel } from './lib/diagram/model';
+import { createModelSource } from './lib/diagram/plant';
+import { modbusTagRegisters } from './lib/diagram/sensors';
 import { DiagramServer } from './lib/diagram/server';
 import { localized, textIn } from './lib/translations';
 
@@ -112,6 +114,8 @@ class IdmModbus extends utils.Adapter {
     /** latest value of every state, for the heat pump diagram */
     private readonly hub = new ValueHub();
     private diagram: DiagramServer | null = null;
+    /** what the sensor table of the web interface told (for the diagram) */
+    private webFacts: WebFacts = { circuitTags: {}, sensors: [] };
     /** latest reading of every register, for the statistics */
     private readonly samples = new Map<string, Sample>();
     private unloading = false;
@@ -239,7 +243,7 @@ class IdmModbus extends utils.Adapter {
         await this.startControl([...active, ...writeOnly], controlSettings);
         await this.startPv(registers);
         await this.startFeeds(registers);
-        await this.startWeb(settings.heatingCircuitNames);
+        await this.startWeb(settings.heatingCircuitNames, registers);
         await this.startBoost(registers, settings.intervalsMs.medium);
         await this.startDiagram(registers, settings.heatingCircuitNames, settings.plant.heatingCircuits);
     }
@@ -259,39 +263,20 @@ class IdmModbus extends utils.Adapter {
         if (this.config.diagramEnabled === false) {
             return;
         }
-        const enumTexts = (id: string): Record<string, string> => {
-            const reg = registers.find(r => r.id === id);
-            return Object.fromEntries(
-                Object.entries(reg?.enum ?? {}).map(([value, text]) => [value, textIn(text, this.language)]),
-            );
-        };
-        const hidden = (this.config.diagramHidden ?? '')
-            .split(',')
-            .map(part => part.trim())
-            .filter(Boolean);
-        // every temperature with a sensor tag of the IDM plant diagrams, e.g. "Heat storage temperature (B38)"
-        const sensors = registers.flatMap(reg => {
-            const tag = /\((B\d+)\)/.exec(reg.label.en)?.[1];
-            return reg.unit === '°C' && tag && reg.access !== 'W'
-                ? [{ id: stateIdFor(reg), tag, name: textIn(reg.label, this.language).replace(/\s*\(B\d+\)/, '') }]
-                : [];
-        });
         const server = new DiagramServer({
             port: this.config.diagramPort || 8183,
             bind: this.config.diagramBind || '0.0.0.0',
             wwwDir: path.join(__dirname, '..', 'www'),
             hub: this.hub,
-            model: () =>
-                buildDiagramModel({
-                    language: this.language ?? 'en',
-                    has: id => this.hub.has(id),
-                    value: id => this.hub.get(id),
-                    circuits: circuits.map(letter => ({ letter, name: circuitNames[letter] ?? null })),
-                    stateIds: Object.keys(this.hub.snapshot()),
-                    enums: { hpMode: enumTexts('hp_operating_mode'), hcActive: enumTexts('hc_a_active_mode') },
-                    hidden,
-                    sensors,
-                }),
+            model: createModelSource({
+                registers,
+                language: this.language,
+                circuits,
+                circuitNames,
+                hidden: this.config.diagramHidden ?? [],
+                hub: this.hub,
+                webFacts: () => this.webFacts,
+            }),
             timers: {
                 setInterval: (cb, ms) => this.setInterval(cb, ms),
                 clearInterval: handle => this.clearInterval(handle as ioBroker.Interval),
@@ -447,8 +432,12 @@ class IdmModbus extends utils.Adapter {
      * Start the web interface module (spec Modul H): room names and room data from the Navigator's local web pages, read only.
      *
      * @param userCircuitNames heating circuit names the user entered (they win over the names from the Navigator)
+     * @param registers all registers of the family (their IDM tags tell which sensors Modbus already delivers)
      */
-    private async startWeb(userCircuitNames: Record<string, string>): Promise<void> {
+    private async startWeb(
+        userCircuitNames: Record<string, string>,
+        registers: readonly RegisterEntry[],
+    ): Promise<void> {
         const settings = readWebSettings(this.config);
         settings.warnings.forEach(warning => this.log.warn(warning));
         if (!settings.enabled) {
@@ -460,6 +449,7 @@ class IdmModbus extends utils.Adapter {
             pin: settings.pin,
             timeoutMs: clampTimerMs(this.config.requestTimeoutMs, DEFAULT_REQUEST_TIMEOUT_MS, 500) * 3,
         });
+        const tagRegisters = modbusTagRegisters(registers);
         const rename = (id: string, name: string): void => {
             void this.getObjectAsync(id)
                 .then(async object => {
@@ -484,15 +474,38 @@ class IdmModbus extends utils.Adapter {
                         await this.extendObject(id, object);
                     }
                 },
+                existingIds: async prefix => {
+                    const start = `${this.namespace}.${prefix}.`;
+                    const list = await this.getObjectListAsync({ startkey: start, endkey: `${start}\u9999` });
+                    return list.rows.map(row => row.id.slice(this.namespace.length + 1));
+                },
+                removeObjects: async ids => {
+                    for (const id of ids) {
+                        this.hub.delete(id);
+                        await this.delObjectAsync(id).catch(() => undefined);
+                        await this.delStateAsync(id).catch(() => undefined);
+                    }
+                },
+                hasModbusValue: tag => {
+                    const registerId = tagRegisters.get(tag);
+                    return registerId !== undefined && this.validSeen.has(registerId);
+                },
+                hasModbusRoom: (zone, room) => this.validSeen.has(`zm${zone}_room${room}_temp`),
                 publish: (id, value) => this.put(id, { val: value, ack: true }),
                 setRoomName: (zone, room, name) => rename(`zones.${zone}.rooms.${room}`, name),
+                setWebFacts: facts => {
+                    this.webFacts = facts;
+                },
                 setCircuitName: (letter, name) => {
                     if (!userCircuitNames[letter]) {
                         rename(`hc.${letter}`, name);
                     }
                 },
             },
-            { intervalMs: settings.intervalMs, statisticsIntervalMs: settings.statisticsIntervalMs },
+            {
+                intervalMs: settings.intervalMs,
+                statisticsIntervalMs: settings.statisticsIntervalMs,
+            },
         );
         await this.web.start();
     }

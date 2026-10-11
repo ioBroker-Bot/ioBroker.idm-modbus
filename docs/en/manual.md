@@ -104,7 +104,11 @@ All three modules are **off by default**, write only when something is configure
 
 ## 8. Web interface (optional)
 
-With the display PIN the adapter reads the Navigator's local web pages (read only): room names and heating circuit names (used as names in the object tree), room temperature, target, humidity and mode per room, and the statistics. The web interface is not documented by IDM and may change with firmware updates. Polling every 60 s (rooms) and 15 minutes (statistics); never faster than 30 s / 5 minutes.
+With the display PIN the adapter reads the Navigator's local web pages (read only): room names and heating circuit names (used as names in the object tree), room temperature, target, humidity and mode per room, and the statistics. The web interface is not documented by IDM and may change with firmware updates. Polling every 60 s (rooms, inputs and outputs) and 15 minutes (statistics); never faster than 30 s / 5 minutes.
+
+The inputs and outputs of the Navigator's information menu become states under `web.io`: sensor inputs that Modbus does not deliver (for example the heating flow rate B2 and the refrigerant circuit pressures and temperatures), digital inputs (for example the hot water flow switch B1 and fault contacts), analog outputs (pump and fan control, -1 % means "not controlled") and digital outputs (pumps, valves, heating rods). Their names are English with translations where the adapter knows the part, otherwise the Navigator's own text.
+
+Modbus wins: a part that Modbus delivers (the adapter matches the IDM tag in the register names, e.g. B33, M64) is not created from these tables, and a room that Modbus reads has no entry under `web.rooms` at all (its name is the state `zones.<zone>.rooms.<room>.name` and the name of the channel, its values are the zone states). The web copy appears only while Modbus has no value, for example the charging pump M73 while it stands (-1 % = not driven cannot be told from "not available" by Modbus). Leftovers of earlier versions are removed at the start.
 
 ## 8a. Heat pump diagram
 

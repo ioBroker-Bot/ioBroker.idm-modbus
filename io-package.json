@@ -43,8 +43,16 @@
             "uk": "Підключає теплові насоси IDM із керуванням Navigator до ioBroker локально через Modbus TCP: зчитування, керування та подача значень кімнати, PV та автоматизації будівель",
             "zh-cn": "通过 Modbus TCP 将带有 Navigator 控制的 IDM 热泵本地连接到 ioBroker：读取、控制和馈送室、PV 和楼宇自动化值"
         },
-        "authors": ["SeaSpotter <seatowage@gmail.com>"],
-        "keywords": ["idm", "heatpump", "modbus", "navigator", "pv"],
+        "authors": [
+            "SeaSpotter <seatowage@gmail.com>"
+        ],
+        "keywords": [
+            "idm",
+            "heatpump",
+            "modbus",
+            "navigator",
+            "pv"
+        ],
         "licenseInformation": {
             "type": "free",
             "license": "MIT"
@@ -175,7 +183,7 @@
         "diagramEnabled": true,
         "diagramPort": 8183,
         "diagramBind": "0.0.0.0",
-        "diagramHidden": "",
+        "diagramHidden": [],
         "webEnabled": false,
         "webPin": "",
         "webPort": 80,
@@ -185,8 +193,12 @@
         "dailyWriteWarn": 24,
         "writeZones": false
     },
-    "encryptedNative": ["webPin"],
-    "protectedNative": ["webPin"],
+    "encryptedNative": [
+        "webPin"
+    ],
+    "protectedNative": [
+        "webPin"
+    ],
     "objects": [],
     "instanceObjects": [
         {

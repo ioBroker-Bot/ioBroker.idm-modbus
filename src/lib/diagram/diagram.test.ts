@@ -6,7 +6,11 @@ import * as path from 'node:path';
 import { LANGUAGES, missingLanguages } from '../translations';
 import dictionary from '../dictionary.json';
 import { ValueHub } from './hub';
-import { buildDiagramModel, DIAGRAM_TEXTS, type DiagramInput } from './model';
+import { loadRegisters } from '../registers/plant';
+import type { RegisterEntry } from '../registers/types';
+import { stateIdFor } from '../state-model';
+import { ioKey } from '../web/io';
+import { buildDiagramModel, DIAGRAM_STATE_IDS, DIAGRAM_TEXTS, type DiagramInput } from './model';
 import { DiagramServer } from './server';
 
 const input = (
@@ -21,7 +25,7 @@ const input = (
         { letter: 'B', name: 'Upstairs' },
     ],
     stateIds: Object.keys(ids),
-    enums: { hpMode: { 1: 'Heating' }, hcActive: { 1: 'Heating' } },
+    hpModes: { 1: 'Heating' },
     hidden: [],
     ...extra,
 });
@@ -41,7 +45,7 @@ describe('diagram model', () => {
                 'zones.1.rooms.1.temp': 23.2,
                 'zones.1.rooms.1.setpoint': 22.5,
                 'zones.1.rooms.2.temp': null,
-                'web.rooms.101.name': 'Kid',
+                'zones.1.rooms.1.name': 'Kid',
             }),
         );
         expect(model.parts).to.deep.equal({
@@ -51,14 +55,11 @@ describe('diagram model', () => {
             pv: true,
             solar: false,
             bivalence: false,
-            cascade: false,
-            isc: false,
-            booster: false,
         });
         expect(model.circuits.map(c => c.letter)).to.deep.equal(['A']); // B has no flow temperature
         expect(model.circuits[0].name).to.equal('Heating circuit A');
         expect(model.rooms).to.deep.equal([
-            { name: 'Kid', temperature: 'zones.1.rooms.1.temp', target: 'zones.1.rooms.1.setpoint' },
+            { zone: 1, name: 'Kid', temperature: 'zones.1.rooms.1.temp', target: 'zones.1.rooms.1.setpoint' },
         ]);
         expect(model.ids.pvProduction).to.equal('pv.pv_production');
         expect(model.ids.solarCollector).to.equal(null);
@@ -74,7 +75,16 @@ describe('diagram model', () => {
         );
         expect(model.parts).to.include({ buffer: false, dhw: false, pv: false });
         expect(model.circuits).to.deep.equal([
-            { letter: 'B', name: 'Upstairs', flow: 'hc.B.flow_temp', setpoint: null, active: null, room: null },
+            {
+                letter: 'B',
+                name: 'Upstairs',
+                flow: 'hc.B.flow_temp',
+                setpoint: null,
+                active: null,
+                room: null,
+                flowTag: '',
+                roomTag: '',
+            },
         ]);
         expect(model.labels.outdoor).to.equal('Außen');
         expect(model.labels.heatPump).to.equal('Wärmepumpe');
@@ -82,6 +92,22 @@ describe('diagram model', () => {
 
     it('finds the storage temperature where Navigator 1.x keeps it', () => {
         expect(buildDiagramModel(input({ 'hp.storage_temp': 35 })).ids.buffer).to.equal('hp.storage_temp');
+    });
+
+    it('only asks for states that the register files and the web module create', () => {
+        const known = new Set(
+            (['nav20', 'nav10', 'nav17'] as const).flatMap(family =>
+                (loadRegisters(family) as RegisterEntry[]).map(stateIdFor),
+            ),
+        );
+        for (const id of Object.values(DIAGRAM_STATE_IDS).flat()) {
+            if (id.startsWith('web.io.')) {
+                const key = id.split('.')[3];
+                expect(ioKey({ tag: key.toUpperCase(), name: '', value: 0, unit: '' }), id).to.equal(key);
+            } else if (!id.startsWith('calc.')) {
+                expect(known.has(id), `${id} is not a register state`).to.equal(true);
+            }
+        }
     });
 
     it('has every text in all 11 languages', () => {
@@ -189,6 +215,34 @@ describe('DiagramServer', () => {
             const text = chunks.join('');
             expect(text).to.contain('event: snapshot\ndata: {"hp.hp_flow_temp":31');
             expect(text).to.contain('event: update\ndata: {"hp.hp_flow_temp":32}');
+        } finally {
+            await server.stop();
+        }
+    });
+
+    it('sends only the changes of states the model listens to', async () => {
+        const { server, port, hub } = await start();
+        try {
+            const chunks: string[] = [];
+            await new Promise<void>(resolve => {
+                const req = http.request({ port, host: '127.0.0.1', path: '/events' }, res => {
+                    res.on('data', c => {
+                        chunks.push(String(c));
+                        if (chunks.join('').includes('event: snapshot') && !chunks.join('').includes('event: update')) {
+                            hub.set('stats.something_else', 1); // not part of the model: not sent
+                            hub.set('hp.hp_flow_temp', 33);
+                        }
+                        if (chunks.join('').includes('event: update')) {
+                            req.destroy();
+                            resolve();
+                        }
+                    });
+                });
+                req.end();
+            });
+            const text = chunks.join('');
+            expect(text).to.not.contain('stats.something_else');
+            expect(text).to.contain('event: update\ndata: {"hp.hp_flow_temp":33}');
         } finally {
             await server.stop();
         }

@@ -11,6 +11,7 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <g transform="translate(0 -30)">
   <!-- heat pump casing -->
   <rect x="64" y="132" width="262" height="248" rx="30" fill="url(#casing)"/>
   <rect x="64" y="132" width="262" height="40" rx="20" fill="#cfdbe7"/>
@@ -29,11 +30,12 @@
     <path d="M366 330 C 340 296 392 262 366 228 C 340 194 392 160 366 126"/>
     <path d="M414 350 C 388 316 440 282 414 248 C 388 214 440 180 414 146" stroke="#fb8500"/>
   </g>
-  <!-- bus line with three nodes (Modbus) -->
-  <g stroke="#ffffff" stroke-width="12" stroke-linecap="round" fill="#ffffff">
-    <path d="M90 430 H 422" fill="none"/>
-    <circle cx="110" cy="430" r="15"/>
-    <circle cx="256" cy="430" r="15"/>
-    <circle cx="402" cy="430" r="15"/>
   </g>
+  <!-- connection symbol (Modbus link) in IDM yellow, centred below -->
+  <g fill="none" stroke="#ffd400" stroke-width="14" stroke-linecap="round">
+    <path d="M211 447 A35 35 0 0 1 246 482"/>
+    <path d="M211 420 A62 62 0 0 1 273 482"/>
+    <path d="M211 392 A90 90 0 0 1 301 482"/>
+  </g>
+  <circle cx="211" cy="482" r="13" fill="#ffd400"/>
 </svg>

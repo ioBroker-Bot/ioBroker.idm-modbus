@@ -6,6 +6,7 @@ const ALLOWED_PAGES = new Set<string>([
     'rooms',
     'heatpump',
     'info',
+    'settings',
     ...Object.values(WEB_STATISTICS).map(s => s.query),
 ]);
 

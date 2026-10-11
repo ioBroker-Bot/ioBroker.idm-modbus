@@ -191,5 +191,12 @@
     "diagramEnabledHelp": "A read-only page with the plant (heat pump, buffer, hot water, heating circuits, photovoltaics, rooms) and live values. It appears as a link next to the instance in the instances list. Parts the plant does not have are not drawn. Anyone in your network who knows the address can open it; it cannot change anything.",
     "diagramPort": "Diagram port",
     "diagramBind": "Diagram listen address",
-    "diagramBindHelp": "0.0.0.0 = reachable in the whole network, 127.0.0.1 = only on this computer"
+    "diagramBindHelp": "0.0.0.0 = reachable in the whole network, 127.0.0.1 = only on this computer",
+    "diagramHidden": "Parts to leave out of the diagram",
+    "diagramHiddenHelp": "Choose parts of the heating system that should not be drawn. Parts the system does not have are not drawn anyway.",
+    "diagramPartBuffer": "Buffer",
+    "diagramPartDhw": "Hot water (tank and fresh water station)",
+    "diagramPartPv": "Photovoltaics",
+    "diagramPartSolar": "Solar thermal",
+    "diagramPartBivalence": "Bivalence"
 }

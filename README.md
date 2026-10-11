@@ -60,6 +60,7 @@ This is an independent community project. IDM and Navigator are trademarks of th
 
 - (SeaSpotter) read-only adapter for Navigator 2.0: register files, Modbus TCP client, polling, object tree, device scan, 11-language texts
 - (SeaSpotter) support file with one click (Diagnostics tab): configuration without host, PIN and addresses, connection state, problem registers, latest readings; English and German manuals, a new logo, German texts aligned with the wording of the IDM manuals (Warmwasserladung, Konstantheizkreis, Trinkwassererwärmer, Datenpunkt)
+- (SeaSpotter) web interface: inputs and outputs of the Navigator (sensors not available by Modbus such as the heating flow rate B2 and the refrigerant circuit, digital inputs such as the hot water flow switch B1, pump and valve states such as M22, M31, M73, fan M13) as states `web.io.*`; the diagram shows them
 - (SeaSpotter) heat pump diagram: a read-only web page (link next to the instance, port 8183) that draws heat pump, buffer, hot water, heating circuits, photovoltaics and rooms with live values, only for the parts the plant has
 - (SeaSpotter) simpler settings: the web interface options sit in the Connection tab, ports, timeouts and intervals are expert settings, the float word order is no longer a setting
 - (SeaSpotter) CO₂ intensity can come from a state (accrued at the value valid when the energy was used), state `stats.co2.intensity` shows the factor in use

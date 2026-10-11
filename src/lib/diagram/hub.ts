@@ -42,6 +42,20 @@ export class ValueHub {
         return value !== undefined && value !== null;
     }
 
+    /**
+     * Forget a state (its object was removed).
+     *
+     * @param id state id relative to the instance
+     */
+    public delete(id: string): void {
+        this.values.delete(id);
+    }
+
+    /** The ids of all states that have been set. */
+    public ids(): IterableIterator<string> {
+        return this.values.keys();
+    }
+
     /** A copy of all values. */
     public snapshot(): Record<string, HubValue> {
         return Object.fromEntries(this.values);

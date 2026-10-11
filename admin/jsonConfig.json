@@ -138,6 +138,41 @@
                     "lg": 12,
                     "xl": 12
                 },
+                "diagramHidden": {
+                    "type": "select",
+                    "multiple": true,
+                    "label": "diagramHidden",
+                    "help": "diagramHiddenHelp",
+                    "newLine": true,
+                    "options": [
+                        {
+                            "label": "diagramPartBuffer",
+                            "value": "buffer"
+                        },
+                        {
+                            "label": "diagramPartDhw",
+                            "value": "dhw"
+                        },
+                        {
+                            "label": "diagramPartPv",
+                            "value": "pv"
+                        },
+                        {
+                            "label": "diagramPartSolar",
+                            "value": "solar"
+                        },
+                        {
+                            "label": "diagramPartBivalence",
+                            "value": "bivalence"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "xl": 6,
+                    "hidden": "!data.diagramEnabled"
+                },
                 "diagramPort": {
                     "type": "number",
                     "label": "diagramPort",

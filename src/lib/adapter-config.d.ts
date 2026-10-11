@@ -152,8 +152,8 @@ declare global {
             diagramEnabled: boolean;
             diagramPort: number;
             diagramBind: string;
-            /** comma separated parts to leave out (buffer, dhw, pv, solar, bivalence) */
-            diagramHidden: string;
+            /** parts to leave out of the diagram (buffer, dhw, pv, solar, bivalence) */
+            diagramHidden: string[];
             /** create states when the Navigator reports the first real value and remove those of hardware that never does */
             hideUnavailable: boolean;
             /** delete states of registers the configuration no longer enables */
