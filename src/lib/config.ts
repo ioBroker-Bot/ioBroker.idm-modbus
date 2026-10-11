@@ -8,6 +8,7 @@ import {
     DEFAULT_BOOST_TARGET_C,
     DEFAULT_PV_INTERVAL_S,
     DEFAULT_WEB_INTERVAL_S,
+    DEFAULT_NAV10_WEB_PORT,
     DEFAULT_WEB_PORT,
     DEFAULT_WEB_STATISTICS_INTERVAL_S,
     MIN_WEB_INTERVAL_S,
@@ -667,8 +668,9 @@ export interface WebSettings {
  * Read the web module settings; without a PIN the module stays off with a warning (CLAUDE.md rule 18).
  *
  * @param config adapter configuration
+ * @param family the Navigator generation (decides the default port)
  */
-export function readWebSettings(config: Partial<ioBroker.AdapterConfig>): WebSettings {
+export function readWebSettings(config: Partial<ioBroker.AdapterConfig>, family: NavigatorFamily): WebSettings {
     const warnings: string[] = [];
     const pin = typeof config.webPin === 'string' ? config.webPin.trim() : '';
     const enabled = config.webEnabled === true;
@@ -680,7 +682,15 @@ export function readWebSettings(config: Partial<ioBroker.AdapterConfig>): WebSet
     return {
         enabled: enabled && pin !== '',
         pin,
-        port: intSetting(config.webPort, 1, 65535, DEFAULT_WEB_PORT, 'Web interface port', warnings),
+        // 0 = automatic: the PHP pages of the Navigator 2.0 on port 80, the WebSocket of the Navigator 10 on 61220
+        port: intSetting(
+            config.webPort || (family === 'nav10' ? DEFAULT_NAV10_WEB_PORT : DEFAULT_WEB_PORT),
+            1,
+            65535,
+            DEFAULT_WEB_PORT,
+            'Web interface port',
+            warnings,
+        ),
         intervalMs:
             intSetting(
                 config.webIntervalS,

@@ -97,6 +97,8 @@ export const ROOM_CONFLICT_AFTER = 3;
 export const DEFAULT_WEB_INTERVAL_S = 60;
 export const MIN_WEB_INTERVAL_S = 30;
 export const DEFAULT_WEB_PORT = 80;
+/** The Navigator 10 serves its web interface on a WebSocket on this port. */
+export const DEFAULT_NAV10_WEB_PORT = 61220;
 export const DEFAULT_WEB_STATISTICS_INTERVAL_S = 900;
 export const MIN_WEB_STATISTICS_INTERVAL_S = 300;
 

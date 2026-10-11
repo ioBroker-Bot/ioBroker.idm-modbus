@@ -1,6 +1,7 @@
-import { localized } from '../translations';
 import type { PlannedObject } from '../object-tree';
-import { ManagedObjects, type ObjectHost } from './managed';
+import { IoPublisher, type IoHost } from './io-publisher';
+import { channelObject, stateObject } from './objects';
+import { ManagedObjects } from './managed';
 import type { Result } from '../modbus/result';
 import {
     parseCircuitNames,
@@ -11,14 +12,14 @@ import {
     type WebStatistics,
     type WebStatisticsKind,
 } from './parse';
-import { buildIoStates, circuitSensorTags, parseIo, type WebFacts } from './io';
+import { parseIo } from './io';
 import { buildStatisticsStates } from './statistics';
 
 /** How often the heating circuit names are read again (they hardly ever change). */
 const CIRCUIT_NAMES_EVERY_MS = 3600000;
 
 /** What the runner needs from the adapter; a fake in the tests. */
-export interface WebHost extends ObjectHost {
+export interface WebHost extends IoHost {
     /** clock in ms */
     now(): number;
     /** log lines, never containing the host or the PIN */
@@ -29,16 +30,10 @@ export interface WebHost extends ObjectHost {
     getData(name: string): Promise<Result<unknown>>;
     /** wait (managed timer), to pace the requests */
     sleep(ms: number): Promise<void>;
-    /** set a state (acknowledged) */
-    publish(id: string, value: string | number | boolean | null): void;
     /** give the channel of a zone room the name from the Navigator */
     setRoomName(zone: number, room: number, name: string): void;
-    /** does Modbus deliver a value for the part with this IDM tag (B33, M73, ...)? The web copy is not needed then. */
-    hasModbusValue(tag: string): boolean;
     /** does Modbus deliver the temperature of this zone room? The web copy of the room's values is not needed then. */
     hasModbusRoom(zone: number, room: number): boolean;
-    /** the sensors and circuit sensor tags of the sensor table (for the diagram), called when they change */
-    setWebFacts(facts: WebFacts): void;
     /** give the channel of a heating circuit the name from the Navigator (the adapter ignores it where the user named it) */
     setCircuitName(letter: string, name: string): void;
 }
@@ -59,12 +54,9 @@ export class WebRunner {
     private statisticsTimer: unknown;
     private statisticsBusy = false;
     private statisticsObjects = new Set<string>();
-    private readonly ioObjects: ManagedObjects;
+    private readonly io: IoPublisher;
     private readonly roomObjects: ManagedObjects;
-    private ioValues = new Map<string, number | string | boolean>();
-    private readonly facts: WebFacts = { circuitTags: {}, sensors: [] };
     private readonly roomNameStates = new Set<string>();
-    private factsJson = '';
     private busy = false;
     private namesAt = Number.NEGATIVE_INFINITY;
     private failing = false;
@@ -77,16 +69,16 @@ export class WebRunner {
         private readonly host: WebHost,
         private readonly options: WebOptions,
     ) {
-        this.ioObjects = new ManagedObjects(host, 'web.io');
+        this.io = new IoPublisher(host);
         this.roomObjects = new ManagedObjects(host, 'web.rooms');
     }
 
     /** Create the base objects, read once and start the cycle. */
     public async start(): Promise<void> {
         await this.host.createObjects([
-            this.channel('web', 'Web interface'),
-            this.channel('web.rooms', 'Rooms'),
-            this.state('web.connected', 'Web interface reachable', 'boolean', 'indicator.reachable'),
+            channelObject('web', 'Web interface'),
+            channelObject('web.rooms', 'Rooms'),
+            stateObject('web.connected', 'Web interface reachable', 'boolean', 'indicator.reachable'),
         ]);
         await this.tick();
         this.timer = this.host.timers.setInterval(() => void this.tick(), this.options.intervalMs);
@@ -183,35 +175,7 @@ export class WebRunner {
             this.host.log.debug(`Web inputs and outputs could not be read: ${settings.error.message}`);
             return;
         }
-        const io = parseIo(settings.value);
-        const states = buildIoStates(io, tag => this.host.hasModbusValue(tag));
-        await this.ioObjects.sync(states.objects);
-        for (const id of this.ioValues.keys()) {
-            if (!states.values.has(id)) {
-                this.ioValues.delete(id); // no longer created: publish it again if it comes back
-            }
-        }
-        states.values.forEach((value, id) => {
-            if (this.ioValues.get(id) !== value) {
-                this.ioValues.set(id, value);
-                this.host.publish(id, value);
-            }
-        });
-        this.facts.sensors = states.sensors;
-        this.facts.circuitTags = {};
-        for (const { letter, kind, tag } of circuitSensorTags(io.sensors ?? [])) {
-            this.facts.circuitTags[letter] = { ...this.facts.circuitTags[letter], [kind]: tag };
-        }
-        this.emitFacts();
-    }
-
-    /** Hand what the diagram needs to the adapter, but only when it changed. */
-    private emitFacts(): void {
-        const json = JSON.stringify(this.facts);
-        if (json !== this.factsJson) {
-            this.factsJson = json;
-            this.host.setWebFacts(JSON.parse(json) as WebFacts);
-        }
+        await this.io.update(parseIo(settings.value));
     }
 
     private fail(message: string): void {
@@ -239,12 +203,12 @@ export class WebRunner {
         }
         const base = `web.rooms.${room.id}`;
         return [
-            this.channel(base, room.name, false),
-            this.state(`${base}.name`, 'Room name', 'string', 'text'),
-            this.state(`${base}.mode`, 'Operating mode', 'string', 'text'),
-            this.state(`${base}.temperature`, 'Room temperature', 'number', 'value.temperature', '°C'),
-            this.state(`${base}.target`, 'Target temperature', 'number', 'value.temperature', '°C'),
-            this.state(`${base}.humidity`, 'Room humidity', 'number', 'value.humidity', '%'),
+            channelObject(base, room.name, false),
+            stateObject(`${base}.name`, 'Room name', 'string', 'text'),
+            stateObject(`${base}.mode`, 'Operating mode', 'string', 'text'),
+            stateObject(`${base}.temperature`, 'Room temperature', 'number', 'value.temperature', '°C'),
+            stateObject(`${base}.target`, 'Target temperature', 'number', 'value.temperature', '°C'),
+            stateObject(`${base}.humidity`, 'Room humidity', 'number', 'value.humidity', '%'),
         ];
     }
 
@@ -285,33 +249,9 @@ export class WebRunner {
         }
         const id = `zones.${zone}.rooms.${room}.name`;
         if (!this.roomNameStates.has(id)) {
-            await this.host.createObjects([this.state(id, 'Room name', 'string', 'text')]);
+            await this.host.createObjects([stateObject(id, 'Room name', 'string', 'text')]);
             this.roomNameStates.add(id);
         }
         this.host.publish(id, name);
-    }
-
-    private channel(id: string, name: string, translate = true): PlannedObject {
-        return {
-            id,
-            object: { type: 'channel', common: { name: translate ? localized(name) : name }, native: {} },
-        };
-    }
-
-    private state(
-        id: string,
-        name: string,
-        type: 'boolean' | 'string' | 'number',
-        role: string,
-        unit?: string,
-    ): PlannedObject {
-        return {
-            id,
-            object: {
-                type: 'state',
-                common: { name: localized(name), type, role, read: true, write: false, ...(unit ? { unit } : {}) },
-                native: {},
-            },
-        };
     }
 }

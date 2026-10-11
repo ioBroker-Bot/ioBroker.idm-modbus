@@ -83,7 +83,8 @@
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
-                    "xl": 12
+                    "xl": 12,
+                    "hidden": "data.family === 'nav17'"
                 },
                 "webPrerequisites": {
                     "type": "staticText",
@@ -93,7 +94,8 @@
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
-                    "xl": 12
+                    "xl": 12,
+                    "hidden": "data.family === 'nav17'"
                 },
                 "webEnabled": {
                     "type": "checkbox",
@@ -103,7 +105,8 @@
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
-                    "xl": 12
+                    "xl": 12,
+                    "hidden": "data.family === 'nav17'"
                 },
                 "webPin": {
                     "type": "password",
@@ -115,7 +118,7 @@
                     "md": 4,
                     "lg": 3,
                     "xl": 3,
-                    "hidden": "!data.webEnabled"
+                    "hidden": "data.family === 'nav17' || !data.webEnabled"
                 },
                 "hdrDiagram": {
                     "type": "header",
@@ -321,7 +324,7 @@
                 "webPort": {
                     "type": "number",
                     "label": "webPort",
-                    "min": 1,
+                    "min": 0,
                     "max": 65535,
                     "xs": 12,
                     "sm": 6,
@@ -329,8 +332,9 @@
                     "lg": 3,
                     "xl": 3,
                     "expertMode": true,
-                    "hidden": "!data.webEnabled",
-                    "newLine": true
+                    "hidden": "data.family === 'nav17' || !data.webEnabled",
+                    "newLine": true,
+                    "help": "webPortHelp"
                 },
                 "webIntervalS": {
                     "type": "number",
@@ -343,7 +347,7 @@
                     "lg": 3,
                     "xl": 3,
                     "expertMode": true,
-                    "hidden": "!data.webEnabled",
+                    "hidden": "data.family === 'nav17' || !data.webEnabled",
                     "newLine": false
                 },
                 "webStatisticsIntervalS": {
@@ -359,7 +363,7 @@
                     "lg": 6,
                     "xl": 6,
                     "expertMode": true,
-                    "hidden": "!data.webEnabled"
+                    "hidden": "data.family === 'nav17' || data.family === 'nav10' || !data.webEnabled"
                 }
             }
         },

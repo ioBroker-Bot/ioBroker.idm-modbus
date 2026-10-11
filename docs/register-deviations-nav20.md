@@ -8,25 +8,25 @@ gemeinsamen Adressen überein; Adressen, Zugriff (lesen/schreiben) und EEPROM-Ma
 
 ## Nur im IDM-PDF
 
-| Adresse | id | Anmerkung |
-| --- | --- | --- |
-| 1714, 1715 | `ext_pump_demand_1`, `ext_pump_demand_2` | Externe Pumpenanforderung; der Navigator regelt selbst, GLT-Ansteuerung laut PDF nicht sinnvoll |
-| 2064 + 65·(z−1) | `zm{z}_room9_relay` | Status Relais Raum 9 (A9) je Zonenmodul, zehn Register |
+| Adresse         | id                                       | Anmerkung                                                                                       |
+| --------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 1714, 1715      | `ext_pump_demand_1`, `ext_pump_demand_2` | Externe Pumpenanforderung; der Navigator regelt selbst, GLT-Ansteuerung laut PDF nicht sinnvoll |
+| 2064 + 65·(z−1) | `zm{z}_room9_relay`                      | Status Relais Raum 9 (A9) je Zonenmodul, zehn Register                                          |
 
 ## Nur bei Xerolux (nicht in der Nav-2.0-Liste)
 
-| Adresse | id | Anmerkung |
-| --- | --- | --- |
-| 88 | `pv_target_value` | Navigator 10 (PDF 812663) |
-| 90 | `smart_grid_status` | Navigator 10 (PDF 812663); in nav20 liegt der Smart-Grid-Status laut PDF auf 1006, siehe Spec O4 |
-| 4120 | `firmware_version` | weder im nav20-PDF noch hier übernommen; für nav10 in Step 10 gegen das PDF prüfen |
+| Adresse | id                  | Anmerkung                                                                                        |
+| ------- | ------------------- | ------------------------------------------------------------------------------------------------ |
+| 88      | `pv_target_value`   | Navigator 10 (PDF 812663)                                                                        |
+| 90      | `smart_grid_status` | Navigator 10 (PDF 812663); in nav20 liegt der Smart-Grid-Status laut PDF auf 1006, siehe Spec O4 |
+| 4120    | `firmware_version`  | weder im nav20-PDF noch hier übernommen; für nav10 in Step 10 gegen das PDF prüfen               |
 
 ## Wertebereiche, die abweichen
 
-| Adresse | id | IDM nav20 | Xerolux | Entscheidung |
-| --- | --- | --- | --- | --- |
-| 1034 | `dhw_charge_off_temp` | 46 bis 53 | 46 bis 67 | PDF |
-| 1120 bis 1123, 1226 bis 1231 | Bivalenzpunkte | -90 bis 40 | -40 bis 40 | PDF; -40 entspricht dem Navigator-10-PDF (siehe Spec, Abschnitt Quellen) |
+| Adresse                      | id                    | IDM nav20  | Xerolux    | Entscheidung                                                             |
+| ---------------------------- | --------------------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| 1034                         | `dhw_charge_off_temp` | 46 bis 53  | 46 bis 67  | PDF                                                                      |
+| 1120 bis 1123, 1226 bis 1231 | Bivalenzpunkte        | -90 bis 40 | -40 bis 40 | PDF; -40 entspricht dem Navigator-10-PDF (siehe Spec, Abschnitt Quellen) |
 
 ## Typ und Einheit
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { readGltSettings, readPlantSettings, readRoomSettings, readStatsSettings } from './config';
+import { readGltSettings, readPlantSettings, readRoomSettings, readStatsSettings, readWebSettings } from './config';
 
 describe('readPlantSettings', () => {
     it('uses the spec defaults for an empty configuration', () => {
@@ -192,5 +192,19 @@ describe('readRoomSettings', () => {
             ],
         });
         expect(settings.sources[0].registerId).to.equal('hc_c_ext_room_temp');
+    });
+});
+
+describe('readWebSettings', () => {
+    const base = { webEnabled: true, webPin: '1234' };
+    it('uses the port of the Navigator generation unless one is set', () => {
+        expect(readWebSettings({ ...base, webPort: 0 }, 'nav20').port).to.equal(80);
+        expect(readWebSettings({ ...base, webPort: 0 }, 'nav10').port).to.equal(61220);
+        expect(readWebSettings({ ...base, webPort: 8080 }, 'nav10').port).to.equal(8080);
+    });
+    it('stays off without a PIN', () => {
+        const settings = readWebSettings({ webEnabled: true, webPin: ' ' }, 'nav10');
+        expect(settings.enabled).to.equal(false);
+        expect(settings.warnings).to.have.length(1);
     });
 });

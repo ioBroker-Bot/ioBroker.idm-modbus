@@ -1,5 +1,5 @@
 import { localized, textIn } from '../translations';
-import { CIRCUIT_A_TAGS, type SensorInput } from './sensors';
+import { circuitTags, type SensorInput } from './sensors';
 
 /** What the model needs to know about the installation. */
 export interface DiagramInput {
@@ -17,8 +17,6 @@ export interface DiagramInput {
     hpModes: Record<string, string>;
     /** parts the user switched off in the settings */
     hidden: string[];
-    /** IDM tags of the flow and room sensors per circuit letter, as the Navigator's sensor table names them */
-    circuitTags?: Record<string, { flow?: string; room?: string }>;
     /** the sensors with an IDM tag that the diagram may list */
     sensors?: SensorInput[];
 }
@@ -209,8 +207,7 @@ export function buildDiagramModel(input: DiagramInput): DiagramModel {
     for (const { letter, name } of input.circuits) {
         const flow = pick([`hc.${letter}.flow_temp`]);
         if (flow) {
-            const tags = input.circuitTags?.[letter];
-            const isA = letter === 'A';
+            const tags = circuitTags(letter);
             circuits.push({
                 letter,
                 name: name ?? textIn(localized('Heating circuit {i}', { i: letter }), input.language),
@@ -218,8 +215,8 @@ export function buildDiagramModel(input: DiagramInput): DiagramModel {
                 setpoint: pick([`hc.${letter}.setpoint_flow_temp`]),
                 active: pick([`hc.${letter}.active_mode`]),
                 room: pick([`hc.${letter}.room_temp`]),
-                flowTag: tags?.flow ?? (isA ? CIRCUIT_A_TAGS.flow : ''),
-                roomTag: tags?.room ?? (isA ? CIRCUIT_A_TAGS.room : ''),
+                flowTag: tags?.flow ?? '',
+                roomTag: tags?.room ?? '',
             });
         }
     }

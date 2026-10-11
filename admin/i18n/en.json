@@ -154,8 +154,8 @@
     "blockBooster": "Booster heat pumps A and B (Navigator 10)",
     "testOkMismatch": "Connection successful (outdoor temperature %s °C). Detected: %s, but %s is selected - change the Navigator generation.",
     "testOkUnknown": "Connection successful (outdoor temperature %s °C). The Navigator generation could not be detected.",
-    "webEnabled": "Also read room names, room data and statistics from the web interface",
-    "webEnabledHelp": "Read only. Uses the PIN of the display (same as the login in the browser). It sets the names of rooms and heating circuits in the object tree and adds the temperature, target and humidity of each room. The web interface is not documented by IDM and may change with firmware updates. The PIN is sent unencrypted in your local network, like in the browser.",
+    "webEnabled": "Also read data from the web interface (inputs and outputs; Navigator 2.0 / Pro: also room names, room data and statistics)",
+    "webEnabledHelp": "Read only. Uses the PIN of the display (same as the login in the browser). Navigator 2.0 / Pro: sets the names of rooms and heating circuits, adds rooms that Modbus does not read and the statistics of the Navigator. Navigator 10: reads the inputs and outputs through its WebSocket. Parts that Modbus delivers are not created from the web interface. Not available for the Navigator 1.0/1.7. The web interface is not documented by IDM and may change with firmware updates. The PIN is sent unencrypted in your local network, like in the browser.",
     "webPin": "PIN of the display",
     "webPort": "Web interface port",
     "webIntervalS": "Interval (s, at least 30)",
@@ -198,5 +198,6 @@
     "diagramPartDhw": "Hot water (tank and fresh water station)",
     "diagramPartPv": "Photovoltaics",
     "diagramPartSolar": "Solar thermal",
-    "diagramPartBivalence": "Bivalence"
+    "diagramPartBivalence": "Bivalence",
+    "webPortHelp": "0 = automatic: 80 for the Navigator 2.0 / Pro, 61220 (WebSocket) for the Navigator 10"
 }

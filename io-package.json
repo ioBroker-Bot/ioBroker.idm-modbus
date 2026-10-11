@@ -186,7 +186,7 @@
         "diagramHidden": [],
         "webEnabled": false,
         "webPin": "",
-        "webPort": 80,
+        "webPort": 0,
         "webIntervalS": 60,
         "webStatisticsIntervalS": 900,
         "eepromMinIntervalS": 60,

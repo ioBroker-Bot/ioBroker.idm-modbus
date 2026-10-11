@@ -15,8 +15,18 @@ export interface SensorInput {
     unit: string;
 }
 
-/** Flow and room sensor of heating circuit A in the IDM plant diagram; the Navigator's sensor table names the other circuits'. */
-export const CIRCUIT_A_TAGS = { flow: 'B51', room: 'B61' } as const;
+const CIRCUIT_LETTERS = 'ABCDEFG';
+
+/**
+ * The IDM tags of the flow and room sensor of a heating circuit: B51 to B57 and B61 to B67 for the circuits A to G (circuit A is
+ * B51/B61 in the IDM plant diagram; Xerolux verified the sequence live at a Navigator 10 with circuits A and D).
+ *
+ * @param letter circuit letter A-G
+ */
+export function circuitTags(letter: string): { flow: string; room: string } | null {
+    const index = CIRCUIT_LETTERS.indexOf(letter);
+    return index < 0 ? null : { flow: `B${51 + index}`, room: `B${61 + index}` };
+}
 
 /** Sensors of the web interface that the diagram shows (the heating flow rate); the others exist as states only. */
 const DIAGRAM_WEB_SENSOR_TAGS: ReadonlySet<string> = new Set(['B2']);
@@ -54,13 +64,21 @@ export function registerSensors(registers: readonly RegisterEntry[], language: s
 }
 
 /**
- * The register that delivers each IDM tag by Modbus (the register labels carry the tags), plus the flow of circuit A. The rows of
+ * The register that delivers each IDM tag by Modbus (the register labels carry the tags, the heating circuits' sensors follow the
+ * sequence above). The rows of
  * the web interface's input/output tables for a tag are only created where this register has no value.
  *
  * @param registers all registers of the family
  */
 export function modbusTagRegisters(registers: readonly RegisterEntry[]): Map<string, string> {
-    const byTag = new Map<string, string>([[CIRCUIT_A_TAGS.flow, 'hc_a_flow_temp']]);
+    const byTag = new Map<string, string>();
+    for (const letter of CIRCUIT_LETTERS) {
+        const tags = circuitTags(letter);
+        if (tags) {
+            byTag.set(tags.flow, `hc_${letter.toLowerCase()}_flow_temp`);
+            byTag.set(tags.room, `hc_${letter.toLowerCase()}_room_temp`);
+        }
+    }
     for (const reg of registers) {
         const tag = idmTag(reg.label.en);
         if (tag && !byTag.has(tag)) {

@@ -1,6 +1,6 @@
 import type { RegisterEntry } from '../registers/types';
 import { textIn } from '../translations';
-import type { WebFacts } from '../web/io';
+import type { WebSensor } from '../web/io';
 import type { ValueHub } from './hub';
 import { buildDiagramModel, type DiagramModel } from './model';
 import { diagramWebSensors, registerSensors } from './sensors';
@@ -19,8 +19,8 @@ export interface ModelSourceOptions {
     hidden: string[];
     /** the latest values */
     hub: ValueHub;
-    /** the sensors and circuit sensor tags the web interface reported so far */
-    webFacts(): WebFacts;
+    /** the sensors the web interface reported so far */
+    webSensors(): WebSensor[];
 }
 
 /**
@@ -39,7 +39,6 @@ export function createModelSource(options: ModelSourceOptions): () => DiagramMod
         ]),
     );
     return () => {
-        const facts = options.webFacts();
         return buildDiagramModel({
             language: language ?? 'en',
             has: id => hub.has(id),
@@ -48,8 +47,7 @@ export function createModelSource(options: ModelSourceOptions): () => DiagramMod
             stateIds: hub.ids(),
             hpModes,
             hidden: options.hidden,
-            sensors: [...registerList, ...diagramWebSensors(facts.sensors, language)],
-            circuitTags: facts.circuitTags,
+            sensors: [...registerList, ...diagramWebSensors(options.webSensors(), language)],
         });
     };
 }

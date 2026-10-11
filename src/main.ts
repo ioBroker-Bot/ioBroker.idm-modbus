@@ -30,7 +30,7 @@ import { detectFamily } from './lib/detect';
 import { faultText } from './lib/faults';
 import { buildSupportReport, type SupportInput } from './lib/support';
 import { decodeWords } from './lib/modbus/codec';
-import { planCleanup, planObjects } from './lib/object-tree';
+import { planCleanup, planObjects, type PlannedObject } from './lib/object-tree';
 import { Poller, type PollSink } from './lib/poller';
 import type { PlantConfig } from './lib/registers/plant';
 import { plantToNative, runScan, type ScanResult, scanToCsv, summarizeScan, suggestPlant } from './lib/scan';
@@ -40,7 +40,9 @@ import { stateIdFor, toStateValue } from './lib/state-model';
 import { PvRunner } from './lib/pv/runner';
 import { RoomRunner } from './lib/rooms/runner';
 import { WebClient } from './lib/web/client';
-import type { WebFacts } from './lib/web/io';
+import type { WebSensor } from './lib/web/io';
+import { Nav10Client } from './lib/web/nav10-client';
+import { Nav10Runner } from './lib/web/nav10-runner';
 import { WebRunner } from './lib/web/runner';
 import { localDateKey, StatsRunner, type Sample } from './lib/stats/runner';
 import { clampTimerMs } from './lib/timers';
@@ -110,12 +112,13 @@ class IdmModbus extends utils.Adapter {
     private rooms: RoomRunner | null = null;
     private glt: RoomRunner | null = null;
     private web: WebRunner | null = null;
+    private nav10: Nav10Runner | null = null;
     private boost: BoostRunner | null = null;
     /** latest value of every state, for the heat pump diagram */
     private readonly hub = new ValueHub();
     private diagram: DiagramServer | null = null;
-    /** what the sensor table of the web interface told (for the diagram) */
-    private webFacts: WebFacts = { circuitTags: {}, sensors: [] };
+    /** the sensors the web interface told about (for the diagram) */
+    private webSensors: WebSensor[] = [];
     /** latest reading of every register, for the statistics */
     private readonly samples = new Map<string, Sample>();
     private unloading = false;
@@ -243,7 +246,7 @@ class IdmModbus extends utils.Adapter {
         await this.startControl([...active, ...writeOnly], controlSettings);
         await this.startPv(registers);
         await this.startFeeds(registers);
-        await this.startWeb(settings.heatingCircuitNames, registers);
+        await this.startWeb(settings.family, settings.heatingCircuitNames, registers);
         await this.startBoost(registers, settings.intervalsMs.medium);
         await this.startDiagram(registers, settings.heatingCircuitNames, settings.plant.heatingCircuits);
     }
@@ -275,7 +278,7 @@ class IdmModbus extends utils.Adapter {
                 circuitNames,
                 hidden: this.config.diagramHidden ?? [],
                 hub: this.hub,
-                webFacts: () => this.webFacts,
+                webSensors: () => this.webSensors,
             }),
             timers: {
                 setInterval: (cb, ms) => this.setInterval(cb, ms),
@@ -429,27 +432,77 @@ class IdmModbus extends utils.Adapter {
     }
 
     /**
-     * Start the web interface module (spec Modul H): room names and room data from the Navigator's local web pages, read only.
+     * Start the web interface module (spec Modul H), read only. The Navigator 2.0 / Pro is read through its PHP pages (rooms, circuit
+     * names, statistics, inputs and outputs), the Navigator 10 through its WebSocket (inputs and outputs); the Navigator 1.0/1.7 has
+     * no web interface the adapter can read.
      *
+     * @param family the Navigator generation
      * @param userCircuitNames heating circuit names the user entered (they win over the names from the Navigator)
-     * @param registers all registers of the family (their IDM tags tell which sensors Modbus already delivers)
+     * @param registers all registers of the family (their IDM tags tell which parts Modbus already delivers)
      */
     private async startWeb(
+        family: NavigatorFamily,
         userCircuitNames: Record<string, string>,
         registers: readonly RegisterEntry[],
     ): Promise<void> {
-        const settings = readWebSettings(this.config);
+        const settings = readWebSettings(this.config, family);
         settings.warnings.forEach(warning => this.log.warn(warning));
         if (!settings.enabled) {
             return;
         }
-        const client = new WebClient({
-            host: this.config.host,
-            port: settings.port,
-            pin: settings.pin,
-            timeoutMs: clampTimerMs(this.config.requestTimeoutMs, DEFAULT_REQUEST_TIMEOUT_MS, 500) * 3,
-        });
+        if (family === 'nav17') {
+            this.log.info(
+                'The Navigator 1.0/1.7 has no web interface the adapter can read: the web interface module stays off',
+            );
+            return;
+        }
         const tagRegisters = modbusTagRegisters(registers);
+        const timeoutMs = clampTimerMs(this.config.requestTimeoutMs, DEFAULT_REQUEST_TIMEOUT_MS, 500) * 3;
+        const common = {
+            log: this.log,
+            timers: {
+                setInterval: (cb: () => void, ms: number) => this.setInterval(cb, ms),
+                clearInterval: (handle: unknown) => this.clearInterval(handle as ioBroker.Interval | undefined),
+            },
+            sleep: (ms: number) => new Promise<void>(resolve => void this.setTimeout(resolve, ms)),
+            createObjects: async (planned: PlannedObject[]) => {
+                for (const { id, object } of planned) {
+                    await this.extendObject(id, object);
+                }
+            },
+            existingIds: async (prefix: string) => {
+                const start = `${this.namespace}.${prefix}.`;
+                const list = await this.getObjectListAsync({ startkey: start, endkey: `${start}\u9999` });
+                return list.rows.map(row => row.id.slice(this.namespace.length + 1));
+            },
+            removeObjects: async (ids: string[]) => {
+                for (const id of ids) {
+                    this.hub.delete(id);
+                    await this.delObjectAsync(id).catch(() => undefined);
+                    await this.delStateAsync(id).catch(() => undefined);
+                }
+            },
+            hasModbusValue: (tag: string) => {
+                const registerId = tagRegisters.get(tag);
+                return registerId !== undefined && this.validSeen.has(registerId);
+            },
+            publish: (id: string, value: string | number | boolean | null) => this.put(id, { val: value, ack: true }),
+            setSensors: (sensors: WebSensor[]) => {
+                this.webSensors = sensors;
+            },
+        };
+        if (family === 'nav10') {
+            const client = new Nav10Client({
+                host: this.config.host,
+                port: settings.port,
+                pin: settings.pin,
+                timeoutMs,
+            });
+            this.nav10 = new Nav10Runner(common, client, settings.intervalMs);
+            await this.nav10.start();
+            return;
+        }
+        const client = new WebClient({ host: this.config.host, port: settings.port, pin: settings.pin, timeoutMs });
         const rename = (id: string, name: string): void => {
             void this.getObjectAsync(id)
                 .then(async object => {
@@ -461,51 +514,18 @@ class IdmModbus extends utils.Adapter {
         };
         this.web = new WebRunner(
             {
+                ...common,
                 now: () => Date.now(),
-                log: this.log,
-                timers: {
-                    setInterval: (cb, ms) => this.setInterval(cb, ms),
-                    clearInterval: handle => this.clearInterval(handle as ioBroker.Interval | undefined),
-                },
                 getData: name => client.getData(name),
-                sleep: ms => new Promise<void>(resolve => void this.setTimeout(resolve, ms)),
-                createObjects: async planned => {
-                    for (const { id, object } of planned) {
-                        await this.extendObject(id, object);
-                    }
-                },
-                existingIds: async prefix => {
-                    const start = `${this.namespace}.${prefix}.`;
-                    const list = await this.getObjectListAsync({ startkey: start, endkey: `${start}\u9999` });
-                    return list.rows.map(row => row.id.slice(this.namespace.length + 1));
-                },
-                removeObjects: async ids => {
-                    for (const id of ids) {
-                        this.hub.delete(id);
-                        await this.delObjectAsync(id).catch(() => undefined);
-                        await this.delStateAsync(id).catch(() => undefined);
-                    }
-                },
-                hasModbusValue: tag => {
-                    const registerId = tagRegisters.get(tag);
-                    return registerId !== undefined && this.validSeen.has(registerId);
-                },
                 hasModbusRoom: (zone, room) => this.validSeen.has(`zm${zone}_room${room}_temp`),
-                publish: (id, value) => this.put(id, { val: value, ack: true }),
                 setRoomName: (zone, room, name) => rename(`zones.${zone}.rooms.${room}`, name),
-                setWebFacts: facts => {
-                    this.webFacts = facts;
-                },
                 setCircuitName: (letter, name) => {
                     if (!userCircuitNames[letter]) {
                         rename(`hc.${letter}`, name);
                     }
                 },
             },
-            {
-                intervalMs: settings.intervalMs,
-                statisticsIntervalMs: settings.statisticsIntervalMs,
-            },
+            { intervalMs: settings.intervalMs, statisticsIntervalMs: settings.statisticsIntervalMs },
         );
         await this.web.start();
     }
@@ -1566,6 +1586,8 @@ class IdmModbus extends utils.Adapter {
                 this.diagram = null;
                 this.web?.stop();
                 this.web = null;
+                this.nav10?.stop();
+                this.nav10 = null;
                 this.glt?.stop();
                 this.glt = null;
                 this.rooms?.stop();

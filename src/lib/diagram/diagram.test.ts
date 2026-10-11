@@ -10,6 +10,7 @@ import { loadRegisters } from '../registers/plant';
 import type { RegisterEntry } from '../registers/types';
 import { stateIdFor } from '../state-model';
 import { ioKey } from '../web/io';
+import { circuitTags, modbusTagRegisters } from './sensors';
 import { buildDiagramModel, DIAGRAM_STATE_IDS, DIAGRAM_TEXTS, type DiagramInput } from './model';
 import { DiagramServer } from './server';
 
@@ -82,8 +83,8 @@ describe('diagram model', () => {
                 setpoint: null,
                 active: null,
                 room: null,
-                flowTag: '',
-                roomTag: '',
+                flowTag: 'B52',
+                roomTag: 'B62',
             },
         ]);
         expect(model.labels.outdoor).to.equal('Außen');
@@ -94,6 +95,16 @@ describe('diagram model', () => {
         const model = buildDiagramModel(input({ 'hp.heat_sink_flow_temp': 34, 'hp.heat_sink_return_temp': 29 }));
         expect(model.ids.hpFlow).to.equal('hp.heat_sink_flow_temp');
         expect(model.ids.hpReturn).to.equal('hp.heat_sink_return_temp');
+    });
+
+    it('names the circuit sensors B51-B57 and B61-B67 and knows their registers', () => {
+        expect(circuitTags('A')).to.deep.equal({ flow: 'B51', room: 'B61' });
+        expect(circuitTags('D')).to.deep.equal({ flow: 'B54', room: 'B64' }); // verified live at a Navigator 10 by Xerolux
+        expect(circuitTags('G')).to.deep.equal({ flow: 'B57', room: 'B67' });
+        expect(circuitTags('H')).to.equal(null);
+        const registers = modbusTagRegisters(loadRegisters('nav20') as RegisterEntry[]);
+        expect(registers.get('B52')).to.equal('hc_b_flow_temp');
+        expect(registers.get('B33')).to.equal('hp_flow_temp');
     });
 
     it('finds the storage temperature where Navigator 1.x keeps it', () => {

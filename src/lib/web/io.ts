@@ -148,37 +148,6 @@ export function parseIo(settings: unknown): Partial<Record<IoGroup, IoItem[]>> {
     return result;
 }
 
-/** A sensor of a heating circuit as the sensor table names it (`Vorlauftemperatur HK B`): its circuit and its IDM tag. */
-export interface CircuitSensorTag {
-    /** circuit letter A-G */
-    letter: string;
-    /** flow or room temperature */
-    kind: 'flow' | 'room';
-    /** IDM tag, e.g. B51 */
-    tag: string;
-}
-
-/**
- * Find the flow and room sensors of the heating circuits in the sensor table (the Navigator names them `Vorlauftemperatur HK A`
- * and `Raumtemperatur HK A` in German). Another device language simply finds none.
- *
- * @param items the rows of the sensor table
- */
-export function circuitSensorTags(items: readonly IoItem[]): CircuitSensorTag[] {
-    const found: CircuitSensorTag[] = [];
-    for (const item of items) {
-        const match = /^(vorlauftemperatur|raumtemperatur) hk ([a-g])$/i.exec(item.name);
-        if (match && item.tag) {
-            found.push({
-                letter: match[2].toUpperCase(),
-                kind: match[1].toLowerCase() === 'vorlauftemperatur' ? 'flow' : 'room',
-                tag: item.tag,
-            });
-        }
-    }
-    return found;
-}
-
 const UMLAUTS: Record<string, string> = { ä: 'ae', ö: 'oe', ü: 'ue', ß: 'ss' };
 
 /**
@@ -213,14 +182,6 @@ export interface WebSensor {
     name: LocalizedText | string;
     /** unit */
     unit: string;
-}
-
-/** What the sensor table tells the diagram: the sensors and the flow/room sensor tags of the heating circuits. */
-export interface WebFacts {
-    /** IDM tags of the flow and room sensor per circuit letter */
-    circuitTags: Record<string, { flow?: string; room?: string }>;
-    /** the tagged sensors */
-    sensors: WebSensor[];
 }
 
 /** The planned objects and current values of the input/output states. */
