@@ -61,6 +61,10 @@ This is an independent community project. IDM and Navigator are trademarks of th
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.3 (2026-10-12)
+
+- (SeaSpotter) diagram: the return pipe flows from the storage to the heat pump, the water pipes move with the charging pump M73 or the flow sensor B2, heat pump power with one decimal, fresh water station moved right and up
+
 ### 0.1.2 (2026-10-11)
 
 - (SeaSpotter) fix: texts the adapter writes into states (scan status, fault texts, operating modes) now follow the system language instead of always being English
