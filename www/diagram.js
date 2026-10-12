@@ -14,6 +14,7 @@
     var TAG = {
         outdoor: 'B32',
         hgl: 'B35',
+        flowRate: 'B2',
         hpFlow: 'B33',
         hpReturn: 'B34',
         dhwTop: 'B48',
@@ -512,9 +513,15 @@
         }
         var hasTank = levels.length > 0;
         var hpRight = L.hp.x + L.hp.w;
+        /* the water moves while the charging pump M73 or the flow sensor B2 says so (the pump runs on after the compressor stops);
+           the hot gas line only carries heat while the compressor runs */
+        var flowRate = sensorByTag(m, TAG.flowRate);
+        var water = [ids.pumpM73, flowRate && flowRate.id].filter(Boolean);
+        var waterActive = water.length ? water : ids.compressor;
         var pipes = [
-            { y: g.yFlow, id: ids.hpFlow, tag: TAG.hpFlow },
-            { y: g.yRet, id: ids.hpReturn, tag: TAG.hpReturn },
+            { y: g.yFlow, id: ids.hpFlow, tag: TAG.hpFlow, active: waterActive },
+            // the return flows from the storage back to the heat pump
+            { y: g.yRet, id: ids.hpReturn, tag: TAG.hpReturn, active: waterActive, back: true },
         ];
         if (hasTank) {
             var title =
@@ -534,13 +541,15 @@
                 m.parts.solar ? L.solar.reserve : 0,
             );
             if (ids.hgl) {
-                pipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl });
+                pipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl, active: ids.compressor });
             }
         }
         var chipX = hasTank ? (hpRight + L.tank.x) / 2 : hpRight + 80;
         pipes.forEach(function (p) {
             if (hasTank) {
-                hline(view.pipes, hpRight, L.tank.x + L.tank.pipeInset, p.y, p.id, ids.compressor);
+                var tankSide = L.tank.x + L.tank.pipeInset;
+                // a pipe flows from its first to its last point, so the return is drawn from the storage to the heat pump
+                hline(view.pipes, p.back ? tankSide : hpRight, p.back ? hpRight : tankSide, p.y, p.id, p.active);
             }
             tagChip(view.parts, chipX, p.y, p.id, p.tag);
         });
