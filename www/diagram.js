@@ -36,7 +36,7 @@
         pipeGap: 100, // between hot gas line, flow and return pipe
         circuit: { x: 980, w: 196, h: 170, gap: 28, pipeDy: 40, manifold: 60 },
         room: { w: 114, h: 52, gap: 8 },
-        station: { y: 150, w: 124, h: 134, hxW: 70, hxH: 70 },
+        station: { y: 128, w: 124, h: 134, hxW: 70, hxH: 70, gap: 48 }, // gap: from the storage to the station card
         solar: { sensorGap: 40, reserve: 110 }, // reserve: room at the bottom of the tank for the solar coil
         cards: { wrap: 1000, w: 310, gap: 330, rowH: 44 },
         tile: { w: 176, h: 62, gap: 12 },
@@ -439,7 +439,7 @@
                 };
             });
         return [
-            { label: m.labels.power, id: m.ids.power, decimals: 2, unit: 'kW' },
+            { label: m.labels.power, id: m.ids.power, decimals: 1, unit: 'kW' },
             { label: m.labels.cop, id: m.ids.cop, decimals: 1, unit: '' },
         ]
             .concat(sensors)
@@ -639,7 +639,7 @@
         var m = view.m;
         var ids = m.ids;
         var s = L.station;
-        var x = L.tank.x + L.tank.w + 12;
+        var x = L.tank.x + L.tank.w + s.gap;
         var y = s.y;
         var hxX = x + 22;
         var hxY = y + 20;
