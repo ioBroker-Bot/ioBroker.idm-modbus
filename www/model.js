@@ -25,6 +25,8 @@
         hpMode: ['hp.hp_operating_mode'],
         compressor: ['hp.compressor_status_1'],
         power: ['energy.power_consumption_hp'],
+        // the heat output (Navigator 1.7 has the instantaneous total instead of the flow sensor value)
+        thermalPower: ['energy.thermal_power_flow_sensor', 'energy.thermal_power_total'],
         copInternal: ['calc.cop_internal'],
         copExternal: ['calc.cop_external'],
         buffer: ['dhw.storage_temp', 'hp.storage_temp'],
