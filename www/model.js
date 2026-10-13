@@ -20,6 +20,8 @@
         hpFlow: ['hp.hp_flow_temp', 'hp.heat_sink_flow_temp'],
         hpReturn: ['hp.hp_return_temp', 'hp.heat_sink_return_temp'],
         hgl: ['hp.hgl_flow_temp'],
+        // the mixer M71 sends heat through the hot gas line while it is open (above 0 V)
+        hglMixer: ['web.io.analog_out.m71'],
         hpMode: ['hp.hp_operating_mode'],
         compressor: ['hp.compressor_status_1'],
         power: ['energy.power_consumption_hp'],
