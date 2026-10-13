@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.5",
+        "version": "0.1.6",
         "news": {
+            "0.1.6": {
+                "en": "diagram: the pump circle turns green while it runs, M71 and the fan M13 in the heat pump box as percent, the hot gas line moves only while M71 is open and the water moves, larger display",
+                "de": "Diagramm: Der Pumpenkreis wird grün während er läuft, M71 und der Ventilator M13 im Wärmepumpenkasten in Prozent, die Heißgasleitung bewegt sich nur solange M71 geöffnet ist und das Wasser bewegt, größere Anzeige",
+                "ru": "диаграмма: кружок насоса становится зеленым во время работы, M71 и вентилятор M13 в блоке теплового насоса в процентах, линия горячего газа движется только тогда, когда M71 открыт, и движется вода, увеличенный дисплей",
+                "pt": "diagrama: o círculo da bomba fica verde enquanto funciona, M71 e o ventilador M13 na caixa da bomba de calor como percentagem, a linha de gás quente move-se apenas enquanto M71 está aberta e a água se move, display maior",
+                "nl": "diagram: de pompcirkel wordt groen terwijl deze draait, M71 en de ventilator M13 in de warmtepompbox als percentage, de heetgasleiding beweegt alleen als M71 open is en het water beweegt, groter display",
+                "fr": "schéma : le cercle de la pompe devient vert pendant qu'elle fonctionne, M71 et le ventilateur M13 dans le boîtier de la pompe à chaleur en pourcentage, la conduite de gaz chaud bouge uniquement lorsque M71 est ouvert et que l'eau bouge, affichage plus grand",
+                "it": "diagramma: il cerchio della pompa diventa verde mentre è in funzione, M71 e il ventilatore M13 nel box della pompa di calore in percentuale, la linea del gas caldo si muove solo mentre M71 è aperta e l'acqua si muove, display più grande",
+                "es": "diagrama: el círculo de la bomba se vuelve verde mientras está funcionando, M71 y el ventilador M13 en la caja de la bomba de calor como porcentaje, la línea de gas caliente se mueve solo mientras M71 está abierta y el agua se mueve, pantalla más grande",
+                "pl": "wykres: koło pompy zmienia kolor na zielony podczas pracy, M71 i wentylator M13 w skrzynce pompy ciepła w procentach, przewód gorącego gazu porusza się tylko wtedy, gdy M71 jest otwarty i woda się porusza, większy wyświetlacz",
+                "uk": "діаграма: круг насоса стає зеленим під час роботи, M71 і вентилятор M13 у коробці теплового насоса у відсотках, лінія гарячого газу рухається лише тоді, коли M71 відкритий і вода рухається, більший дисплей",
+                "zh-cn": "图：运行时泵圈变绿，热泵箱内的M71和风扇M13为百分比，仅当M71打开时热气管路才移动，水移动，大显示"
+            },
             "0.1.5": {
                 "en": "diagram: pump symbols (green running, grey off), mixer status of M71 and M41, the hot gas line moves with its mixer M71",
                 "de": "Diagramm: Pumpensymbole (grün läuft, grau aus), Mischerstatus von M71 und M41, die Heißgasleitung bewegt sich mit ihrem Mischer M71",
@@ -54,19 +67,6 @@
                 "pl": "Stany w postaci zwykłego tekstu są zgodne z językiem systemu (status skanowania, teksty usterek, tryby pracy), wybierz jednostkę ceny (waluta lub cent za kWh) i współczynnika CO2 (g lub kg na kWh), status skanowania obok postępu",
                 "uk": "текстові стани слідують за системною мовою (статус сканування, тексти помилок, режими роботи), виберіть одиницю ціни (валюта або цент за кВт-год) і коефіцієнт CO2 (г або кг за кВт-год), статус сканування поруч із прогресом",
                 "zh-cn": "纯文本状态遵循系统语言（扫描状态、故障文本、操作模式），选择价格单位（货币或美分每千瓦时）和二氧化碳系数（克或千克每千瓦时），扫描进度旁边的状态"
-            },
-            "0.1.1": {
-                "en": "maintenance: web adapter noted as requirement of the diagram, consistent German names, safer translation tooling",
-                "de": "Wartung: Web-Adapter als Anforderung des Diagramms vermerkt, konsistente deutsche Namen, sicherere Übersetzungstools",
-                "ru": "обслуживание: веб-адаптер отмечен как требование схемы, согласованные немецкие имена, более безопасные инструменты перевода",
-                "pt": "manutenção: adaptador web indicado como requisito do diagrama, nomes alemães consistentes, ferramentas de tradução mais seguras",
-                "nl": "onderhoud: webadapter vermeld als vereiste in het diagram, consistente Duitse namen, veiliger vertaaltools",
-                "fr": "maintenance : adaptateur Web noté comme exigence du diagramme, noms allemands cohérents, outils de traduction plus sûrs",
-                "it": "manutenzione: adattatore web indicato come requisito del diagramma, nomi tedeschi coerenti, strumenti di traduzione più sicuri",
-                "es": "mantenimiento: adaptador web indicado como requisito del diagrama, nombres alemanes consistentes, herramientas de traducción más seguras",
-                "pl": "konserwacja: adapter sieciowy wskazany jako wymóg diagramu, spójne nazwy niemieckie, bezpieczniejsze narzędzia do tłumaczenia",
-                "uk": "технічне обслуговування: веб-адаптер зазначено як вимогу до діаграми, послідовні німецькі назви, безпечніший інструмент перекладу",
-                "zh-cn": "维护：根据图表要求标注网络适配器、一致的德语名称、更安全的翻译工具"
             }
         },
         "titleLang": {
