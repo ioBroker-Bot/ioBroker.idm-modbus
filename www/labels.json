@@ -64,6 +64,32 @@
         "uk": "КОП (COP)",
         "zh-cn": "COP（能效比）"
     },
+    "copInternal": {
+        "en": "COP (Navigator)",
+        "de": "COP (Navigator)",
+        "ru": "COP (Navigator)",
+        "pt": "COP (Navigator)",
+        "nl": "COP (Navigator)",
+        "fr": "COP (Navigator)",
+        "it": "COP (Navigator)",
+        "es": "COP (Navigator)",
+        "pl": "COP (Navigator)",
+        "uk": "COP (Navigator)",
+        "zh-cn": "COP（Navigator）"
+    },
+    "copExternal": {
+        "en": "COP (external meter)",
+        "de": "COP (externer Zähler)",
+        "ru": "COP (внешний счётчик)",
+        "pt": "COP (medidor externo)",
+        "nl": "COP (externe meter)",
+        "fr": "COP (compteur externe)",
+        "it": "COP (contatore esterno)",
+        "es": "COP (medidor externo)",
+        "pl": "COP (licznik zewnętrzny)",
+        "uk": "COP (зовнішній лічильник)",
+        "zh-cn": "COP（外部仪表）"
+    },
     "heatPump": {
         "en": "Heat pump",
         "de": "Wärmepumpe",

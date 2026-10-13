@@ -1,5 +1,6 @@
 import {
     DEFAULT_CO2_G_PER_KWH,
+    DIAGRAM_COP_SOURCES,
     DIAGRAM_PARTS,
     MAX_DIAGRAM_ZONE,
     DEFAULT_DAILY_WRITE_WARN,
@@ -764,6 +765,8 @@ export function readBoostSettings(config: Partial<ioBroker.AdapterConfig>): Boos
 export interface DiagramSettings {
     /** 'air' or 'ground'; left out for automatic detection */
     heatSource?: 'air' | 'ground';
+    /** the COP shown in the heat pump box; left out for the default (the Navigator's) */
+    cop?: 'external' | 'both' | 'none';
     /** parts the user does not want to see */
     hidden: string[];
     /** which heating circuit the rooms of a zone module stand next to (a zone without an entry follows its number) */
@@ -805,8 +808,16 @@ export function readDiagramSettings(config: Partial<ioBroker.AdapterConfig>): {
         }
     }
     const source = config.diagramHeatSource;
+    const cop = (DIAGRAM_COP_SOURCES as readonly string[]).includes(String(config.diagramCop))
+        ? (config.diagramCop as (typeof DIAGRAM_COP_SOURCES)[number])
+        : 'internal';
     return {
-        settings: { ...(source === 'air' || source === 'ground' ? { heatSource: source } : {}), hidden, zoneCircuit },
+        settings: {
+            ...(source === 'air' || source === 'ground' ? { heatSource: source } : {}),
+            ...(cop !== 'internal' ? { cop } : {}),
+            hidden,
+            zoneCircuit,
+        },
         warnings,
     };
 }

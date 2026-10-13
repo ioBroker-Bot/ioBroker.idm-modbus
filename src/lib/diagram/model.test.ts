@@ -22,6 +22,7 @@ interface Model {
     labels: Record<string, string>;
 }
 interface Settings {
+    cop?: string;
     heatSource?: string;
     hidden?: string[];
     zoneCircuit?: { zone: number; circuit: string }[];
@@ -242,5 +243,21 @@ describe('diagram labels', () => {
 
     it('knows the same hideable parts as the adapter settings', () => {
         expect(diagram.PARTS).to.deep.equal([...DIAGRAM_PARTS]);
+    });
+
+    it('takes the COP from the Navigator, the external meters, both or none', () => {
+        const states = { 'calc.cop_internal': 6.2, 'calc.cop_external': 4.8 };
+        expect(build(states).ids).to.deep.include({ cop: 'calc.cop_internal', cop2: null });
+        expect(build(states, { settings: { cop: 'external' } }).ids).to.deep.include({
+            cop: 'calc.cop_external',
+            cop2: null,
+        });
+        expect(build(states, { settings: { cop: 'both' } }).ids).to.deep.include({
+            cop: 'calc.cop_internal',
+            cop2: 'calc.cop_external',
+        });
+        expect(build(states, { settings: { cop: 'none' } }).ids.cop).to.equal(null);
+        // no value, no row
+        expect(build({ 'calc.cop_internal': 6.2 }, { settings: { cop: 'both' } }).ids.cop2).to.equal(null);
     });
 });

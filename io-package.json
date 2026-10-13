@@ -222,6 +222,7 @@
         "boostTargetC": 55,
         "boostMaxMinutes": 60,
         "diagramHeatSource": "auto",
+        "diagramCop": "internal",
         "diagramHidden": [],
         "diagramZoneCircuit": [],
         "webEnabled": false,

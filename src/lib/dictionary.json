@@ -7018,5 +7018,29 @@
         "pl": "Pliki wsparcia",
         "uk": "Файли підтримки",
         "zh-cn": "支持文件"
+    },
+    "COP (Navigator)": {
+        "de": "COP (Navigator)",
+        "ru": "COP (Navigator)",
+        "pt": "COP (Navigator)",
+        "nl": "COP (Navigator)",
+        "fr": "COP (Navigator)",
+        "it": "COP (Navigator)",
+        "es": "COP (Navigator)",
+        "pl": "COP (Navigator)",
+        "uk": "COP (Navigator)",
+        "zh-cn": "COP（Navigator）"
+    },
+    "COP (external meter)": {
+        "de": "COP (externer Zähler)",
+        "ru": "COP (внешний счётчик)",
+        "pt": "COP (medidor externo)",
+        "nl": "COP (externe meter)",
+        "fr": "COP (compteur externe)",
+        "it": "COP (contatore esterno)",
+        "es": "COP (medidor externo)",
+        "pl": "COP (licznik zewnętrzny)",
+        "uk": "COP (зовнішній лічильник)",
+        "zh-cn": "COP（外部仪表）"
     }
 }

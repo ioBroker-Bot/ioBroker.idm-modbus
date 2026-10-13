@@ -259,6 +259,13 @@ describe('readDiagramSettings', () => {
         });
         expect(warnings).to.have.length(4);
     });
+    it('reads the COP source and leaves the default out', () => {
+        expect(readDiagramSettings({ diagramCop: 'internal' }).settings.cop).to.equal(undefined);
+        expect(readDiagramSettings({ diagramCop: 'both' }).settings.cop).to.equal('both');
+        expect(readDiagramSettings({ diagramCop: 'external' }).settings.cop).to.equal('external');
+        expect(readDiagramSettings({ diagramCop: 'none' }).settings.cop).to.equal('none');
+        expect(readDiagramSettings({ diagramCop: 'average' }).settings.cop).to.equal(undefined);
+    });
     it('survives values of the wrong type', () => {
         const wrong = { diagramHidden: '', diagramZoneCircuit: 'x' } as unknown as Partial<ioBroker.AdapterConfig>;
         expect(readDiagramSettings(wrong).settings).to.deep.equal({ hidden: [], zoneCircuit: [] });
