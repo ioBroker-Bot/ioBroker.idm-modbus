@@ -31,6 +31,7 @@
     var L = {
         originX: 170, // the drawing is shifted right by this much: room for the outdoor value left of the heat pump
         minWidth: 1170,
+        displayScale: 1.35, // the page shows the drawing at this size (a larger window does not stretch it further)
         marginRight: 24,
         outdoorX: -150,
         hp: { x: -20, w: 330, minH: 270, rowGap: 50, iconSize: 96 },
@@ -215,7 +216,7 @@
     function badge(parent, x, y, tag, id, showPercent) {
         var r = 7;
         var cy = y - 4;
-        el('circle', { cx: x + r, cy: cy, r: r, class: 'pumpbody smallpump' }, parent);
+        var body = el('circle', { cx: x + r, cy: cy, r: r, class: 'pumpbody smallpump' }, parent);
         var k = r / 26;
         var arrow = el(
             'path',
@@ -229,6 +230,7 @@
         bind(id, function (v) {
             var on = isRunning(v);
             arrow.style.fill = on ? 'var(--good)' : 'var(--muted)';
+            body.style.stroke = on ? 'var(--good)' : 'var(--muted)';
             label.textContent = `${tag} ${on ? (showPercent ? `${Math.round(v)} %` : view.m.labels.on) : view.m.labels.off}`;
         });
     }
@@ -253,10 +255,14 @@
             label.textContent = `${tag} ${info.text}`;
         });
     }
-    /* M71, the hot gas mixer: an analog output in volts */
+    /* an analog output of 0 to 10 V is 0 to 100 % (the hot gas mixer M71, the fan M13) */
+    function percentOfVolts(v) {
+        var n = num(v);
+        return n === null ? '–' : fmt(n * 10, 0, '%');
+    }
     function describeVoltage(v) {
         var n = num(v);
-        return { text: n === null ? '–' : fmt(n, 1, 'V'), active: n !== null && n > 0 };
+        return { text: percentOfVolts(v), active: n !== null && n > 0 };
     }
     /* M41, the heating circuit mixer: the Navigator reports a text (German "Aus" while it does not move) */
     function describeMixerText(v) {
@@ -372,7 +378,7 @@
             { d: `M${cx - 40 * k} ${cy} H${cx - 26 * k} M${cx + 26 * k} ${cy} H${cx + 40 * k}`, class: 'pumpstub' },
             parent,
         );
-        el('circle', { cx: cx, cy: cy, r: 26 * k, class: 'pumpbody' }, parent);
+        var body = el('circle', { cx: cx, cy: cy, r: 26 * k, class: 'pumpbody' }, parent);
         var arrow = el(
             'path',
             {
@@ -383,6 +389,7 @@
         );
         whenRunning(pumpIds, function (running) {
             arrow.style.fill = running ? 'var(--good)' : 'var(--muted)';
+            body.style.stroke = running ? 'var(--good)' : 'var(--muted)';
             stubs.classList.toggle('flowing', running);
         });
     }
@@ -551,6 +558,16 @@
         if (ids.pumpM73) {
             badge(parts, x + 16, statusY, 'M73', ids.pumpM73, true);
         }
+        /* the hot gas mixer and the fan next to the pump; both are 0-10 V outputs shown as 0-100 % */
+        if (ids.hglMixer) {
+            mixerBadge(parts, x + 120, statusY, 'M71', ids.hglMixer, describeVoltage);
+        }
+        if (ids.fanM13) {
+            var fanLabel = text(parts, x + 232, statusY, 'M13 –', 'small');
+            bind(ids.fanM13, function (v) {
+                fanLabel.textContent = `M13 ${percentOfVolts(v)}`;
+            });
+        }
         /* brine / intermediate circuit pump M16 and heat source / groundwater pump M15 */
         [
             ['M16', ids.pumpBrine],
@@ -624,9 +641,6 @@
         }
         var chipX = hasTank ? (hpRight + L.tank.x) / 2 : hpRight + 80;
         pipes.forEach(function (p) {
-            if (hasTank && ids.hglMixer && p.id === ids.hgl) {
-                mixerBadge(view.parts, hpRight + 12, p.y - 14, 'M71', ids.hglMixer, describeVoltage);
-            }
             if (hasTank) {
                 var tankSide = L.tank.x + L.tank.pipeInset;
                 // a pipe flows from its first to its last point, so the return is drawn from the storage to the heat pump
@@ -942,6 +956,7 @@
         }
         var width = Math.max(L.minWidth, circuits.maxRight + L.originX + L.marginRight);
         svg.setAttribute('viewBox', `0 0 ${width} ${bottom + 20}`);
+        svg.style.maxWidth = `${Math.round(width * L.displayScale)}px`;
         applyAll();
     }
 
