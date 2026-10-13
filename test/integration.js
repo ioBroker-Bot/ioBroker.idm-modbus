@@ -216,7 +216,15 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const running = await waitForState(harness, 'diag.scanRunning', 20000, true);
                 expect(running.val).to.equal(true);
-                expect(harness.hasLog(/Scan started: reading \d+ registers/, 'info')).to.equal(true);
+                // the log line can arrive a moment after the state (slow runners), so wait for it
+                let logged = false;
+                for (let i = 0; i < 50 && !logged; i++) {
+                    logged = harness.hasLog(/Scan started: reading \d+ registers/, 'info');
+                    if (!logged) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                }
+                expect(logged).to.equal(true);
                 // polling is paused while the scan owns the single connection
                 await waitForState(harness, 'info.connection', 10000, false);
                 expect(harness.getLogs('error').map(l => l.raw)).to.deep.equal([]);
