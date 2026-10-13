@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "news": {
+            "0.1.5": {
+                "en": "diagram: pump symbols (green running, grey off), mixer status of M71 and M41, the hot gas line moves with its mixer M71",
+                "de": "Diagramm: Pumpensymbole (grün läuft, grau aus), Mischerstatus von M71 und M41, die Heißgasleitung bewegt sich mit ihrem Mischer M71",
+                "ru": "диаграмма: символы насоса (зеленый работает, серый выключен), состояние смесителя M71 и M41, линия горячего газа движется вместе со смесителем M71.",
+                "pt": "diagrama: símbolos da bomba (verde em funcionamento, cinza apagado), status do misturador M71 e M41, a linha de gás quente se move com seu misturador M71",
+                "nl": "diagram: pompsymbolen (groen actief, grijs uit), mengerstatus van M71 en M41, de heetgasleiding beweegt mee met zijn menger M71",
+                "fr": "schéma : symboles de la pompe (vert en marche, gris éteint), état du mélangeur M71 et M41, la conduite de gaz chauds se déplace avec son mélangeur M71",
+                "it": "schema: simboli pompa (verde accesa, grigio spenta), stato del miscelatore M71 e M41, la linea del gas caldo si muove con il relativo miscelatore M71",
+                "es": "diagrama: símbolos de la bomba (verde funcionando, gris apagado), estado del mezclador de M71 y M41, la línea de gas caliente se mueve con su mezclador M71",
+                "pl": "schemat: symbole pompy (zielona pracuje, szara wyłączona), stan mieszacza M71 i M41, przewód gorącego gazu porusza się wraz z mieszaczem M71",
+                "uk": "діаграма: символи насоса (зелений працює, сірий не світиться), стан змішувача M71 і M41, лінія гарячого газу рухається разом із змішувачем M71",
+                "zh-cn": "示意图：泵符号（绿色运行，灰色关闭），M71 和 M41 的混合器状态，热气管线与其混合器 M71 一起移动"
+            },
             "0.1.4": {
                 "en": "diagram: long labels fit, wider boxes, the dashes of the circuit pipes run through the junction, the COP appears without reloading, choose the COP shown (Navigator, external meters, both)",
                 "de": "Diagramm: Lange Beschriftungen passen, breitere Kästchen, die Striche der Leitungen des Stromkreises verlaufen durch die Verbindungsstelle, der COP erscheint ohne Neuladen, wählen Sie den angezeigten COP (Navigator, externe Zähler, beides)",
@@ -54,19 +67,6 @@
                 "pl": "konserwacja: adapter sieciowy wskazany jako wymóg diagramu, spójne nazwy niemieckie, bezpieczniejsze narzędzia do tłumaczenia",
                 "uk": "технічне обслуговування: веб-адаптер зазначено як вимогу до діаграми, послідовні німецькі назви, безпечніший інструмент перекладу",
                 "zh-cn": "维护：根据图表要求标注网络适配器、一致的德语名称、更安全的翻译工具"
-            },
-            "0.1.0": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "uk": "Початкова версія",
-                "zh-cn": "首次出版"
             }
         },
         "titleLang": {

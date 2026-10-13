@@ -61,6 +61,11 @@ This is an independent community project. IDM and Navigator are trademarks of th
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.5 (2026-10-13)
+
+- (SeaSpotter) diagram: pumps (M73, M22, M31, source pumps) as a small pump symbol, green while running and grey while off
+- (SeaSpotter) diagram: status of the hot gas mixer M71 and of the mixer M41 of heating circuit A; the hot gas line moves while M71 is open
+
 ### 0.1.4 (2026-10-13)
 
 - (SeaSpotter) diagram: long labels fit instead of being cut off, wider heat pump box and heating circuit card, the dashes of the circuit pipes run through the junction, a value that appears after the page was opened (the COP) shows without reloading
