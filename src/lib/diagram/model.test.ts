@@ -228,6 +228,13 @@ describe('diagram model', () => {
             }
         }
     });
+
+    it('finds the hot gas mixer M71 of the web interface', () => {
+        expect(build({ 'hp.hgl_flow_temp': 48, 'web.io.analog_out.m71': 0 }).ids.hglMixer).to.equal(
+            'web.io.analog_out.m71',
+        );
+        expect(build({ 'hp.hgl_flow_temp': 48 }).ids.hglMixer).to.equal(null);
+    });
 });
 
 describe('diagram labels', () => {

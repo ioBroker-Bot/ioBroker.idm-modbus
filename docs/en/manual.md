@@ -137,7 +137,7 @@ The diagram is a live picture of your plant on a web page. It is drawn from the 
 - **Solar thermal** (bottom left, when the plant has it): the collector (B73), a coil in the storage, charging (B74) and return (B75) on their pipes, further solar sensors in the box.
 - **Energy tiles** (bottom): photovoltaics, battery, surplus, house and heat pump power. They are not tied to the heat pump.
 
-**Colours and movement.** Flow pipes and their sensors are orange, return pipes and theirs are blue; the storage fades from hot (top) to cold (bottom). Pipes move while something runs: the heat pump's flow and return pipes while the charging pump M73 runs or the flow sensor B2 reports a flow (the return moves from the storage to the heat pump), the hot gas line while the compressor runs, a circuit's pipes while it runs, the station while hot water is drawn.
+**Colours and movement.** Flow pipes and their sensors are orange, return pipes and theirs are blue; the storage fades from hot (top) to cold (bottom). Pipes move while something runs: the heat pump's flow and return pipes while the charging pump M73 runs or the flow sensor B2 reports a flow (the return moves from the storage to the heat pump), the hot gas line while its mixer M71 is open (above 0 V; without that value while the compressor runs), a circuit's pipes while it runs, the station while hot water is drawn.
 
 **Where the values come from.** Mostly from Modbus. A few exist only in the web interface (the flow rate B2, the hot water flow switch B1, the pump M22, the fan voltage M13, the pump M31): switch on _Web interface_ and enter the display PIN to see them. Where Modbus and the web interface both deliver a value, Modbus is used.
 

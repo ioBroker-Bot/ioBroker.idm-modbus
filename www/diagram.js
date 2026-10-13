@@ -549,7 +549,7 @@
         var hasTank = levels.length > 0;
         var hpRight = L.hp.x + L.hp.w;
         /* the water moves while the charging pump M73 or the flow sensor B2 says so (the pump runs on after the compressor stops);
-           the hot gas line only carries heat while the compressor runs */
+           the hot gas line only carries heat while its mixer M71 is open (the compressor if the plant has no M71 value) */
         var flowRate = sensorByTag(m, TAG.flowRate);
         var water = [ids.pumpM73, flowRate && flowRate.id].filter(Boolean);
         var waterActive = water.length ? water : ids.compressor;
@@ -576,7 +576,7 @@
                 m.parts.solar ? L.solar.reserve : 0,
             );
             if (ids.hgl) {
-                pipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl, active: ids.compressor });
+                pipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl, active: ids.hglMixer || ids.compressor });
             }
         }
         var chipX = hasTank ? (hpRight + L.tank.x) / 2 : hpRight + 80;
