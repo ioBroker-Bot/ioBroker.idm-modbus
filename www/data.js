@@ -55,7 +55,7 @@
      *
      * @param options `instance` (instance number) and `origin` (address of the web adapter when the page is not served by it)
      * @param handlers `onSnapshot({ states, objects, settings, language })` after every (re)connect and when the objects changed,
-     *   `onState(id, value)` for every change, `onConnection(connected, message)`
+     *   `onState(id, value, before)` for every change (`before` is the value it replaces), `onConnection(connected, message)`
      */
     function connect(options, handlers) {
         var origin = options.origin || '';
@@ -160,13 +160,14 @@
                 if (!objects[rel] && rel !== 'info.connection') {
                     refreshObjects();
                 }
+                var before = states[rel];
                 states[rel] = state ? state.val : null;
                 if (rel === 'diagram.settings') {
                     settings = parseSettings(states[rel]);
                     handlers.onSnapshot({ states: states, objects: objects, settings: settings, language: language });
                     return;
                 }
-                handlers.onState(rel, states[rel]);
+                handlers.onState(rel, states[rel], before);
             });
         });
         start.catch(function (error) {

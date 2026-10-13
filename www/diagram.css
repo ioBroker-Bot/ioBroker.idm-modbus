@@ -113,9 +113,13 @@ svg {
     stroke-dasharray: 10 12;
     animation: flow 1.1s linear infinite;
 }
+/* the start position (--phase) lets a branch continue the dashes of the pipe it joins; one period moves the dashes on by 22 */
 @keyframes flow {
+    from {
+        stroke-dashoffset: var(--phase, 0px);
+    }
     to {
-        stroke-dashoffset: -22;
+        stroke-dashoffset: calc(var(--phase, 0px) - 22px);
     }
 }
 .fan {

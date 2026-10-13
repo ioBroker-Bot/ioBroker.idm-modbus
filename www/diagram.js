@@ -4,6 +4,7 @@
 
     var SVG_NS = 'http://www.w3.org/2000/svg';
     var REBUILD_DELAY_MS = 500;
+    var DASH_PERIOD = 22; // dash and gap of a flowing pipe, see diagram.css
     var NARROW_SPACE = String.fromCharCode(0x202f);
     var IDLE_COLOR = '#9aa5b1';
     /* flow pipes and their sensors are always warm, return ones always cold; anything else follows its temperature */
@@ -32,10 +33,10 @@
         minWidth: 1170,
         marginRight: 24,
         outdoorX: -150,
-        hp: { x: -20, w: 280, minH: 270, rowGap: 50, iconSize: 96 },
+        hp: { x: -20, w: 330, minH: 270, rowGap: 50, iconSize: 96 },
         tank: { x: 520, w: 150, top: 80, h: 460, hSolar: 540, radius: 58, levelInset: 56, levelH: 30, pipeInset: 12 },
         pipeGap: 100, // between hot gas line, flow and return pipe
-        circuit: { x: 980, w: 196, h: 170, gap: 28, pipeDy: 40, manifold: 60 },
+        circuit: { x: 980, w: 216, h: 170, gap: 28, pipeDy: 40, manifold: 60 },
         room: { w: 114, h: 52, gap: 8 },
         station: { y: 128, w: 124, h: 134, hxW: 70, hxH: 70, gap: 48 }, // gap: from the storage to the station card
         solar: { sensorGap: 40, reserve: 110 }, // reserve: room at the bottom of the tank for the solar coil
@@ -108,12 +109,13 @@
     function decimalsOf(unit) {
         return unit === 'V' ? 2 : 1;
     }
-    function shorten(label) {
-        return label.length > 22 ? `${label.slice(0, 21)}…` : label;
-    }
-    /* the sensor name without the word "temperature" (in the languages the adapter has), to fit the heat pump box */
+    /* the sensor name without the word "temperature" (in the languages the adapter has), to fit the heat pump box; only a
+       separate word after another word goes, never the end of a compound or the first word ("Luftansaugtemperatur" stays whole), Chinese has no spaces */
     function stripTemperature(name) {
-        return name.replace(/\s*(temperature|temperatur|température|temperatura|temperatuur|温度)\s*/i, ' ').trim();
+        return name
+            .replace(/\s(temperature|temperatur|température|temperatura|temperatuur)(?=\s|$)/i, ' ')
+            .replace(/温度/, '')
+            .trim();
     }
 
     /* blue (cold) to orange (hot), with a light step in between so the blend does not turn grey */
@@ -170,6 +172,14 @@
         t.textContent = str;
         return t;
     }
+    /* squeeze a text that is wider than `maxWidth` into it instead of cutting it off (long names in some languages) */
+    function fitText(t, maxWidth) {
+        var width = t.getComputedTextLength ? t.getComputedTextLength() : 0;
+        if (width > maxWidth) {
+            t.setAttribute('textLength', maxWidth);
+            t.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+        }
+    }
     function value(parent, x, y, id, decimals, unit, cls, anchor) {
         var t = text(parent, x, y, '–', cls || 'value', anchor);
         bind(id, function (v) {
@@ -178,8 +188,11 @@
         return t;
     }
     /* a small label with its value `dy` below */
-    function labeled(parent, x, y, label, id, decimals, unit, cls, dy) {
-        text(parent, x, y, label, 'label');
+    function labeled(parent, x, y, label, id, decimals, unit, cls, dy, maxWidth) {
+        var t = text(parent, x, y, label, 'label');
+        if (maxWidth) {
+            fitText(t, maxWidth);
+        }
         return value(parent, x, y + (dy || 20), id, decimals, unit, cls || 'value');
     }
     function sensorValue(parent, x, y, sensor) {
@@ -221,9 +234,17 @@
     function rawPipe(parent, d, color) {
         return el('path', { d: d, class: 'pipe', stroke: color }, parent);
     }
+    /* where in the dash pattern a pipe starts, so that a branch continues the dashes of the pipe it joins: the pattern position at
+       the joint is the length of the pipe so far, modulo the period */
+    function phaseOf(length) {
+        return ((length % DASH_PERIOD) + DASH_PERIOD) % DASH_PERIOD;
+    }
     /* a pipe coloured by its sensor; it flows while one of the `activeIds` runs */
-    function pipe(parent, d, sensorId, activeIds) {
+    function pipe(parent, d, sensorId, activeIds, phase) {
         var p = rawPipe(parent, d, IDLE_COLOR);
+        if (phase) {
+            p.style.setProperty('--phase', `${phase}px`);
+        }
         bind(sensorId, function (v) {
             p.setAttribute('stroke', colorOf(sensorId, v));
         });
@@ -233,15 +254,15 @@
         return p;
     }
     /* a pipe made of straight pieces; `points` are [x, y] pairs */
-    function line(parent, points, sensorId, activeIds) {
+    function line(parent, points, sensorId, activeIds, phase) {
         var d = points
             .map(function (pt, k) {
                 return `${(k ? 'L' : 'M') + pt[0]} ${pt[1]}`;
             })
             .join(' ');
-        return pipe(parent, d, sensorId, activeIds);
+        return pipe(parent, d, sensorId, activeIds, phase);
     }
-    function hline(parent, x1, x2, y, sensorId, activeIds) {
+    function hline(parent, x1, x2, y, sensorId, activeIds, phase) {
         return line(
             parent,
             [
@@ -250,6 +271,7 @@
             ],
             sensorId,
             activeIds,
+            phase,
         );
     }
     /* a value chip with the IDM tag in front, sitting on a pipe */
@@ -433,7 +455,7 @@
             .map(function (sensor) {
                 var name = sensor.unit === '°C' ? stripTemperature(sensor.name) : sensor.name;
                 return {
-                    label: shorten(`${sensor.tag} ${name}`),
+                    label: `${sensor.tag} ${name}`,
                     id: sensor.id,
                     decimals: decimalsOf(sensor.unit),
                     unit: sensor.unit,
@@ -468,7 +490,18 @@
             fan(parts, x + 72, y + 118, L.hp.iconSize, ids.compressor, ids.fanM13);
         }
         rows.forEach(function (row, i) {
-            labeled(parts, textX, y + 70 + i * L.hp.rowGap, row.label, row.id, row.decimals, row.unit, 'big', 22);
+            labeled(
+                parts,
+                textX,
+                y + 70 + i * L.hp.rowGap,
+                row.label,
+                row.id,
+                row.decimals,
+                row.unit,
+                'big',
+                22,
+                L.hp.w - 142 - 12,
+            );
         });
         if (ids.pumpM73) {
             badge(parts, x + 16, statusY, 'M73', ids.pumpM73, true);
@@ -592,8 +625,11 @@
 
         m.circuits.forEach(function (circuit, i) {
             var y = tops[i];
-            hline(view.pipes, flowManifold, c.x, y + c.pipeDy, circuit.flow, running[i]);
-            hline(view.pipes, c.x, returnManifold, y + returnDy, ids.hpReturn, running[i]);
+            // the branches continue the dashes of the trunk they join (the trunk runs from the storage and, for the return, ends there)
+            var flowPhase = phaseOf(flowManifold - fromX + (y + c.pipeDy - g.yFlow));
+            var returnPhase = phaseOf(tops[tops.length - 1] - y - (c.x - returnManifold));
+            hline(view.pipes, flowManifold, c.x, y + c.pipeDy, circuit.flow, running[i], flowPhase);
+            hline(view.pipes, c.x, returnManifold, y + returnDy, ids.hpReturn, running[i], returnPhase);
             card(parts, c.x, y, c.w, c.h, circuit.name);
             dot(parts, c.x + c.w - 18, y + 22, running[i]);
             if (circuit.letter === 'A' && ids.pumpM31) {
@@ -606,8 +642,21 @@
             if (circuit.room) {
                 columns.push({ label: `${circuit.roomTag} ${m.labels.room}`, id: circuit.room });
             }
+            // the columns share the card; two columns get more room, so "Vorlauf" and "Soll" do not touch
+            var spacing = (c.w - 24) / columns.length;
             columns.forEach(function (column, k) {
-                labeled(parts, c.x + 12 + k * 62, y + 72, column.label.trim(), column.id, 1, '°', 'value', 24);
+                labeled(
+                    parts,
+                    c.x + 12 + k * spacing,
+                    y + 72,
+                    column.label.trim(),
+                    column.id,
+                    1,
+                    '°',
+                    'value',
+                    24,
+                    spacing - 8,
+                );
             });
             roomsOf[i].forEach(function (room, k) {
                 var rx = roomsX + (k % 2) * (L.room.w + L.room.gap);
@@ -903,8 +952,9 @@
             rebuildTimer = setTimeout(rebuild, REBUILD_DELAY_MS);
         }
     }
-    function onState(id, value) {
-        var appeared = (state[id] === undefined || state[id] === null) !== (value === undefined || value === null);
+    function onState(id, value, before) {
+        // the data layer has stored the new value already, so it hands over the old one
+        var appeared = (before === undefined || before === null) !== (value === undefined || value === null);
         state[id] = value;
         fire(id);
         updateStatus();
