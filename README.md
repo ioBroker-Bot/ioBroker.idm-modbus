@@ -61,6 +61,11 @@ This is an independent community project. IDM and Navigator are trademarks of th
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.4 (2026-10-13)
+
+- (SeaSpotter) diagram: long labels fit instead of being cut off, wider heat pump box and heating circuit card, the dashes of the circuit pipes run through the junction, a value that appears after the page was opened (the COP) shows without reloading
+- (SeaSpotter) diagram: choose the COP in the heat pump box (Navigator, external meters, both or none)
+
 ### 0.1.3 (2026-10-12)
 
 - (SeaSpotter) diagram: the return pipe flows from the storage to the heat pump, the water pipes move with the charging pump M73 or the flow sensor B2, heat pump power with one decimal, fresh water station moved right and up
