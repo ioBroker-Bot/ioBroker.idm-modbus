@@ -171,6 +171,12 @@ svg {
 .pvtile {
     stroke: var(--solar);
 }
+.smallpump {
+    stroke-width: 1.5;
+}
+.valve {
+    fill: var(--muted);
+}
 .pumparrow {
     fill: var(--muted);
 }
