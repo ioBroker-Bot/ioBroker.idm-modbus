@@ -61,6 +61,10 @@ This is an independent community project. IDM and Navigator are trademarks of th
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.6 (2026-10-13)
+
+- (SeaSpotter) diagram: the circle of a pump symbol turns green while the pump runs, the hot gas mixer M71 and the fan M13 show as 0-100 % in the heat pump box, the hot gas line moves only while M71 is open and the water moves, the drawing is shown larger
+
 ### 0.1.5 (2026-10-13)
 
 - (SeaSpotter) diagram: pumps (M73, M22, M31, source pumps) as a small pump symbol, green while running and grey while off
