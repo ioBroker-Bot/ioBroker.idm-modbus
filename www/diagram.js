@@ -31,6 +31,7 @@
     var L = {
         originX: 170, // the drawing is shifted right by this much: room for the outdoor value left of the heat pump
         minWidth: 1170,
+        displayScale: 1.35, // the page shows the drawing at this size (a larger window does not stretch it further)
         marginRight: 24,
         outdoorX: -150,
         hp: { x: -20, w: 330, minH: 270, rowGap: 50, iconSize: 96 },
@@ -93,6 +94,26 @@
         };
         list.forEach(function (id) {
             bind(id, refresh);
+        });
+    }
+    /* like whenRunning, but true only while every group has something running (a mixer that is open AND a pump that runs) */
+    function whenAllRunning(groups, apply) {
+        var lists = groups.map(function (ids) {
+            return [].concat(ids || []).filter(Boolean);
+        });
+        var refresh = function () {
+            apply(
+                lists.every(function (list) {
+                    return list.some(function (id) {
+                        return isRunning(state[id]);
+                    });
+                }),
+            );
+        };
+        lists.forEach(function (list) {
+            list.forEach(function (id) {
+                bind(id, refresh);
+            });
         });
     }
     function fmt(v, decimals, unit) {
@@ -215,7 +236,7 @@
     function badge(parent, x, y, tag, id, showPercent) {
         var r = 7;
         var cy = y - 4;
-        el('circle', { cx: x + r, cy: cy, r: r, class: 'pumpbody smallpump' }, parent);
+        var body = el('circle', { cx: x + r, cy: cy, r: r, class: 'pumpbody smallpump' }, parent);
         var k = r / 26;
         var arrow = el(
             'path',
@@ -229,6 +250,7 @@
         bind(id, function (v) {
             var on = isRunning(v);
             arrow.style.fill = on ? 'var(--good)' : 'var(--muted)';
+            body.style.stroke = on ? 'var(--good)' : 'var(--muted)';
             label.textContent = `${tag} ${on ? (showPercent ? `${Math.round(v)} %` : view.m.labels.on) : view.m.labels.off}`;
         });
     }
@@ -253,10 +275,14 @@
             label.textContent = `${tag} ${info.text}`;
         });
     }
-    /* M71, the hot gas mixer: an analog output in volts */
+    /* an analog output of 0 to 10 V is 0 to 100 % (the hot gas mixer M71, the fan M13) */
+    function percentOfVolts(v) {
+        var n = num(v);
+        return n === null ? '–' : fmt(n * 10, 0, '%');
+    }
     function describeVoltage(v) {
         var n = num(v);
-        return { text: n === null ? '–' : fmt(n, 1, 'V'), active: n !== null && n > 0 };
+        return { text: percentOfVolts(v), active: n !== null && n > 0 };
     }
     /* M41, the heating circuit mixer: the Navigator reports a text (German "Aus" while it does not move) */
     function describeMixerText(v) {
@@ -291,9 +317,12 @@
         bind(sensorId, function (v) {
             p.setAttribute('stroke', colorOf(sensorId, v));
         });
-        whenRunning(activeIds, function (running) {
-            p.classList.toggle('flowing', running);
-        });
+        // `{ all: [groupA, groupB] }`: flows only while both groups have something running
+        (activeIds && activeIds.all ? whenAllRunning.bind(null, activeIds.all) : whenRunning.bind(null, activeIds))(
+            function (running) {
+                p.classList.toggle('flowing', running);
+            },
+        );
         return p;
     }
     /* a pipe made of straight pieces; `points` are [x, y] pairs */
@@ -372,7 +401,7 @@
             { d: `M${cx - 40 * k} ${cy} H${cx - 26 * k} M${cx + 26 * k} ${cy} H${cx + 40 * k}`, class: 'pumpstub' },
             parent,
         );
-        el('circle', { cx: cx, cy: cy, r: 26 * k, class: 'pumpbody' }, parent);
+        var body = el('circle', { cx: cx, cy: cy, r: 26 * k, class: 'pumpbody' }, parent);
         var arrow = el(
             'path',
             {
@@ -383,6 +412,7 @@
         );
         whenRunning(pumpIds, function (running) {
             arrow.style.fill = running ? 'var(--good)' : 'var(--muted)';
+            body.style.stroke = running ? 'var(--good)' : 'var(--muted)';
             stubs.classList.toggle('flowing', running);
         });
     }
@@ -551,6 +581,16 @@
         if (ids.pumpM73) {
             badge(parts, x + 16, statusY, 'M73', ids.pumpM73, true);
         }
+        /* the hot gas mixer and the fan next to the pump; both are 0-10 V outputs shown as 0-100 % */
+        if (ids.hglMixer) {
+            mixerBadge(parts, x + 120, statusY, 'M71', ids.hglMixer, describeVoltage);
+        }
+        if (ids.fanM13) {
+            var fanLabel = text(parts, x + 232, statusY, 'M13 –', 'small');
+            bind(ids.fanM13, function (v) {
+                fanLabel.textContent = `M13 ${percentOfVolts(v)}`;
+            });
+        }
         /* brine / intermediate circuit pump M16 and heat source / groundwater pump M15 */
         [
             ['M16', ids.pumpBrine],
@@ -592,7 +632,7 @@
         var hasTank = levels.length > 0;
         var hpRight = L.hp.x + L.hp.w;
         /* the water moves while the charging pump M73 or the flow sensor B2 says so (the pump runs on after the compressor stops);
-           the hot gas line only carries heat while its mixer M71 is open (the compressor if the plant has no M71 value) */
+           the hot gas line only carries water while its mixer M71 is open and the water moves (without an M71 value it follows the water) */
         var flowRate = sensorByTag(m, TAG.flowRate);
         var water = [ids.pumpM73, flowRate && flowRate.id].filter(Boolean);
         var waterActive = water.length ? water : ids.compressor;
@@ -619,14 +659,16 @@
                 m.parts.solar ? L.solar.reserve : 0,
             );
             if (ids.hgl) {
-                pipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl, active: ids.hglMixer || ids.compressor });
+                pipes.unshift({
+                    y: g.yHgl,
+                    id: ids.hgl,
+                    tag: TAG.hgl,
+                    active: ids.hglMixer ? { all: [ids.hglMixer, waterActive] } : waterActive,
+                });
             }
         }
         var chipX = hasTank ? (hpRight + L.tank.x) / 2 : hpRight + 80;
         pipes.forEach(function (p) {
-            if (hasTank && ids.hglMixer && p.id === ids.hgl) {
-                mixerBadge(view.parts, hpRight + 12, p.y - 14, 'M71', ids.hglMixer, describeVoltage);
-            }
             if (hasTank) {
                 var tankSide = L.tank.x + L.tank.pipeInset;
                 // a pipe flows from its first to its last point, so the return is drawn from the storage to the heat pump
@@ -942,6 +984,7 @@
         }
         var width = Math.max(L.minWidth, circuits.maxRight + L.originX + L.marginRight);
         svg.setAttribute('viewBox', `0 0 ${width} ${bottom + 20}`);
+        svg.style.maxWidth = `${Math.round(width * L.displayScale)}px`;
         applyAll();
     }
 
