@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.3",
+        "version": "0.1.4",
         "news": {
+            "0.1.4": {
+                "en": "diagram: long labels fit, wider boxes, the dashes of the circuit pipes run through the junction, the COP appears without reloading, choose the COP shown (Navigator, external meters, both)",
+                "de": "Diagramm: Lange Beschriftungen passen, breitere Kästchen, die Striche der Leitungen des Stromkreises verlaufen durch die Verbindungsstelle, der COP erscheint ohne Neuladen, wählen Sie den angezeigten COP (Navigator, externe Zähler, beides)",
+                "ru": "схема: подходят длинные метки, более широкие коробки, черточки контурных труб проходят через разветвление, появляется КС без перезагрузки, выбираем показанный КС (Навигатор, внешние счетчики, оба)",
+                "pt": "diagrama: cabem etiquetas longas, caixas mais largas, os traços dos tubos do circuito passam pela junção, o COP aparece sem recarregar, escolha o COP mostrado (Navegador, medidores externos, ambos)",
+                "nl": "diagram: lange labels passen, bredere dozen, de streepjes van de circuitleidingen lopen door de kruising, de COP verschijnt zonder herladen, kies de getoonde COP (Navigator, externe meters, beide)",
+                "fr": "schéma : étiquettes longues s'ajustent, cases plus larges, les tirets des canalisations du circuit traversent la jonction, le COP apparaît sans rechargement, choisir le COP affiché (Navigateur, compteurs externes, les deux)",
+                "it": "schema: si adattano le etichette lunghe, scatole più larghe, i trattini dei tubi del circuito attraversano la giunzione, il COP appare senza ricaricare, scegliere il COP visualizzato (Navigatore, contatori esterni, entrambi)",
+                "es": "diagrama: caben etiquetas largas, cajas más anchas, los guiones de las tuberías del circuito pasan por el empalme, aparece el COP sin recargar, elija el COP que se muestra (Navegador, medidores externos, ambos)",
+                "pl": "schemat: pasują długie etykiety, szersze ramki, kreski rur obwodu przebiegają przez skrzyżowanie, COP pojawia się bez przeładowywania, wybierz pokazany COP (Nawigator, liczniki zewnętrzne, oba)",
+                "uk": "схема: довгі написи підходять, ширші коробки, штрихи контурних труб проходять через з’єднання, COP з’являється без перезавантаження, виберіть показаний COP (Навігатор, зовнішні лічильники, обидва)",
+                "zh-cn": "图表：长标签适合，更宽的盒子，电路管道的虚线穿过连接处，COP出现而无需重新加载，选择所示的COP（导航器，外部仪表，两者）"
+            },
             "0.1.3": {
                 "en": "diagram: the return pipe flows from the storage to the heat pump, water pipes follow the charging pump and flow sensor, heat pump power with one decimal, fresh water station moved",
                 "de": "Diagramm: Rücklaufleitung fließt vom Speicher zur Wärmepumpe, Wasserleitungen folgen der Ladepumpe und dem Vorlaufsensor, Wärmepumpenleistung mit einer Nachkommastelle, Frischwasserstation verschoben",
