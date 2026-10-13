@@ -212,5 +212,11 @@
     "co2Unit": "CO₂ unit",
     "co2UnitHelp": "How the fixed CO₂ factor and the CO₂ state are given.",
     "co2UnitG": "g per kWh",
-    "co2UnitKg": "kg per kWh"
+    "co2UnitKg": "kg per kWh",
+    "diagramCop": "COP in the heat pump box",
+    "diagramCopHelp": "The COP shown is the current one: heat output divided by electrical power. The Navigator values are always available; the external one needs an external electricity meter (Statistics tab).",
+    "diagramCopInternal": "From the Navigator",
+    "diagramCopExternal": "From the external meters",
+    "diagramCopBoth": "Both",
+    "diagramCopNone": "Do not show"
 }

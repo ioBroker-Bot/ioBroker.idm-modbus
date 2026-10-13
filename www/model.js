@@ -23,7 +23,8 @@
         hpMode: ['hp.hp_operating_mode'],
         compressor: ['hp.compressor_status_1'],
         power: ['energy.power_consumption_hp'],
-        cop: ['calc.cop_internal'],
+        copInternal: ['calc.cop_internal'],
+        copExternal: ['calc.cop_external'],
         buffer: ['dhw.storage_temp', 'hp.storage_temp'],
         dhwTop: ['dhw.dhw_temp_top', 'dhw.dhw_temp'],
         dhwBottom: ['dhw.dhw_temp_bottom'],
@@ -159,6 +160,11 @@
         Object.keys(STATE_IDS).forEach(function (name) {
             ids[name] = pick(STATE_IDS[name]);
         });
+
+        // the COP row: from the Navigator, from the external meters, both, or none (settings.cop)
+        var copSetting = settings.cop || 'internal';
+        ids.cop = copSetting === 'external' ? ids.copExternal : copSetting === 'none' ? null : ids.copInternal;
+        ids.cop2 = copSetting === 'both' ? ids.copExternal : null;
 
         var circuits = [];
         for (var i = 0; i < CIRCUIT_LETTERS.length; i++) {

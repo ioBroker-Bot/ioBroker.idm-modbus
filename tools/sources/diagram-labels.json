@@ -21,6 +21,14 @@
             "en": "COP",
             "de": "Arbeitszahl (COP)"
         },
+        "copInternal": {
+            "en": "COP (Navigator)",
+            "de": "COP (Navigator)"
+        },
+        "copExternal": {
+            "en": "COP (external meter)",
+            "de": "COP (externer Zähler)"
+        },
         "heatPump": {
             "en": "Heat pump",
             "de": "Wärmepumpe"

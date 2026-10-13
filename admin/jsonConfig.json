@@ -1716,6 +1716,34 @@
                     "lg": 4,
                     "xl": 4
                 },
+                "diagramCop": {
+                    "type": "select",
+                    "label": "diagramCop",
+                    "help": "diagramCopHelp",
+                    "options": [
+                        {
+                            "label": "diagramCopInternal",
+                            "value": "internal"
+                        },
+                        {
+                            "label": "diagramCopExternal",
+                            "value": "external"
+                        },
+                        {
+                            "label": "diagramCopBoth",
+                            "value": "both"
+                        },
+                        {
+                            "label": "diagramCopNone",
+                            "value": "none"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
                 "diagramHidden": {
                     "type": "select",
                     "multiple": true,

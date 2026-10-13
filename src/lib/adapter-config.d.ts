@@ -154,6 +154,8 @@ declare global {
             webStatisticsIntervalS: number;
             /** heat pump diagram (spec Modul I): 'auto', 'air' or 'ground' */
             diagramHeatSource: string;
+            /** the COP in the heat pump box: 'internal' (Navigator), 'external', 'both' or 'none' */
+            diagramCop: string;
             /** parts to leave out of the diagram (buffer, dhw, freshwater, pv, solar, bivalence) */
             diagramHidden: string[];
             /** the heating circuit next to the rooms of a zone module */

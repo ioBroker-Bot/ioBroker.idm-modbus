@@ -124,6 +124,7 @@ The diagram is a live picture of your plant on a web page. It is drawn from the 
 | Setting                        | Meaning                                                                                                                                                                          |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Heat source                    | Automatic, Air or Ground or groundwater. Automatic decides from the sensors the Navigator reports; choose by hand if it guesses wrong.                                           |
+| COP in the heat pump box       | Shows the current COP (heat output divided by electrical power) from the Navigator values (default), from the external meters (Statistics tab), both, or not at all.             |
 | Parts to leave out             | Buffer, hot water tank, fresh water station, photovoltaics, solar thermal, bivalence. Parts the plant does not have are not drawn anyway.                                        |
 | Rooms next to heating circuits | By default the rooms of zone module 1 stand next to heating circuit A, those of module 2 next to circuit B, and so on. Add a row to place a zone module next to another circuit. |
 
