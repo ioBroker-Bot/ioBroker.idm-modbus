@@ -210,15 +210,58 @@
             c.setAttribute('fill', running ? 'var(--good)' : IDLE_COLOR);
         });
     }
-    /* a pump or fan status from the web interface: a dot (green = running) with the IDM tag; analog pumps show their speed */
+    /* a pump from the web interface or Modbus: a small pump symbol (green = running, grey = off) with the IDM tag; analog pumps
+       show their speed */
     function badge(parent, x, y, tag, id, showPercent) {
-        var dotEl = el('circle', { cx: x, cy: y - 4, r: 5, fill: IDLE_COLOR }, parent);
-        var label = text(parent, x + 11, y, `${tag} ${view.m.labels.off}`, 'small');
+        var r = 7;
+        var cy = y - 4;
+        el('circle', { cx: x + r, cy: cy, r: r, class: 'pumpbody smallpump' }, parent);
+        var k = r / 26;
+        var arrow = el(
+            'path',
+            {
+                d: `M${x + r - 10 * k} ${cy - 15 * k} L${x + r + 15 * k} ${cy} L${x + r - 10 * k} ${cy + 15 * k} Z`,
+                class: 'pumparrow',
+            },
+            parent,
+        );
+        var label = text(parent, x + 2 * r + 6, y, `${tag} ${view.m.labels.off}`, 'small');
         bind(id, function (v) {
             var on = isRunning(v);
-            dotEl.setAttribute('fill', on ? 'var(--good)' : IDLE_COLOR);
+            arrow.style.fill = on ? 'var(--good)' : 'var(--muted)';
             label.textContent = `${tag} ${on ? (showPercent ? `${Math.round(v)} %` : view.m.labels.on) : view.m.labels.off}`;
         });
+    }
+    /* a mixer valve (two triangles meeting in a point, as in the IDM plant diagram) with its tag and value: green while it is
+       driven, grey otherwise. `describe(value)` returns the text and whether it is driven. */
+    function mixerBadge(parent, x, y, tag, id, describe) {
+        var s = 6;
+        var cx = x + s + 2;
+        var cy = y - 4;
+        var valve = el(
+            'path',
+            {
+                d: `M${cx - s} ${cy - s} L${cx} ${cy} L${cx - s} ${cy + s} Z M${cx + s} ${cy - s} L${cx} ${cy} L${cx + s} ${cy + s} Z`,
+                class: 'valve',
+            },
+            parent,
+        );
+        var label = text(parent, x + 2 * s + 8, y, tag, 'small');
+        bind(id, function (v) {
+            var info = describe(v);
+            valve.style.fill = info.active ? 'var(--good)' : 'var(--muted)';
+            label.textContent = `${tag} ${info.text}`;
+        });
+    }
+    /* M71, the hot gas mixer: an analog output in volts */
+    function describeVoltage(v) {
+        var n = num(v);
+        return { text: n === null ? '–' : fmt(n, 1, 'V'), active: n !== null && n > 0 };
+    }
+    /* M41, the heating circuit mixer: the Navigator reports a text (German "Aus" while it does not move) */
+    function describeMixerText(v) {
+        var t = v === null || v === undefined ? '' : String(v).trim();
+        return { text: t || '–', active: t !== '' && !/^(aus|off|0|-)$/i.test(t) };
     }
     function roomTile(parent, x, y, w, room) {
         el('rect', { x: x, y: y, width: w, height: L.room.h, rx: 10, class: 'box' }, parent);
@@ -581,6 +624,9 @@
         }
         var chipX = hasTank ? (hpRight + L.tank.x) / 2 : hpRight + 80;
         pipes.forEach(function (p) {
+            if (hasTank && ids.hglMixer && p.id === ids.hgl) {
+                mixerBadge(view.parts, hpRight + 12, p.y - 14, 'M71', ids.hglMixer, describeVoltage);
+            }
             if (hasTank) {
                 var tankSide = L.tank.x + L.tank.pipeInset;
                 // a pipe flows from its first to its last point, so the return is drawn from the storage to the heat pump
@@ -636,6 +682,9 @@
             dot(parts, c.x + c.w - 18, y + 22, running[i]);
             if (circuit.letter === 'A' && ids.pumpM31) {
                 badge(parts, c.x + 12, y + 150, 'M31', ids.pumpM31, false);
+            }
+            if (circuit.letter === 'A' && ids.mixerM41) {
+                mixerBadge(parts, c.x + 104, y + 150, 'M41', ids.mixerM41, describeMixerText);
             }
             var columns = [{ label: `${circuit.flowTag} ${m.labels.flow}`, id: circuit.flow }];
             if (circuit.setpoint) {

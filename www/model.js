@@ -45,6 +45,8 @@
         pumpM22: ['web.io.analog_out.m22'],
         pumpM73: ['hp.charging_pump_status', 'web.io.analog_out.m73'],
         pumpM31: ['web.io.digital_out.m31'],
+        // the mixer of heating circuit A; the Navigator reports a text for it
+        mixerM41: ['web.io.digital_out.m41'],
         fanM13: ['web.io.analog_out.m13'],
     };
 

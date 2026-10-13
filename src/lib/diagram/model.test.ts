@@ -235,6 +235,11 @@ describe('diagram model', () => {
         );
         expect(build({ 'hp.hgl_flow_temp': 48 }).ids.hglMixer).to.equal(null);
     });
+
+    it('finds the mixer M41 of heating circuit A', () => {
+        expect(build({ 'web.io.digital_out.m41': 'Aus' }).ids.mixerM41).to.equal('web.io.digital_out.m41');
+        expect(build({}).ids.mixerM41).to.equal(null);
+    });
 });
 
 describe('diagram labels', () => {
