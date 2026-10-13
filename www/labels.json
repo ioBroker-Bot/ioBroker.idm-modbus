@@ -39,17 +39,30 @@
         "zh-cn": "供水"
     },
     "power": {
-        "en": "Power",
-        "de": "Leistung",
-        "ru": "Мощность",
-        "pt": "Potência",
-        "nl": "Vermogen",
-        "fr": "Puissance",
-        "it": "Potenza",
-        "es": "Potencia",
-        "pl": "Moc",
-        "uk": "Потужність",
-        "zh-cn": "功率"
+        "en": "Electrical power",
+        "de": "Elektrische Leistung",
+        "ru": "Электрическая мощность",
+        "pt": "Potência elétrica",
+        "nl": "Elektrisch vermogen",
+        "fr": "Puissance électrique",
+        "it": "Potenza elettrica",
+        "es": "Potencia eléctrica",
+        "pl": "Moc elektryczna",
+        "uk": "Електрична потужність",
+        "zh-cn": "电功率"
+    },
+    "thermalPower": {
+        "en": "Thermal power",
+        "de": "Thermische Leistung",
+        "ru": "Тепловая мощность",
+        "pt": "Potência térmica",
+        "nl": "Thermisch vermogen",
+        "fr": "Puissance thermique",
+        "it": "Potenza termica",
+        "es": "Potencia térmica",
+        "pl": "Moc cieplna",
+        "uk": "Теплова потужність",
+        "zh-cn": "热功率"
     },
     "cop": {
         "en": "COP",

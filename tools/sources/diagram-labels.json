@@ -14,8 +14,12 @@
             "de": "Vorlauf"
         },
         "power": {
-            "en": "Power",
-            "de": "Leistung"
+            "en": "Electrical power",
+            "de": "Elektrische Leistung"
+        },
+        "thermalPower": {
+            "en": "Thermal power",
+            "de": "Thermische Leistung"
         },
         "cop": {
             "en": "COP",

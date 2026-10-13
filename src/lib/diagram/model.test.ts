@@ -240,6 +240,14 @@ describe('diagram model', () => {
         expect(build({ 'web.io.digital_out.m41': 'Aus' }).ids.mixerM41).to.equal('web.io.digital_out.m41');
         expect(build({}).ids.mixerM41).to.equal(null);
     });
+
+    it('finds the thermal power of the Navigator 2.0 and 1.7', () => {
+        expect(build({ 'energy.thermal_power_flow_sensor': 5.9 }).ids.thermalPower).to.equal(
+            'energy.thermal_power_flow_sensor',
+        );
+        expect(build({ 'energy.thermal_power_total': 4.2 }).ids.thermalPower).to.equal('energy.thermal_power_total');
+        expect(build({}).ids.thermalPower).to.equal(null);
+    });
 });
 
 describe('diagram labels', () => {

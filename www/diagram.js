@@ -536,6 +536,7 @@
             });
         return [
             { label: m.labels.power, id: m.ids.power, decimals: 1, unit: 'kW' },
+            { label: m.labels.thermalPower, id: m.ids.thermalPower, decimals: 1, unit: 'kW' },
             // with both COPs the rows say where each one comes from
             { label: m.ids.cop2 ? m.labels.copInternal : m.labels.cop, id: m.ids.cop, decimals: 1, unit: '' },
             { label: m.labels.copExternal, id: m.ids.cop2, decimals: 1, unit: '' },

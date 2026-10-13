@@ -7042,5 +7042,29 @@
         "pl": "COP (licznik zewnętrzny)",
         "uk": "COP (зовнішній лічильник)",
         "zh-cn": "COP（外部仪表）"
+    },
+    "Electrical power": {
+        "de": "Elektrische Leistung",
+        "ru": "Электрическая мощность",
+        "pt": "Potência elétrica",
+        "nl": "Elektrisch vermogen",
+        "fr": "Puissance électrique",
+        "it": "Potenza elettrica",
+        "es": "Potencia eléctrica",
+        "pl": "Moc elektryczna",
+        "uk": "Електрична потужність",
+        "zh-cn": "电功率"
+    },
+    "Thermal power": {
+        "de": "Thermische Leistung",
+        "ru": "Тепловая мощность",
+        "pt": "Potência térmica",
+        "nl": "Thermisch vermogen",
+        "fr": "Puissance thermique",
+        "it": "Potenza termica",
+        "es": "Potencia térmica",
+        "pl": "Moc cieplna",
+        "uk": "Теплова потужність",
+        "zh-cn": "热功率"
     }
 }
