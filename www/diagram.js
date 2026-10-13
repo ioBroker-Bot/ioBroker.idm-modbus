@@ -581,12 +581,13 @@
         if (ids.pumpM73) {
             badge(parts, x + 16, statusY, 'M73', ids.pumpM73, true);
         }
-        /* the hot gas mixer and the fan next to the pump; both are 0-10 V outputs shown as 0-100 % */
+        /* the hot gas mixer next to the pump and the fan speed under the fan; both are 0-10 V outputs shown as 0-100 % */
         if (ids.hglMixer) {
             mixerBadge(parts, x + 120, statusY, 'M71', ids.hglMixer, describeVoltage);
         }
-        if (ids.fanM13) {
-            var fanLabel = text(parts, x + 232, statusY, 'M13 –', 'small');
+        if (ids.fanM13 && m.heatSource !== 'ground') {
+            // under the fan it belongs to
+            var fanLabel = text(parts, x + 72, y + 118 + L.hp.iconSize / 2 + 16, 'M13 –', 'small', 'middle');
             bind(ids.fanM13, function (v) {
                 fanLabel.textContent = `M13 ${percentOfVolts(v)}`;
             });
