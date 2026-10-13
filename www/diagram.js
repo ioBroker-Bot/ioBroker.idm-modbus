@@ -96,6 +96,26 @@
             bind(id, refresh);
         });
     }
+    /* like whenRunning, but true only while every group has something running (a mixer that is open AND a pump that runs) */
+    function whenAllRunning(groups, apply) {
+        var lists = groups.map(function (ids) {
+            return [].concat(ids || []).filter(Boolean);
+        });
+        var refresh = function () {
+            apply(
+                lists.every(function (list) {
+                    return list.some(function (id) {
+                        return isRunning(state[id]);
+                    });
+                }),
+            );
+        };
+        lists.forEach(function (list) {
+            list.forEach(function (id) {
+                bind(id, refresh);
+            });
+        });
+    }
     function fmt(v, decimals, unit) {
         var n = num(v);
         if (n === null) {
@@ -297,9 +317,12 @@
         bind(sensorId, function (v) {
             p.setAttribute('stroke', colorOf(sensorId, v));
         });
-        whenRunning(activeIds, function (running) {
-            p.classList.toggle('flowing', running);
-        });
+        // `{ all: [groupA, groupB] }`: flows only while both groups have something running
+        (activeIds && activeIds.all ? whenAllRunning.bind(null, activeIds.all) : whenRunning.bind(null, activeIds))(
+            function (running) {
+                p.classList.toggle('flowing', running);
+            },
+        );
         return p;
     }
     /* a pipe made of straight pieces; `points` are [x, y] pairs */
@@ -609,7 +632,7 @@
         var hasTank = levels.length > 0;
         var hpRight = L.hp.x + L.hp.w;
         /* the water moves while the charging pump M73 or the flow sensor B2 says so (the pump runs on after the compressor stops);
-           the hot gas line only carries heat while its mixer M71 is open (the compressor if the plant has no M71 value) */
+           the hot gas line only carries water while its mixer M71 is open and the water moves (without an M71 value it follows the water) */
         var flowRate = sensorByTag(m, TAG.flowRate);
         var water = [ids.pumpM73, flowRate && flowRate.id].filter(Boolean);
         var waterActive = water.length ? water : ids.compressor;
@@ -636,7 +659,12 @@
                 m.parts.solar ? L.solar.reserve : 0,
             );
             if (ids.hgl) {
-                pipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl, active: ids.hglMixer || ids.compressor });
+                pipes.unshift({
+                    y: g.yHgl,
+                    id: ids.hgl,
+                    tag: TAG.hgl,
+                    active: ids.hglMixer ? { all: [ids.hglMixer, waterActive] } : waterActive,
+                });
             }
         }
         var chipX = hasTank ? (hpRight + L.tank.x) / 2 : hpRight + 80;
