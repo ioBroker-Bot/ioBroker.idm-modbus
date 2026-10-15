@@ -145,6 +145,56 @@
         return sensors;
     }
 
+    /* The name of every measuring point and actor by its IDM tag, in the language of the page: Modbus registers carry the tag at the
+       end of their label ("Heat storage temperature (B38)"), the states of the web interface at the start ("M73 Charging pump").
+       Modbus names come first (they are translated with the register files), web names fill the rest. */
+    function findTagNames(objects, language) {
+        var names = {};
+        var ids = Object.keys(objects).sort(function (a, b) {
+            return (a.indexOf('web.io.') === 0) - (b.indexOf('web.io.') === 0);
+        });
+        ids.forEach(function (id) {
+            var common = objects[id].common || {};
+            if (objects[id].type !== 'state' || !common.name) {
+                return;
+            }
+            var english = textOf(common.name, 'en');
+            var local = textOf(common.name, language);
+            var tag;
+            var name;
+            if (id.indexOf('web.io.') === 0) {
+                var web = /^([BME]\d+v?)\s+/.exec(english);
+                tag = web && web[1];
+                name = local.replace(/^[BME]\d+v?\s+/, '');
+            } else {
+                var modbus = /\s*\(([BME]\d+v?)\)\s*$/.exec(english);
+                tag = modbus && modbus[1];
+                name = local.replace(/\s*\([BME]\d+v?\)\s*$/, '');
+            }
+            if (tag && name && !names[tag]) {
+                names[tag] = name;
+            }
+        });
+        return names;
+    }
+
+    /* The tags of the heating circuits get a name of our own where the Navigator delivers none (a circuit that has no web table
+       entry, or none in this language): pump M31..M37, mixer M41..M47, flow sensor B51..B57, room device B61..B67. */
+    function withCircuitNames(names, labels) {
+        CIRCUIT_LETTERS.split('').forEach(function (letter, i) {
+            var named = function (tag, template) {
+                if (!names[tag] && template) {
+                    names[tag] = template.replace('{i}', letter);
+                }
+            };
+            named(`M${31 + i}`, labels.circuitPump);
+            named(`M${41 + i}`, labels.circuitMixer);
+            named(`B${51 + i}`, labels.circuitFlow);
+            named(`B${61 + i}`, labels.circuitRoom);
+        });
+        return names;
+    }
+
     function fillLabels(labels, language) {
         var result = {};
         Object.keys(labels || {}).forEach(function (key) {
@@ -300,6 +350,7 @@
             },
             ids: ids,
             circuits: circuits,
+            tagNames: withCircuitNames(findTagNames(objects, language), labels),
             rods: ROD_STAGES.filter(function (stage) {
                 return hasValue(states, stage.id);
             }),
