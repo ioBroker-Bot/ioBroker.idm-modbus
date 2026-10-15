@@ -55,6 +55,8 @@
         fanM13: ['web.io.analog_out.m13'],
         // the hot water circulation pump
         circulation: ['dhw.circulation_pump', 'web.io.digital_out.m64'],
+        // the cold storage (cooling buffer)
+        coldBuffer: ['dhw.cold_storage_temp'],
     };
 
     /* the stages of the electric heating rod (web outputs), each with the kW it stands for */
@@ -345,12 +347,21 @@
         return {
             language: language,
             heatSource: heatSource || (detectedGround ? 'ground' : 'air'),
+            // size of the drawing in percent of the original size
+            scale: Math.min(200, Math.max(40, Number(settings.scale) || 90)),
             // two vessels (hot water above, a separate heating buffer below) only where both exist
             storage:
                 settings.storage === 'separate' && ids.dhwTop !== null && ids.buffer !== null ? 'separate' : 'combined',
             parts: parts,
             // hot water without a heating buffer (a Hygienik with a direct circuit): the circuits are fed by the heat pump itself
             hotWaterOnly: parts.dhw && !parts.buffer,
+            // the hot water vessel hangs below the pipes when there is no heating buffer or a separate one
+            // (a fresh water station without hot water sensors still has a vessel: the schemes draw a Hygienik without B41 / B48)
+            hungDhw:
+                (parts.dhw || (parts.freshwater && !parts.buffer)) &&
+                (settings.storage === 'separate' || !parts.buffer),
+            // a vessel in the middle: the heating buffer, with the hot water inside unless that hangs apart
+            centralTank: parts.buffer,
             ids: ids,
             circuits: circuits,
             tagNames: withCircuitNames(findTagNames(objects, language), labels),

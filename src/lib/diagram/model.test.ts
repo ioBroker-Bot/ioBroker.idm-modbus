@@ -15,6 +15,9 @@ interface Model {
     heatSource: 'air' | 'ground';
     storage: 'combined' | 'separate';
     hotWaterOnly: boolean;
+    scale: number;
+    hungDhw: boolean;
+    centralTank: boolean;
     rods: { id: string; label: string }[];
     tagNames: Record<string, string>;
     parts: Record<string, boolean>;
@@ -185,7 +188,6 @@ describe('diagram model', () => {
             'B2:heatpump:Durchflußsensor Heizung',
             'B36:source:Heat source outlet temperature',
             'B37:source:Ansauglufttemperatur',
-            'B40:storage:Cold storage temperature',
         ]);
     });
 
@@ -297,6 +299,28 @@ describe('diagram model', () => {
         expect(build({ 'dhw.dhw_temp_top': 45, 'dhw.storage_temp': 30 }).hotWaterOnly).to.equal(false);
         expect(build({ 'dhw.storage_temp': 30 }).hotWaterOnly).to.equal(false);
         expect(build({ 'dhw.dhw_temp_top': 45 }, { settings: { hidden: ['dhw'] } }).hotWaterOnly).to.equal(false);
+    });
+
+    it('says which vessels stand in the middle and which hang below', () => {
+        const both = { 'dhw.dhw_temp_top': 45, 'dhw.storage_temp': 30 };
+        expect(build(both)).to.deep.include({ centralTank: true, hungDhw: false });
+        expect(build(both, { settings: { storage: 'separate' } })).to.deep.include({
+            centralTank: true,
+            hungDhw: true,
+        });
+        expect(build({ 'dhw.dhw_temp_top': 45 })).to.deep.include({ centralTank: false, hungDhw: true });
+        expect(build({ 'dhw.storage_temp': 30 })).to.deep.include({ centralTank: true, hungDhw: false });
+        // a fresh water station without hot water sensors still has a vessel of its own
+        expect(build({ 'dhw.dhw_tapping_temp': 41 })).to.deep.include({ centralTank: false, hungDhw: true });
+        // the cold storage (B40) is found by its state
+        expect(build({ 'dhw.cold_storage_temp': 11 }).ids.coldBuffer).to.equal('dhw.cold_storage_temp');
+    });
+
+    it('takes the size of the drawing from the settings, inside the limits', () => {
+        expect(build({}).scale).to.equal(90);
+        expect(build({}, { settings: { scale: 120 } as never }).scale).to.equal(120);
+        expect(build({}, { settings: { scale: 5 } as never }).scale).to.equal(40);
+        expect(build({}, { settings: { scale: 900 } as never }).scale).to.equal(200);
     });
 
     it('lists the heating rod stages that report and finds the circulation pump', () => {
