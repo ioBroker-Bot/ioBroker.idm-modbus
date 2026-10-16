@@ -82,7 +82,7 @@
         pipeGap: 100, // between hot gas line, flow and return pipe
         circuit: { x: 980, w: 216, h: 170, gap: 28, pipeDy: 40, manifold: 60 },
         room: { w: 114, h: 52, gap: 8 },
-        station: { y: 128, w: 124, h: 146, hxW: 70, hxH: 70, gap: 48, circulationExtra: 40, circulationGap: 74 }, // gap: from the storage to the station card
+        station: { y: 128, w: 184, h: 146, titleH: 24, hxW: 70, hxH: 70, gap: 48, circulationGap: 74 }, // gap: from the storage to the station card
         solar: { sensorGap: 40, reserve: 110 }, // reserve: room at the bottom of the tank for the solar coil
         cards: { wrap: 1000, w: 310, gap: 330, rowH: 44 },
         tile: { w: 176, h: 62, gap: 12 },
@@ -338,7 +338,8 @@
     function card(parent, x, y, w, h, title) {
         el('rect', { x: x, y: y, width: w, height: h, rx: 14, class: 'box' }, parent);
         if (title) {
-            text(parent, x + 16, y + 28, title, 'title');
+            // a long name (another language) is squeezed to leave room for the status dot in the corner
+            fitText(text(parent, x + 16, y + 28, title, 'title'), w - 48);
         }
     }
     function dot(parent, cx, cy, ids) {
@@ -1289,8 +1290,7 @@
         var x = L.tank.x + L.tank.w + s.gap;
         // beside the upper part of the storage; with a separate hot water vessel beside that vessel
         var y = m.hungDhw ? g.dhwTop + 20 : s.y;
-        // the card is wider by the circulation pump badge beside the station pump
-        var w = s.w + (ids.circulation ? s.circulationExtra : 0);
+        var w = s.w;
         // the heat exchanger stands in the middle of the card
         var hxX = x + (w - s.hxW) / 2;
         var hxY = y + 20;
@@ -1304,8 +1304,8 @@
         var tapX = x + w + 90;
         var tapY = inY - 20;
 
-        card(view.mid, x, y, w, s.h, null);
-        text(view.mid, x + w / 2, y + 108, m.labels.freshwater, 'small', 'middle');
+        // the title row sits above the heat exchanger, so the card grows upward and the pipes and the tap stay where they are
+        card(view.mid, x, y - s.titleH, w, s.h + s.titleH, m.labels.freshwater);
         if (ids.pumpM22) {
             badge(view.mid, x + 14, y + 126, 'M22', ids.pumpM22, true);
         }
