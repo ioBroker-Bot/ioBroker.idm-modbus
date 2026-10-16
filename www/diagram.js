@@ -16,6 +16,9 @@
     var COOL_COLOR = RETURN_COLOR;
     // value of the operating mode register while the heat pump cools
     var COOLING_MODE = 2;
+    // the fan icon: number of blades and the outline of one blade (the shape of the adapter logo, 86 units long)
+    var FAN_BLADES = 5;
+    var FAN_BLADE_PATH = 'M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z';
     // the solar loop counts as running when the charge pipe is at least this much (K) warmer than the return
     var SOLAR_MIN_DIFF = 2;
 
@@ -395,7 +398,7 @@
     /* M41, the heating circuit mixer: the Navigator reports a text (German "Aus" while it does not move) */
     function describeMixerText(v) {
         var t = v === null || v === undefined ? '' : String(v).trim();
-        return { text: t || '–', active: t !== '' && !/^(aus|off|0|-)$/i.test(t) };
+        return { text: t || '–', active: t !== '' && !/^(aus|off|zu|closed|geschlossen|0|-)$/i.test(t) };
     }
     function roomTile(parent, x, y, w, room) {
         el('rect', { x: x, y: y, width: w, height: L.room.h, rx: 10, class: 'box' }, parent);
@@ -415,8 +418,10 @@
     }
     /* A pipe is a thin grey base (all bases lie in one layer below), a solid coloured line while the pipe is on the active path (`uses`
        names the paths that use it: heat, dhw, cool), and light dashes that move along it while it runs (`activeIds`, see activityOf).
-       The colour comes from the sensor `sensorId` unless `opts.color` is given; `opts.phase` shifts the dash pattern (see phaseOf). */
+       The colour comes from the sensor `sensorId` unless `opts.color` is given; `opts.phase` shifts the dash pattern (see phaseOf);
+       `opts.whileRunning` keeps the pipe grey while it does not run (a station or a generator has no operating mode of its own). */
     function pipe(parent, d, sensorId, activeIds, opts) {
+        var whileRunning = opts && opts.whileRunning;
         var phase = opts && opts.phase;
         var uses = opts && opts.uses;
         var fixedColor = opts && opts.color;
@@ -433,7 +438,7 @@
         var flowing = null;
         var stroke = null;
         var update = function () {
-            var on = inUse(uses);
+            var on = inUse(uses) && (!whileRunning || running);
             if (on !== shown) {
                 color.style.display = on ? '' : 'none';
                 light.style.display = on ? '' : 'none';
@@ -540,18 +545,19 @@
         iconBox(parent, cx, cy, size);
         var g = el('g', { transform: `translate(${cx} ${cy})` }, parent);
         var blades = el('g', { class: 'fan' }, g);
-        for (var i = 0; i < 3; i++) {
+        // five blades, the shape of the adapter logo
+        for (var i = 0; i < FAN_BLADES; i++) {
             el(
                 'path',
                 {
-                    d: 'M0 0 C 8 -10 22 -34 6 -44 C -9 -34 -10 -12 0 0 Z',
+                    d: FAN_BLADE_PATH,
                     fill: 'var(--accent)',
-                    transform: `rotate(${i * 120}) scale(${size / 110})`,
+                    transform: `rotate(${(i * 360) / FAN_BLADES}) scale(${size / 205})`,
                 },
                 blades,
             );
         }
-        el('circle', { r: 4, fill: 'var(--muted)' }, g);
+        el('circle', { r: 5, fill: 'var(--muted)' }, g);
         if (speedId) {
             bind(speedId, function (v) {
                 var volts = num(v);
@@ -675,6 +681,7 @@
         document.getElementById('title').textContent = m.labels.title;
         document.title = m.labels.title;
         document.documentElement.lang = m.language;
+        svg.setAttribute('aria-label', m.labels.title);
         bindings = {};
         var coolRole = coolRoles(m);
         var root = el('g', { transform: `translate(${L.originX} 0)` }, svg);
@@ -921,6 +928,10 @@
         // the paths that take the water of the heat pump: the heating buffer (and, without a cold storage, cooling through it) or, with
         // no heating buffer, the pipes straight to the circuits; the hot water vessel and the cold storage on their own paths
         var endUses = hungOf(g.hung, 'cold') ? ['heat'] : ['heat', 'cool'];
+        // a hot water vessel inside the central one (a Hygienik with stratification plate) is charged through the same pipes
+        if (central && m.parts.dhw && !m.hungDhw) {
+            endUses = endUses.concat(['dhw']);
+        }
         // the vessels that hang below: charged by pipes that drop down left of the tanks and enter the side of the vessel, the feed at
         // the height of the upper sensor and the return at the lower one; the return is the outer pipe, so none crosses another, and
         // every further vessel takes the lane to the left of the one above
@@ -1082,7 +1093,7 @@
             returnX: central ? st.wall : lanes.length ? lanes[0].returnX : st.hpRight,
             cold: hungOf(g.hung, 'cold'),
             // a heating buffer keeps feeding the circuits while the heat pump charges the hot water vessel
-            trunkUses: central ? st.endUses.concat(['dhw']) : st.endUses,
+            trunkUses: central ? Array.from(new Set(st.endUses.concat(['dhw']))) : st.endUses,
         };
         return { central: central, any: hasPipes };
     }
@@ -1269,14 +1280,20 @@
             badge(view.mid, x + 14 + (ids.pumpM22 ? s.circulationGap : 0), y + 126, 'M64', ids.circulation, false);
         }
         // hot in, back cooler, also where the vessel has no sensors
-        hline(view.mid, tankInside, hxX, inY, ids.dhwTop, active, { color: FLOW_COLOR });
-        hline(view.mid, hxX, tankInside, outY, ids.dhwBottom || ids.buffer, active, { color: RETURN_COLOR });
+        hline(view.mid, tankInside, hxX, inY, ids.dhwTop, active, { color: FLOW_COLOR, whileRunning: true });
+        hline(view.mid, hxX, tankInside, outY, ids.dhwBottom || ids.buffer, active, {
+            color: RETURN_COLOR,
+            whileRunning: true,
+        });
         el('rect', { x: hxX, y: hxY, width: s.hxW, height: s.hxH, rx: 6, class: 'hx' }, view.parts);
         el('path', { d: `M${hxX} ${hxY + s.hxH} L${hxRight} ${hxY}`, class: 'hxline' }, view.parts);
 
         // the drinking water runs through the heat exchanger as soon as the station works: cold in, hot out to the tap
-        pipe(view.parts, `M${hxRight} ${inY} H${tapX + 2}`, null, active, { color: FLOW_COLOR });
-        pipe(view.parts, `M${coldEnd} ${outY} H${hxRight}`, null, active, { color: tempColor(COLD_WATER_TEMP) });
+        pipe(view.parts, `M${hxRight} ${inY} H${tapX + 2}`, null, active, { color: FLOW_COLOR, whileRunning: true });
+        pipe(view.parts, `M${coldEnd} ${outY} H${hxRight}`, null, active, {
+            color: tempColor(COLD_WATER_TEMP),
+            whileRunning: true,
+        });
 
         text(view.parts, coldEnd, outY + 22, m.labels.coldWater, 'small', 'middle');
         faucet(view.parts, tapX, tapY, ids.dhwFlow);
@@ -1400,6 +1417,14 @@
             bind(back.id, refreshCharge);
             bind(charge.id, refreshBack);
         }
+        // the loop follows the pumps where they report, so the chips do as well
+        solarPumps.forEach(function (pump) {
+            [refreshCharge, refreshBack].forEach(function (refresh) {
+                if (refresh) {
+                    bind(pump[1], refresh);
+                }
+            });
+        });
         drawSolarCoil(flowY, returnY);
         return y + h + 20;
     }
@@ -1466,12 +1491,15 @@
             return; // no storage drawn (drawStorage sets it): nothing to join
         }
         var gen = L.generator;
-        var flowX =
+        // the risers stand left of the lanes of the hung vessels, but never left of the card they leave
+        var flowX = Math.max(
             L.tank.x -
-            L.split.returnX -
-            Math.max(g.hung.length, 1) * L.split.lane -
-            gen.riserInset -
-            index * gen.riserStep;
+                L.split.returnX -
+                Math.max(g.hung.length, 1) * L.split.lane -
+                gen.riserInset -
+                index * gen.riserStep,
+            cardRight + gen.riserInset,
+        );
         var returnX = flowX - gen.returnGap;
         var wall = tankWallLeft();
         var flowY = storage.central ? L.tank.top + gen.flowDy : g.yFlow;
@@ -1490,8 +1518,16 @@
             flowPoints.push([wall, flowY]);
             returnPoints.unshift([wall, returnY]);
         }
-        line(view.pipes, flowPoints, spec.flowSensor, spec.active, { uses: spec.uses, color: spec.flowColor });
-        line(view.pipes, returnPoints, spec.returnSensor, spec.active, { uses: spec.uses, color: spec.returnColor });
+        line(view.pipes, flowPoints, spec.flowSensor, spec.active, {
+            uses: spec.uses,
+            color: spec.flowColor,
+            whileRunning: true,
+        });
+        line(view.pipes, returnPoints, spec.returnSensor, spec.active, {
+            uses: spec.uses,
+            color: spec.returnColor,
+            whileRunning: true,
+        });
     }
     /* the cascade card: the stages that run of the stages that are available per mode */
     function drawCascadeCard(x, top, gen) {
@@ -1765,9 +1801,6 @@
         if (json !== modelJson) {
             modelJson = json;
             model = m;
-            document.title = m.labels.title;
-            document.getElementById('title').textContent = m.labels.title;
-            document.documentElement.lang = m.language;
             render(m);
         } else {
             updateStatus();
@@ -1778,9 +1811,16 @@
             rebuildTimer = setTimeout(rebuild, REBUILD_DELAY_MS);
         }
     }
+    /* does the state say anything about the plant? A cascade that answers 0 stages is a single unit, like no answer at all. */
+    function reports(id, value) {
+        if (value === undefined || value === null) {
+            return false;
+        }
+        return id.indexOf('cascade.cascade_available_') !== 0 || Number(value) > 0;
+    }
     function onState(id, value, before) {
         // the data layer has stored the new value already, so it hands over the old one
-        var appeared = (before === undefined || before === null) !== (value === undefined || value === null);
+        var appeared = reports(id, before) !== reports(id, value);
         state[id] = value;
         fire(id);
         updateStatus();

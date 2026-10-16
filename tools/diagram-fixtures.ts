@@ -155,7 +155,8 @@ export function buildSnapshot(scheme: Scheme, language = 'en', mode: number = MO
     // every Navigator has the heat pump flow and return sensors and the charging pump, whatever the scheme draws
     ['B33', 'B34', 'M73'].forEach(tag => tags.add(tag));
     (scheme.family === 'air' ? ['B37', 'M13'] : ['B36', 'B43', 'M16']).forEach(tag => tags.add(tag));
-    // the schemes draw a dashed box for optional further circuits; a scheme titled "1 HK" has circuit A only, "2 HK" A and C
+    // the schemes draw a dashed box for optional further circuits: a scheme that names n circuits keeps A and the next n - 1 of C, D, ...
+    // (circuit B, the direct circuit, stays unless the title names one circuit and no direct circuit)
     const count = scheme.circuits;
     if (count) {
         const keep = ['A', 'C', 'D', 'E', 'F', 'G'].slice(0, count);

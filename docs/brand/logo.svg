@@ -1,41 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <title>ioBroker.idm-modbus</title>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b5fa5"/>
-      <stop offset="1" stop-color="#0a9396"/>
-    </linearGradient>
-    <linearGradient id="casing" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#dfe9f2"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <g transform="translate(0 -30)">
-  <!-- heat pump casing -->
-  <rect x="64" y="132" width="262" height="248" rx="30" fill="url(#casing)"/>
-  <rect x="64" y="132" width="262" height="40" rx="20" fill="#cfdbe7"/>
-  <!-- fan -->
-  <circle cx="195" cy="262" r="92" fill="#eef3f8" stroke="#9fb4c8" stroke-width="6"/>
-  <g transform="translate(195 262)" fill="#0b5fa5">
-    <path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(0)"/>
-    <path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(72)"/>
-    <path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(144)"/>
-    <path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(216)"/>
-    <path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(288)"/>
-    <circle r="15" fill="#073f6e"/>
-  </g>
-  <!-- heat rising on the right -->
-  <g fill="none" stroke="#ffb703" stroke-width="16" stroke-linecap="round">
-    <path d="M366 330 C 340 296 392 262 366 228 C 340 194 392 160 366 126"/>
-    <path d="M414 350 C 388 316 440 282 414 248 C 388 214 440 180 414 146" stroke="#fb8500"/>
-  </g>
-  </g>
-  <!-- connection symbol (Modbus link) in IDM yellow, centred below -->
-  <g fill="none" stroke="#ffd400" stroke-width="14" stroke-linecap="round">
-    <path d="M211 447 A35 35 0 0 1 246 482"/>
-    <path d="M211 420 A62 62 0 0 1 273 482"/>
-    <path d="M211 392 A90 90 0 0 1 301 482"/>
-  </g>
-  <circle cx="211" cy="482" r="13" fill="#ffd400"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><title>ioBroker.idm-modbus</title><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b5fa5"/><stop offset="1" stop-color="#0a9396"/></linearGradient><linearGradient id="casing" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe9f2"/></linearGradient><linearGradient id="vessel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f48c3a"/><stop offset="0.5" stop-color="#f2b377"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs><rect width="512" height="512" rx="96" fill="url(#bg)"/>
+<g stroke-linecap="round" fill="none" stroke-width="14"><path d="M200 196 H420" stroke="#f08a3a"/><path d="M200 262 H420" stroke="#3b82f6"/><path d="M296 262 V372 H420" stroke="#3b82f6"/><path d="M296 196 V150 H420" stroke="#f08a3a" opacity="0"/></g>
+<rect x="36" y="120" width="170" height="190" rx="22" fill="url(#casing)"/><rect x="36" y="120" width="170" height="26" rx="13" fill="#cfdbe7"/>
+<circle cx="121" cy="223" r="60" fill="#eef3f8" stroke="#9fb4c8" stroke-width="5"/>
+<g transform="translate(121 223) scale(0.6)" fill="#0b5fa5"><path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(0)"/><path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(72)"/><path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(144)"/><path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(216)"/><path d="M0 0 C 20 -22 52 -70 14 -86 C -18 -66 -22 -24 0 0 Z" transform="rotate(288)"/><circle r="15" fill="#073f6e"/></g>
+<rect x="248" y="178" width="76" height="36" rx="18" fill="#f08a3a" stroke="#fff" stroke-width="4"/><rect x="248" y="244" width="76" height="36" rx="18" fill="#3b82f6" stroke="#fff" stroke-width="4"/>
+<rect x="392" y="120" width="84" height="300" rx="42" fill="url(#vessel)" stroke="#ffffff" stroke-width="6"/>
+<rect x="36" y="350" width="220" height="86" rx="18" fill="#ffffff"/><rect x="54" y="372" width="80" height="14" rx="7" fill="#9fb4c8"/><rect x="54" y="398" width="130" height="20" rx="10" fill="#0b5fa5"/><circle cx="232" cy="378" r="9" fill="#2ba24c"/>
 </svg>
