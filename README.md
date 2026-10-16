@@ -69,6 +69,10 @@ A live picture of your plant on a web page, drawn from the values the adapter re
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.11 (2026-10-16)
+
+- (SeaSpotter) diagram: the flow in a heating circuit follows its pump (M31, M32, ...) instead of its operating mode; the white flow dashes show only while a pipe actually flows
+
 ### 0.1.10 (2026-10-16)
 
 - (SeaSpotter) new adapter logo; the fan in the diagram has five blades
