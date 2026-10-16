@@ -69,6 +69,12 @@ A live picture of your plant on a web page, drawn from the values the adapter re
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.13 (2026-10-16)
+
+- (SeaSpotter) diagram: the heating circuits keep drawing from the heating buffer while the heat pump is off or defrosting, so their pipes show the flow while the circuit pump runs
+- (SeaSpotter) diagram: the pipes along the heating circuits flow only as far as the lowest running circuit; the dot on a circuit card is green while the circuit pump runs (not merely while the circuit is in heating mode)
+- (SeaSpotter) diagram: the fresh water station box is taller, has its title on top like the other cards and its heat exchanger stands in the middle; the actor M22 is named "Pump hot water station" (Pumpe Warmwasserstation) instead of "Fresh water station"
+
 ### 0.1.12 (2026-10-16)
 
 - (SeaSpotter) diagram: a pipe and the label on it are coloured only while water really flows through it; a pipe whose pump is off, or that the operating mode does not use, stays grey

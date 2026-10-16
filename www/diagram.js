@@ -82,7 +82,7 @@
         pipeGap: 100, // between hot gas line, flow and return pipe
         circuit: { x: 980, w: 216, h: 170, gap: 28, pipeDy: 40, manifold: 60 },
         room: { w: 114, h: 52, gap: 8 },
-        station: { y: 128, w: 124, h: 134, hxW: 70, hxH: 70, gap: 48, circulationExtra: 40, circulationGap: 74 }, // gap: from the storage to the station card
+        station: { y: 128, w: 184, h: 146, titleH: 24, hxW: 70, hxH: 70, gap: 48, circulationGap: 74 }, // gap: from the storage to the station card
         solar: { sensorGap: 40, reserve: 110 }, // reserve: room at the bottom of the tank for the solar coil
         cards: { wrap: 1000, w: 310, gap: 330, rowH: 44 },
         tile: { w: 176, h: 62, gap: 12 },
@@ -251,7 +251,8 @@
     }
     /* Which way the water goes depends on the operating mode: heating charges the heating buffer and the circuits take their heat from
        it, hot water charges the hot water vessel, cooling charges the cold storage and the circuits take their cold from it (without
-       a cold storage the heat pump cools straight through the circuits). Without a mode value both heating and hot water count. */
+       a cold storage the heat pump cools straight through the circuits). While the heat pump does nothing (off, defrost) the path
+       'rest' is on: the circuits still draw from the heating buffer. Without a mode value both heating and hot water count. */
     function pathOn(path) {
         if (path === 'solar') {
             // the solar loop works while its charge pipe is clearly warmer than its return (set by drawSolar; without both sensors always)
@@ -259,7 +260,11 @@
         }
         var mode = view.mode;
         if (mode === null) {
-            return path !== 'cool';
+            return path !== 'cool' && path !== 'rest';
+        }
+        // 'rest': the heat pump itself does nothing (off or defrosting); the circuits still draw from the heating buffer then
+        if (path === 'rest') {
+            return mode === 0 || mode === 8;
         }
         return path === 'heat' ? mode === 1 : path === 'dhw' ? mode === 4 : mode === COOLING_MODE;
     }
@@ -333,7 +338,8 @@
     function card(parent, x, y, w, h, title) {
         el('rect', { x: x, y: y, width: w, height: h, rx: 14, class: 'box' }, parent);
         if (title) {
-            text(parent, x + 16, y + 28, title, 'title');
+            // a long name (another language) is squeezed to leave room for the status dot in the corner
+            fitText(text(parent, x + 16, y + 28, title, 'title'), w - 48);
         }
     }
     function dot(parent, cx, cy, ids) {
@@ -417,7 +423,7 @@
         return ((length % DASH_PERIOD) + DASH_PERIOD) % DASH_PERIOD;
     }
     /* A pipe is a thin grey base (all bases lie in one layer below), a solid coloured line while the pipe is on the active path (`uses`
-       names the paths that use it: heat, dhw, cool), and light dashes that move along it while it runs (`activeIds`, see activityOf).
+       names the paths that use it: heat, dhw, cool, rest, solar), and light dashes that move along it while it runs (`activeIds`, see activityOf).
        The colour comes from the sensor `sensorId` unless `opts.color` is given; `opts.phase` shifts the dash pattern (see phaseOf).
        A pipe on the active path that does not flow stays grey: no water, no colour. Without any state that could say so (`activeIds`
        empty) the pipe counts as flowing. */
@@ -1104,7 +1110,7 @@
             returnX: central ? st.wall : lanes.length ? lanes[0].returnX : st.hpRight,
             cold: hungOf(g.hung, 'cold'),
             // a heating buffer keeps feeding the circuits while the heat pump charges the hot water vessel
-            trunkUses: central ? Array.from(new Set(st.endUses.concat(['dhw']))) : st.endUses,
+            trunkUses: central ? Array.from(new Set(st.endUses.concat(['dhw', 'rest']))) : st.endUses,
         };
         return { central: central, any: hasPipes };
     }
@@ -1140,14 +1146,10 @@
             returnDy: c.pipeDy + (g.yRet - g.yFlow), // return pipe, from the top of a circuit block
             // the circuits are fed by the heating buffer (heating and hot water) or by the cold storage (cooling); without a heating
             // buffer the pipes come straight from the heat pump, which cannot feed them while it charges the hot water vessel
-            circuitUses: view.storage.central ? ['heat', 'dhw', 'cool'] : ['heat', 'cool'],
+            circuitUses: view.storage.central ? ['heat', 'dhw', 'cool', 'rest'] : ['heat', 'cool'],
             roomsOf: roomsOf,
-            /* a circuit runs while its mode says so or its pump runs (M31 for circuit A, M32 for B, ...) */
-            running: m.circuits.map(function (circuit) {
-                return circuit.pump ? [circuit.active, circuit.pump] : [circuit.active];
-            }),
-            /* water flows through a circuit while its pump runs (the mode alone says nothing: a circuit in heating mode with its pump
-               off carries no water); only without a pump state does the mode have to do */
+            /* a circuit runs, and water flows through it, while its pump runs (M31 for circuit A, M32 for B, ...); the mode alone says
+               nothing (a circuit in heating mode with its pump off carries no water), only without a pump state does it have to do */
             flows: m.circuits.map(function (circuit) {
                 return circuit.pump ? [circuit.pump] : [circuit.active];
             }),
@@ -1162,7 +1164,6 @@
         var parts = view.parts;
         var c = cl.c;
         var y = cl.tops[i];
-        var running = cl.running[i];
         var flows = cl.flows[i];
         // the branches continue the dashes of the trunk they join (the trunk runs from the storage and, for the return, ends there)
         var flowPhase = phaseOf(cl.flowManifold - view.storage.flowX + (y + c.pipeDy - g.yFlow));
@@ -1176,7 +1177,7 @@
             uses: cl.circuitUses,
         });
         card(parts, c.x, y, c.w, c.h, circuit.name);
-        dot(parts, c.x + c.w - 18, y + 22, running);
+        dot(parts, c.x + c.w - 18, y + 22, flows);
         // pump and mixer of every circuit that reports them; a direct circuit shows the pump only
         if (circuit.pump) {
             badge(parts, c.x + 12, y + 150, circuit.pumpTag, circuit.pump, false);
@@ -1232,8 +1233,23 @@
         // the pipes from the heat pump or the heating buffer (heating, and cooling where there is no cold storage) ...
         hline(view.pipes, storage.flowX, cl.flowManifold, g.yFlow, ids.hpFlow, any, { uses: storage.trunkUses });
         hline(view.pipes, cl.returnManifold, storage.returnX, g.yRet, ids.hpReturn, any, { uses: storage.trunkUses });
-        vline(view.pipes, cl.flowManifold, g.yFlow, flowBottom, ids.hpFlow, any, { uses: cl.circuitUses });
-        vline(view.pipes, cl.returnManifold, returnBottom, g.yRet, ids.hpReturn, any, { uses: cl.circuitUses });
+        // the manifolds run along the circuits in one stretch per circuit: water flows in a stretch only while a circuit at or below it
+        // runs, so the pipes past the last running circuit rest
+        for (var k = 1; k < cl.tops.length; k++) {
+            var below = [].concat.apply([], cl.flows.slice(k));
+            var flowUpper = cl.tops[k - 1] + cl.c.pipeDy;
+            var flowLower = cl.tops[k] + cl.c.pipeDy;
+            var returnUpper = cl.tops[k - 1] + cl.returnDy;
+            var returnLower = cl.tops[k] + cl.returnDy;
+            vline(view.pipes, cl.flowManifold, flowUpper, flowLower, ids.hpFlow, below, {
+                phase: phaseOf(cl.flowManifold - storage.flowX + (flowUpper - g.yFlow)),
+                uses: cl.circuitUses,
+            });
+            vline(view.pipes, cl.returnManifold, returnLower, returnUpper, ids.hpReturn, below, {
+                phase: phaseOf(returnBottom - returnLower),
+                uses: cl.circuitUses,
+            });
+        }
         // ... and, where there is one, from the cold storage (cooling): its pipes join the manifolds on the right of the vessels
         if (cold) {
             var coldFlowY = cold.bottom - L.tank.levelInset;
@@ -1274,7 +1290,9 @@
         var x = L.tank.x + L.tank.w + s.gap;
         // beside the upper part of the storage; with a separate hot water vessel beside that vessel
         var y = m.hungDhw ? g.dhwTop + 20 : s.y;
-        var hxX = x + 22;
+        var w = s.w;
+        // the heat exchanger stands in the middle of the card
+        var hxX = x + (w - s.hxW) / 2;
         var hxY = y + 20;
         var hxRight = hxX + s.hxW;
         var inY = hxY + 16;
@@ -1282,14 +1300,12 @@
         var tankInside = L.tank.x + L.tank.w - 60; // the storage pipes start where the tank wall is straight
         /* the station runs while the hot water flow switch B1 or the station pump M22 says so (else with the compressor) */
         var active = ids.dhwFlow || ids.pumpM22 ? [ids.dhwFlow, ids.pumpM22] : compressorIds();
-        // the card is wider by the circulation pump badge beside the station pump
-        var w = s.w + (ids.circulation ? s.circulationExtra : 0);
         var coldEnd = x + w + 54;
         var tapX = x + w + 90;
         var tapY = inY - 20;
 
-        card(view.mid, x, y, w, s.h, null);
-        text(view.mid, x + w / 2, y + 108, m.labels.freshwater, 'small', 'middle');
+        // the title row sits above the heat exchanger, so the card grows upward and the pipes and the tap stay where they are
+        card(view.mid, x, y - s.titleH, w, s.h + s.titleH, m.labels.freshwater);
         if (ids.pumpM22) {
             badge(view.mid, x + 14, y + 126, 'M22', ids.pumpM22, true);
         }

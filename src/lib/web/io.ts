@@ -50,7 +50,7 @@ const NAMES: Record<string, string> = {
     'störung hochdruck 1': 'High pressure fault 1',
     ladepumpe: 'Charging pump',
     'hgl mischer': 'Hot gas line mixer',
-    warmwasserstation: 'Fresh water station',
+    warmwasserstation: 'Fresh water station pump',
     'ventilatordrehzahl 1': 'Fan speed 1',
     '4-wegeventil kreis 1': '4-way valve circuit 1',
     'pumpe heizkreis a': 'Pump heating circuit A',

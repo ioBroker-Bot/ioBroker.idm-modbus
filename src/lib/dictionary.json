@@ -7198,5 +7198,17 @@
         "pl": "Piec kaflowy",
         "uk": "Кахельна піч",
         "zh-cn": "瓷砖炉"
+    },
+    "Fresh water station pump": {
+        "de": "Pumpe Warmwasserstation",
+        "ru": "Насос станции свежей воды",
+        "pt": "Bomba da estação de AQS instantânea",
+        "nl": "Pomp tapwaterstation",
+        "fr": "Pompe de la station d'ECS instantanée",
+        "it": "Pompa della stazione acqua calda istantanea",
+        "es": "Bomba de la estación de ACS instantánea",
+        "pl": "Pompa stacji c.w.u. przepływowej",
+        "uk": "Насос станції свіжої води",
+        "zh-cn": "即热热水站水泵"
     }
 }
