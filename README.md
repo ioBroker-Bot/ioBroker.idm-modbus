@@ -69,6 +69,12 @@ A live picture of your plant on a web page, drawn from the values the adapter re
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.10 (2026-10-16)
+
+- (SeaSpotter) new adapter logo; the fan in the diagram has five blades
+- (SeaSpotter) diagram: the pipes of an idle fresh water station, boiler, stove and cascade stay grey; a mixer that reports "Zu" is no longer shown as driven; hot water charging colours the pipes of a combined vessel; the solar labels follow the solar pumps; a cascade that appears later shows without reloading; the size field falls back to the default when empty; the accessibility label of the page follows the language
+- (SeaSpotter) manuals: screenshots and a "how to read it" guide for the diagram; integration tests run against the released js-controller
+
 ### 0.1.9 (2026-10-16)
 
 - (SeaSpotter) diagram: the plant is drawn by its operating mode: pipes are coloured and move while the heat pump heats, charges hot water or cools, and rest (grey) where they carry nothing; cold water is blue in both flow and return

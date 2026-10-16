@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.9",
+        "version": "0.1.10",
         "news": {
+            "0.1.10": {
+                "en": "new adapter logo and a five-blade fan in the diagram; the pipes of an idle fresh water station, boiler, stove and cascade stay grey; a mixer that reports \"Zu\" is no longer shown as driven; hot water charging colours the pipes of a combined vessel; the solar labels follow the solar pumps; an empty size field means the default",
+                "de": "neues Adapter-Logo und ein Lüfter mit fünf Flügeln im Diagramm; die Leitungen einer ruhenden Frischwasserstation, eines Kessels, Kachelofens und einer Kaskade bleiben grau; ein Mischer, der „Zu“ meldet, wird nicht mehr als angesteuert gezeigt; beim Warmwasserladen werden die Leitungen eines gemeinsamen Behälters gefärbt; die Solar-Schilder folgen den Solarpumpen; ein leeres Größenfeld bedeutet den Standardwert",
+                "ru": "новый логотип адаптера и пятилопастный вентилятор на схеме; трубы неработающей станции пресной воды, котла, печи и каскада остаются серыми; смеситель, сообщающий «Zu», больше не показывается как управляемый; при нагреве воды окрашиваются трубы общего бака; метки солнечного контура следуют за солнечными насосами; пустое поле размера означает значение по умолчанию",
+                "pt": "novo logótipo do adaptador e ventoinha de cinco pás no diagrama; os tubos de uma estação de água doce, caldeira, recuperador e cascata em repouso ficam cinzentos; uma misturadora que indica «Zu» deixa de ser mostrada como acionada; ao carregar a água quente os tubos de um depósito comum ficam coloridos; as etiquetas solares seguem as bombas solares; um campo de tamanho vazio significa o valor predefinido",
+                "nl": "nieuw adapterlogo en een ventilator met vijf bladen in het diagram; de leidingen van een stilstaand verswaterstation, ketel, kachel en cascade blijven grijs; een menger die «Zu» meldt wordt niet meer als aangestuurd getoond; bij warmwaterladen kleuren de leidingen van een gecombineerd vat; de zonne-labels volgen de zonnepompen; een leeg veld voor de grootte betekent de standaardwaarde",
+                "fr": "nouveau logo de l'adaptateur et ventilateur à cinq pales dans le schéma ; les conduites d'une station d'eau douce, d'une chaudière, d'un poêle et d'une cascade à l'arrêt restent grises ; un mélangeur qui indique « Zu » n'est plus affiché comme commandé ; lors de la charge d'eau chaude, les conduites d'un ballon commun sont colorées ; les étiquettes solaires suivent les pompes solaires ; un champ de taille vide signifie la valeur par défaut",
+                "it": "nuovo logo dell'adattatore e ventola a cinque pale nello schema; i tubi di una stazione acqua dolce, caldaia, stufa e cascata ferme restano grigi; un miscelatore che segnala «Zu» non viene più mostrato come comandato; durante la carica dell'acqua calda i tubi di un serbatoio comune si colorano; le etichette solari seguono le pompe solari; un campo dimensione vuoto significa il valore predefinito",
+                "es": "nuevo logotipo del adaptador y ventilador de cinco aspas en el diagrama; las tuberías de una estación de agua dulce, caldera, estufa y cascada en reposo se quedan grises; una mezcladora que indica «Zu» ya no se muestra como accionada; al cargar el agua caliente se colorean las tuberías de un depósito común; las etiquetas solares siguen a las bombas solares; un campo de tamaño vacío significa el valor predeterminado",
+                "pl": "nowe logo adaptera i pięciołopatkowy wentylator na schemacie; rury nieczynnej stacji świeżej wody, kotła, pieca i kaskady pozostają szare; mieszacz zgłaszający «Zu» nie jest już pokazywany jako sterowany; podczas ładowania ciepłej wody kolorują się rury wspólnego zbiornika; etykiety solarne podążają za pompami solarnymi; puste pole rozmiaru oznacza wartość domyślną",
+                "uk": "новий логотип адаптера та п'ятилопатевий вентилятор на схемі; труби станції прісної води, котла, печі та каскаду, що не працюють, залишаються сірими; змішувач, який повідомляє «Zu», більше не показується як керований; під час нагрівання води забарвлюються труби спільного бака; позначки сонячного контуру слідують за сонячними насосами; порожнє поле розміру означає значення за замовчуванням",
+                "zh-cn": "新的适配器徽标，示意图中的风扇改为五叶；闲置的淡水站、锅炉、壁炉和级联的管道保持灰色；报告“Zu”的混合阀不再显示为受控；加热热水时，共用水箱的管道会着色；太阳能标签跟随太阳能泵；尺寸栏为空时使用默认值"
+            },
             "0.1.9": {
                 "en": "diagram: draws the plant by its operating mode (pipes coloured and moving while heating, charging hot water or cooling), two vessels for a separate heating buffer or a cold storage, pump and mixer of every heating circuit, heating rod, circulation pump, solar pumps, boiler, tiled stove and cascade of heat pumps, names on hover, adjustable size",
                 "de": "Diagramm: zeichnet die Anlage nach der Betriebsart (Leitungen gefärbt und bewegt beim Heizen, Warmwasserladen oder Kühlen), zwei Behälter bei eigenem Heizungspuffer oder Kältespeicher, Pumpe und Mischer jedes Heizkreises, Heizstab, Zirkulationspumpe, Solarpumpen, Kessel, Kachelofen und Kaskade von Wärmepumpen, Namen beim Darüberfahren, einstellbare Größe",
@@ -54,19 +67,6 @@
                 "pl": "wykres: koło pompy zmienia kolor na zielony podczas pracy, M71 i wentylator M13 w skrzynce pompy ciepła w procentach, przewód gorącego gazu porusza się tylko wtedy, gdy M71 jest otwarty i woda się porusza, większy wyświetlacz",
                 "uk": "діаграма: круг насоса стає зеленим під час роботи, M71 і вентилятор M13 у коробці теплового насоса у відсотках, лінія гарячого газу рухається лише тоді, коли M71 відкритий і вода рухається, більший дисплей",
                 "zh-cn": "图：运行时泵圈变绿，热泵箱内的M71和风扇M13为百分比，仅当M71打开时热气管路才移动，水移动，大显示"
-            },
-            "0.1.5": {
-                "en": "diagram: pump symbols (green running, grey off), mixer status of M71 and M41, the hot gas line moves with its mixer M71",
-                "de": "Diagramm: Pumpensymbole (grün läuft, grau aus), Mischerstatus von M71 und M41, die Heißgasleitung bewegt sich mit ihrem Mischer M71",
-                "ru": "диаграмма: символы насоса (зеленый работает, серый выключен), состояние смесителя M71 и M41, линия горячего газа движется вместе со смесителем M71.",
-                "pt": "diagrama: símbolos da bomba (verde em funcionamento, cinza apagado), status do misturador M71 e M41, a linha de gás quente se move com seu misturador M71",
-                "nl": "diagram: pompsymbolen (groen actief, grijs uit), mengerstatus van M71 en M41, de heetgasleiding beweegt mee met zijn menger M71",
-                "fr": "schéma : symboles de la pompe (vert en marche, gris éteint), état du mélangeur M71 et M41, la conduite de gaz chauds se déplace avec son mélangeur M71",
-                "it": "schema: simboli pompa (verde accesa, grigio spenta), stato del miscelatore M71 e M41, la linea del gas caldo si muove con il relativo miscelatore M71",
-                "es": "diagrama: símbolos de la bomba (verde funcionando, gris apagado), estado del mezclador de M71 y M41, la línea de gas caliente se mueve con su mezclador M71",
-                "pl": "schemat: symbole pompy (zielona pracuje, szara wyłączona), stan mieszacza M71 i M41, przewód gorącego gazu porusza się wraz z mieszaczem M71",
-                "uk": "діаграма: символи насоса (зелений працює, сірий не світиться), стан змішувача M71 і M41, лінія гарячого газу рухається разом із змішувачем M71",
-                "zh-cn": "示意图：泵符号（绿色运行，灰色关闭），M71 和 M41 的混合器状态，热气管线与其混合器 M71 一起移动"
             }
         },
         "titleLang": {
