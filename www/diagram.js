@@ -1237,8 +1237,23 @@
         // the pipes from the heat pump or the heating buffer (heating, and cooling where there is no cold storage) ...
         hline(view.pipes, storage.flowX, cl.flowManifold, g.yFlow, ids.hpFlow, any, { uses: storage.trunkUses });
         hline(view.pipes, cl.returnManifold, storage.returnX, g.yRet, ids.hpReturn, any, { uses: storage.trunkUses });
-        vline(view.pipes, cl.flowManifold, g.yFlow, flowBottom, ids.hpFlow, any, { uses: cl.circuitUses });
-        vline(view.pipes, cl.returnManifold, returnBottom, g.yRet, ids.hpReturn, any, { uses: cl.circuitUses });
+        // the manifolds run along the circuits in one stretch per circuit: water flows in a stretch only while a circuit at or below it
+        // runs, so the pipes past the last running circuit rest
+        for (var k = 1; k < cl.tops.length; k++) {
+            var below = [].concat.apply([], cl.flows.slice(k));
+            var flowUpper = cl.tops[k - 1] + cl.c.pipeDy;
+            var flowLower = cl.tops[k] + cl.c.pipeDy;
+            var returnUpper = cl.tops[k - 1] + cl.returnDy;
+            var returnLower = cl.tops[k] + cl.returnDy;
+            vline(view.pipes, cl.flowManifold, flowUpper, flowLower, ids.hpFlow, below, {
+                phase: phaseOf(cl.flowManifold - storage.flowX + (flowUpper - g.yFlow)),
+                uses: cl.circuitUses,
+            });
+            vline(view.pipes, cl.returnManifold, returnLower, returnUpper, ids.hpReturn, below, {
+                phase: phaseOf(returnBottom - returnLower),
+                uses: cl.circuitUses,
+            });
+        }
         // ... and, where there is one, from the cold storage (cooling): its pipes join the manifolds on the right of the vessels
         if (cold) {
             var coldFlowY = cold.bottom - L.tank.levelInset;
