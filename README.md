@@ -54,6 +54,14 @@ documents leave questions open.
 
 This is an independent community project. IDM and Navigator are trademarks of their respective owner; the project is not affiliated with or endorsed by IDM Energiesysteme GmbH.
 
+## Heat pump diagram
+
+A live picture of your plant on a web page, drawn from the values the adapter reads (sample values below). Pipes are coloured and move only where water flows in the current operating mode: orange is the hot flow, blue the return and, while cooling, the cold water; a thin grey pipe carries nothing. Hover over a label to see the name of the IDM measuring point. See the [manual](docs/en/manual.md#8a-heat-pump-diagram) for the settings and every part.
+
+![Heating](https://raw.githubusercontent.com/seaspotter/ioBroker.idm-modbus/main/docs/images/en/diagram-heating.png)
+
+![Cooling](https://raw.githubusercontent.com/seaspotter/ioBroker.idm-modbus/main/docs/images/en/diagram-cooling.png)
+
 ## Changelog
 
 <!--

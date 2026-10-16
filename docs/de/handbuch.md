@@ -117,6 +117,26 @@ Das Diagramm ist ein Livebild Ihrer Anlage auf einer Webseite. Es wird aus den W
 
 **Öffnen.** Auf den Link _Wärmepumpen-Diagramm_ neben der Instanz in der Instanzenliste klicken oder `http://<ioBroker-Rechner>:8082/idm-modbus/index.html?instance=0` öffnen (die Zahl ist die Instanz dieses Adapters). Die Seite folgt der Sprache der ioBroker-Systemeinstellungen.
 
+**So liest man es.** Die Bilder unten sind mit Beispielwerten gezeichnet (keine echte Anlage).
+
+- **Orange** Leitungen führen den heißen Vorlauf der Wärmepumpe (oder eines Kessels, Kachelofens, der Solaranlage), **blaue** Leitungen den Rücklauf und beim Kühlen das kalte Wasser.
+- Eine **dünne graue** Leitung führt in der aktuellen Betriebsart nichts; ihr Wertschild ist ebenfalls grau.
+- **Helle Striche**, die an einer gefärbten Leitung entlanglaufen, bedeuten, dass dort jetzt Wasser fließt.
+- **Grün** (ein Punkt, ein Pumpen- oder Mischersymbol) heißt: läuft bzw. wird angesteuert, grau heißt: aus.
+- Die Kürzel (B33, B38, M73 ...) sind die IDM-Messstellen (B = Fühler, M = Stellglied); mit der Maus über ein Schild fahren zeigt seinen Namen.
+
+![Heizen](../images/de/diagram-heating.png)
+
+_Heizen: Die Wärmepumpe (links oben) lädt den Heizungspuffer (Mitte), Heizkreis A (rechts) holt seine Wärme dort. Der Warmwasserbehälter mit Frischwasserstation (unten) ruht, seine Leitungen sind grau. Der Kasten Solarthermie (links unten) heizt den Speicher über eine Rohrschlange._
+
+![Warmwasser](../images/de/diagram-hot-water.png)
+
+_Warmwasser: dieselbe Anlage, während die Wärmepumpe den Warmwasserbehälter lädt. Die Leitungen zum Behälter sind jetzt gefärbt, die Leitungen der Wärmepumpe zum Puffer ruhen. Der Puffer speist Heizkreis A weiter, seine Leitungen bleiben gefärbt._
+
+![Kühlen](../images/de/diagram-cooling.png)
+
+_Kühlen: Die Wärmepumpe lädt den Kältespeicher (Mitte, blau), der Heizkreis holt seine Kälte dort. Alle Leitungen mit kaltem Wasser sind blau; Puffer und Warmwasserbehälter ruhen._
+
 **Einstellungen (Reiter Diagramm).** Sie gelten sofort, die Seite zeichnet sich neu.
 
 | Einstellung                   | Bedeutung                                                                                                                                                                                                             |
@@ -140,6 +160,14 @@ Das Diagramm ist ein Livebild Ihrer Anlage auf einer Webseite. Es wird aus den W
 - **Heizstab und Zirkulation:** die Stufen des Elektroheizstabs und die Warmwasser-Zirkulationspumpe (M64), wo die Anlage sie meldet.
 - **Weitere Wärmeerzeuger** (links unten): eine Kaskade von Wärmepumpen (laufende von verfügbaren Stufen für Heizen, Kühlen und Warmwasser; die Fühler der anderen Geräte werden nicht bereitgestellt), ein Öl- oder Gaskessel (Vorrangventil M111) und ein Kachelofen (Pumpe M88, Fühler B84). Ihre Leitungen münden in den Heizungspuffer, ohne Puffer in die Leitungen der Wärmepumpe, und bewegen sich, solange sie laufen. Der Kessel wird immer zum Heizungspuffer gezeichnet, auch wenn seine Ventile ihn auf den Warmwasserbehälter umschalten können.
 - **Energiekacheln** (unten): Photovoltaik, Batterie, Überschuss, Haus und Leistung der Wärmepumpe. Sie sind nicht mit der Wärmepumpe verbunden.
+
+![Kessel](../images/de/diagram-boiler.png)
+
+_Ein Öl- oder Gaskessel (links unten) speist den Heizungspuffer, solange er läuft; ein Kachelofen wird genauso gezeichnet._
+
+![Kaskade](../images/de/diagram-cascade.png)
+
+_Eine Kaskade aus zwei Wärmepumpen: Die Karte (links unten) zeigt, wie viele der verfügbaren Stufen für Heizen und Warmwasser laufen; ihre Leitungen münden in die der Wärmepumpe._
 
 **Pumpen und Mischer.** Pumpen (Ladepumpe M73, Warmwasserpumpe M22, Heizkreispumpe M31 und die Quellenpumpen einer Erdreich-Wärmepumpe) erscheinen als kleines Pumpensymbol: grün, solange sie laufen, grau, solange sie aus sind, mit ihrer Drehzahl. Der Heißgasmischer M71 (in der Wärmepumpen-Box) und der Mischer M41 von Heizkreis A (der Text, den der Navigator meldet) erscheinen als Ventilsymbol, grün, solange sie angesteuert werden; M71 und der Lüfter M13 sind 0-10-V-Ausgänge und werden als 0-100 % gezeigt. Der Kreis der Pumpe wird grün, solange sie läuft. Mischer und die Pumpen M22, M31 und M73 brauchen die Werte der Weboberfläche.
 
