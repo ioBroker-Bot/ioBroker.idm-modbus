@@ -69,6 +69,11 @@ A live picture of your plant on a web page, drawn from the values the adapter re
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.13 (2026-10-16)
+
+- (SeaSpotter) diagram: the heating circuits keep drawing from the heating buffer while the heat pump is off or defrosting, so their pipes show the flow while the circuit pump runs
+- (SeaSpotter) diagram: the fresh water station box is taller and its heat exchanger stands in the middle
+
 ### 0.1.12 (2026-10-16)
 
 - (SeaSpotter) diagram: a pipe and the label on it are coloured only while water really flows through it; a pipe whose pump is off, or that the operating mode does not use, stays grey
