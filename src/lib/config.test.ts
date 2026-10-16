@@ -306,6 +306,10 @@ describe('readDiagramSettings', () => {
             zoneCircuit: [],
         });
         expect(readDiagramSettings({}).settings).to.deep.equal({ hidden: [], zoneCircuit: [] });
+        // a cleared number field is "not set": the default, without a warning (not 0, which would be clamped to the minimum)
+        const cleared = readDiagramSettings({ diagramScale: '' as unknown as number });
+        expect(cleared.settings).to.deep.equal({ hidden: [], zoneCircuit: [] });
+        expect(cleared.warnings).to.deep.equal([]);
     });
     it('survives values of the wrong type', () => {
         const wrong = { diagramHidden: '', diagramZoneCircuit: 'x' } as unknown as Partial<ioBroker.AdapterConfig>;

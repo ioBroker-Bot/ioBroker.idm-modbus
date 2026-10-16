@@ -54,12 +54,26 @@ documents leave questions open.
 
 This is an independent community project. IDM and Navigator are trademarks of their respective owner; the project is not affiliated with or endorsed by IDM Energiesysteme GmbH.
 
+## Heat pump diagram
+
+A live picture of your plant on a web page, drawn from the values the adapter reads (sample values below). Pipes are coloured and move only where water flows in the current operating mode: orange is the hot flow, blue the return and, while cooling, the cold water; a thin grey pipe carries nothing. Hover over a label to see the name of the IDM measuring point. See the [manual](docs/en/manual.md#8a-heat-pump-diagram) for the settings and every part.
+
+![Heating](https://raw.githubusercontent.com/seaspotter/ioBroker.idm-modbus/main/docs/images/en/diagram-heating.png)
+
+![Cooling](https://raw.githubusercontent.com/seaspotter/ioBroker.idm-modbus/main/docs/images/en/diagram-cooling.png)
+
 ## Changelog
 
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.1.10 (2026-10-16)
+
+- (SeaSpotter) new adapter logo; the fan in the diagram has five blades
+- (SeaSpotter) diagram: the pipes of an idle fresh water station, boiler, stove and cascade stay grey; a mixer that reports "Zu" is no longer shown as driven; hot water charging colours the pipes of a combined vessel; the solar labels follow the solar pumps; a cascade that appears later shows without reloading; the size field falls back to the default when empty; the accessibility label of the page follows the language
+- (SeaSpotter) manuals: screenshots and a "how to read it" guide for the diagram; integration tests run against the released js-controller
 
 ### 0.1.9 (2026-10-16)
 

@@ -818,7 +818,9 @@ export function readDiagramSettings(config: Partial<ioBroker.AdapterConfig>): {
         }
     }
     // a size outside the limits is brought back to the nearest one, anything that is no number to the default
-    const wanted = Number(config.diagramScale ?? DIAGRAM_SCALE.default);
+    // (an empty field is "not set", not 0)
+    const raw: unknown = config.diagramScale;
+    const wanted = raw === undefined || raw === null || raw === '' ? DIAGRAM_SCALE.default : Number(raw);
     const scale = Number.isFinite(wanted)
         ? Math.min(DIAGRAM_SCALE.max, Math.max(DIAGRAM_SCALE.min, Math.round(wanted)))
         : DIAGRAM_SCALE.default;

@@ -119,6 +119,26 @@ The diagram is a live picture of your plant on a web page. It is drawn from the 
 
 **Opening it.** Click the link _Heat pump diagram_ next to the instance in the instances list, or open `http://<ioBroker computer>:8082/idm-modbus/index.html?instance=0` (the number is the instance of this adapter). The page follows the language of the ioBroker system settings.
 
+**How to read it.** The pictures below are drawn from sample values (not a real plant).
+
+- **Orange** pipes carry the hot flow from the heat pump (or a boiler, stove, solar), **blue** pipes the return and, while cooling, the cold water.
+- A **thin grey** pipe carries nothing in the current operating mode; its value label is grey too.
+- **Light dashes** moving along a coloured pipe mean that the water flows there now.
+- **Green** (a dot, a pump or mixer symbol) means running or driven, grey means off.
+- The short codes (B33, B38, M73 ...) are the IDM measuring points (B = sensor, M = actor); hover over a label to see its name.
+
+![Heating](../images/en/diagram-heating.png)
+
+_Heating: the heat pump (top left) charges the heating buffer (middle), heating circuit A (right) takes its heat from it. The hot water vessel with its fresh water station (bottom) rests, so its pipes are grey. The solar thermal box (bottom left) heats the storage through a coil._
+
+![Hot water](../images/en/diagram-hot-water.png)
+
+_Hot water: the same plant while the heat pump charges the hot water vessel. The pipes to the vessel are coloured now and the heat pump pipes to the buffer rest. The buffer still feeds circuit A, so its pipes stay coloured._
+
+![Cooling](../images/en/diagram-cooling.png)
+
+_Cooling: the heat pump charges the cold storage (middle, blue) and the circuit takes its cold from it. All pipes with cold water are blue; the buffer and the hot water vessel rest._
+
 **Settings (Diagram tab).** They apply at once, the page redraws itself.
 
 | Setting                        | Meaning                                                                                                                                                                                               |
@@ -142,6 +162,14 @@ The diagram is a live picture of your plant on a web page. It is drawn from the 
 - **Heating rod and circulation:** the stages of the electric heating rod and the hot water circulation pump (M64) where the plant reports them.
 - **Further heat generators** (bottom left): a cascade of heat pumps (stages running of the stages available for heating, cooling and hot water; the sensors of the other units are not exposed), an oil or gas boiler (priority valve M111) and a tiled stove (pump M88, sensor B84). Their pipes join the heating buffer, or the heat pump pipes where there is none, and move while they run. The boiler is always drawn to the heating buffer, although its valves may also switch it to the hot water vessel.
 - **Energy tiles** (bottom): photovoltaics, battery, surplus, house and heat pump power. They are not tied to the heat pump.
+
+![Boiler](../images/en/diagram-boiler.png)
+
+_An oil or gas boiler (bottom left) feeds the heating buffer while it runs; a tiled stove is drawn the same way._
+
+![Cascade](../images/en/diagram-cascade.png)
+
+_A cascade of two heat pumps: the card (bottom left) shows how many stages run of those available for heating and hot water; its pipes join the heat pump pipes._
 
 **Pumps and mixers.** Pumps (the charging pump M73, the fresh water pump M22, the heating circuit pump M31, and the source pumps of a ground source heat pump) show as a small pump symbol: green while it runs, grey while it is off, with its speed. The hot gas mixer M71 (in the heat pump box) and the mixer M41 of heating circuit A (the text the Navigator reports) show as a valve symbol, green while they are driven; M71 and the fan M13 are 0-10 V outputs and shown as 0-100 %. The pump circle turns green while the pump runs. Mixers and the pumps M22, M31 and M73 need the web interface values.
 

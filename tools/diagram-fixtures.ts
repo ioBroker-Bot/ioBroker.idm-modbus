@@ -50,6 +50,12 @@ const plant = exported.module.exports as Plant;
 /** The operating modes of the Navigator the pictures are drawn in (`hp.hp_operating_mode`). */
 export const MODE = { heating: 1, cooling: 2, hotWater: 4 } as const;
 
+/** The operating mode texts the objects carry, by display language (English for every language but German). */
+const MODE_TEXTS: Record<'en' | 'de', Record<number, string>> = {
+    en: { 0: 'Off', 1: 'Heating', 2: 'Cooling', 4: 'Hot water', 8: 'Defrost' },
+    de: { 0: 'Aus', 1: 'Heizen', 2: 'Kühlen', 4: 'Warmwasser', 8: 'Abtauen' },
+};
+
 const HOT_WATER_TAGS = ['B41', 'B42', 'B48'];
 const COOLING_TAGS = ['B31', 'B40', 'M51', 'M61', 'M62', 'M74'];
 
@@ -149,7 +155,8 @@ export function buildSnapshot(scheme: Scheme, language = 'en', mode: number = MO
     // every Navigator has the heat pump flow and return sensors and the charging pump, whatever the scheme draws
     ['B33', 'B34', 'M73'].forEach(tag => tags.add(tag));
     (scheme.family === 'air' ? ['B37', 'M13'] : ['B36', 'B43', 'M16']).forEach(tag => tags.add(tag));
-    // the schemes draw a dashed box for optional further circuits; a scheme titled "1 HK" has circuit A only, "2 HK" A and C
+    // the schemes draw a dashed box for optional further circuits: a scheme that names n circuits keeps A and the next n - 1 of C, D, ...
+    // (circuit B, the direct circuit, stays unless the title names one circuit and no direct circuit)
     const count = scheme.circuits;
     if (count) {
         const keep = ['A', 'C', 'D', 'E', 'F', 'G'].slice(0, count);
@@ -202,7 +209,8 @@ export function buildSnapshot(scheme: Scheme, language = 'en', mode: number = MO
         } else if (tag in ANALOG) {
             value = ANALOG[tag];
         } else if (/^M4[1-7]$/.test(tag)) {
-            value = index % 2 ? 'Auf' : 'Aus';
+            // the mixer text is whatever the Navigator reports, in its display language
+            value = language === 'de' ? (index % 2 ? 'Auf' : 'Aus') : index % 2 ? 'Open' : 'Off';
         } else if (id.startsWith('web.io.digital') || reg?.type === 'BOOL' || reg?.type === 'UCHAR') {
             value = id.startsWith('web.io') ? Number(index % 2) : index % 2 === 0;
         } else {
@@ -234,7 +242,7 @@ export function buildSnapshot(scheme: Scheme, language = 'en', mode: number = MO
             common: {
                 name: modeRegister.label,
                 role: 'value',
-                states: { 0: 'Off', 1: 'Heating', 2: 'Cooling', 4: 'Hot water', 8: 'Defrost' },
+                states: MODE_TEXTS[language === 'de' ? 'de' : 'en'],
             },
         };
     }
