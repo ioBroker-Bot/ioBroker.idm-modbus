@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.10",
+        "version": "0.1.11",
         "news": {
+            "0.1.11": {
+                "en": "diagram: the flow in a heating circuit follows its pump (M31, M32, ...) instead of its operating mode, and the white flow dashes show only while a pipe actually flows",
+                "de": "Diagramm: der Fluss in einem Heizkreis folgt seiner Pumpe (M31, M32, ...) statt seiner Betriebsart, und die weißen Strömungsstriche erscheinen nur, solange eine Leitung wirklich fließt",
+                "ru": "схема: поток в контуре отопления определяется его насосом (M31, M32, ...), а не режимом работы, а белые штрихи потока видны только пока в трубе действительно течёт вода",
+                "pt": "diagrama: o fluxo num circuito de aquecimento segue a sua bomba (M31, M32, ...) em vez do modo de funcionamento, e os traços brancos de fluxo só aparecem enquanto um tubo realmente tem fluxo",
+                "nl": "diagram: de stroming in een verwarmingskring volgt zijn pomp (M31, M32, ...) in plaats van zijn bedrijfsmodus, en de witte stromingsstreepjes verschijnen alleen zolang een leiding echt stroomt",
+                "fr": "schéma : le débit dans un circuit de chauffage suit sa pompe (M31, M32, ...) et non son mode de fonctionnement, et les tirets blancs d'écoulement n'apparaissent que lorsqu'une conduite coule réellement",
+                "it": "schema: il flusso in un circuito di riscaldamento segue la sua pompa (M31, M32, ...) invece della modalità di funzionamento, e i trattini bianchi del flusso compaiono solo mentre un tubo scorre davvero",
+                "es": "diagrama: el flujo en un circuito de calefacción sigue a su bomba (M31, M32, ...) en lugar de su modo de funcionamiento, y los guiones blancos de flujo solo aparecen mientras una tubería realmente fluye",
+                "pl": "schemat: przepływ w obiegu grzewczym zależy od jego pompy (M31, M32, ...), a nie od trybu pracy, a białe kreski przepływu pojawiają się tylko wtedy, gdy rura naprawdę przepływa",
+                "uk": "схема: потік у контурі опалення визначається його насосом (M31, M32, ...), а не режимом роботи, а білі штрихи потоку видно лише поки в трубі справді тече вода",
+                "zh-cn": "示意图：采暖回路的水流取决于其水泵（M31、M32 等），而不是运行模式；白色流动短线只在管道真正有水流时显示"
+            },
             "0.1.10": {
                 "en": "new adapter logo and a five-blade fan in the diagram; the pipes of an idle fresh water station, boiler, stove and cascade stay grey; a mixer that reports \"Zu\" is no longer shown as driven; hot water charging colours the pipes of a combined vessel; the solar labels follow the solar pumps; an empty size field means the default",
                 "de": "neues Adapter-Logo und ein Lüfter mit fünf Flügeln im Diagramm; die Leitungen einer ruhenden Frischwasserstation, eines Kessels, Kachelofens und einer Kaskade bleiben grau; ein Mischer, der „Zu“ meldet, wird nicht mehr als angesteuert gezeigt; beim Warmwasserladen werden die Leitungen eines gemeinsamen Behälters gefärbt; die Solar-Schilder folgen den Solarpumpen; ein leeres Größenfeld bedeutet den Standardwert",
@@ -54,19 +67,6 @@
                 "pl": "schemat: nowe ustawienie źródła mocy i COP (Navigator lub liczniki zewnętrzne, z rozwiązaniem zastępczym), wyświetlana moc cieplna, etykieta wentylatora pod ikoną; moc zewnętrzna jako stany; poprawione tłumaczenia",
                 "uk": "схема: нове налаштування джерела потужності та COP (Navigator або зовнішні лічильники, із запасним варіантом), відображається теплова потужність, підпис вентилятора під значком; зовнішня потужність як стани; переглянуто переклади",
                 "zh-cn": "示意图：新增功率和 COP 来源设置（Navigator 或外部电表，带回退）、显示热功率、风扇标签位于图标下方；外部功率作为状态提供；翻译已审校"
-            },
-            "0.1.6": {
-                "en": "diagram: the pump circle turns green while it runs, M71 and the fan M13 in the heat pump box as percent, the hot gas line moves only while M71 is open and the water moves, larger display",
-                "de": "Diagramm: Der Pumpenkreis wird grün während er läuft, M71 und der Ventilator M13 im Wärmepumpenkasten in Prozent, die Heißgasleitung bewegt sich nur solange M71 geöffnet ist und das Wasser bewegt, größere Anzeige",
-                "ru": "диаграмма: кружок насоса становится зеленым во время работы, M71 и вентилятор M13 в блоке теплового насоса в процентах, линия горячего газа движется только тогда, когда M71 открыт, и движется вода, увеличенный дисплей",
-                "pt": "diagrama: o círculo da bomba fica verde enquanto funciona, M71 e o ventilador M13 na caixa da bomba de calor como percentagem, a linha de gás quente move-se apenas enquanto M71 está aberta e a água se move, display maior",
-                "nl": "diagram: de pompcirkel wordt groen terwijl deze draait, M71 en de ventilator M13 in de warmtepompbox als percentage, de heetgasleiding beweegt alleen als M71 open is en het water beweegt, groter display",
-                "fr": "schéma : le cercle de la pompe devient vert pendant qu'elle fonctionne, M71 et le ventilateur M13 dans le boîtier de la pompe à chaleur en pourcentage, la conduite de gaz chaud bouge uniquement lorsque M71 est ouvert et que l'eau bouge, affichage plus grand",
-                "it": "diagramma: il cerchio della pompa diventa verde mentre è in funzione, M71 e il ventilatore M13 nel box della pompa di calore in percentuale, la linea del gas caldo si muove solo mentre M71 è aperta e l'acqua si muove, display più grande",
-                "es": "diagrama: el círculo de la bomba se vuelve verde mientras está funcionando, M71 y el ventilador M13 en la caja de la bomba de calor como porcentaje, la línea de gas caliente se mueve solo mientras M71 está abierta y el agua se mueve, pantalla más grande",
-                "pl": "wykres: koło pompy zmienia kolor na zielony podczas pracy, M71 i wentylator M13 w skrzynce pompy ciepła w procentach, przewód gorącego gazu porusza się tylko wtedy, gdy M71 jest otwarty i woda się porusza, większy wyświetlacz",
-                "uk": "діаграма: круг насоса стає зеленим під час роботи, M71 і вентилятор M13 у коробці теплового насоса у відсотках, лінія гарячого газу рухається лише тоді, коли M71 відкритий і вода рухається, більший дисплей",
-                "zh-cn": "图：运行时泵圈变绿，热泵箱内的M71和风扇M13为百分比，仅当M71打开时热气管路才移动，水移动，大显示"
             }
         },
         "titleLang": {
