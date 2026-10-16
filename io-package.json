@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "idm-modbus",
-        "version": "0.1.11",
+        "version": "0.1.12",
         "news": {
+            "0.1.12": {
+                "en": "diagram: a pipe and the label on it are coloured only while water really flows through it; a pipe whose pump is off, or that the operating mode does not use, stays grey",
+                "de": "Diagramm: eine Leitung und das Schild darauf sind nur gefärbt, solange wirklich Wasser durch sie fließt; eine Leitung, deren Pumpe aus ist oder die die Betriebsart nicht nutzt, bleibt grau",
+                "ru": "схема: труба и метка на ней окрашиваются только пока по ней действительно течёт вода; труба, у которой насос выключен или которую не использует текущий режим, остаётся серой",
+                "pt": "diagrama: um tubo e a etiqueta nele só são coloridos enquanto a água realmente passa por ele; um tubo cuja bomba está desligada, ou que o modo de funcionamento não usa, fica cinzento",
+                "nl": "diagram: een leiding en het label erop zijn alleen gekleurd zolang er echt water doorheen stroomt; een leiding waarvan de pomp uit is, of die de bedrijfsmodus niet gebruikt, blijft grijs",
+                "fr": "schéma : une conduite et l'étiquette qu'elle porte ne sont colorées que lorsque l'eau y circule réellement ; une conduite dont la pompe est arrêtée, ou que le mode de fonctionnement n'utilise pas, reste grise",
+                "it": "schema: un tubo e l'etichetta su di esso sono colorati solo mentre l'acqua vi scorre davvero; un tubo la cui pompa è spenta, o che la modalità di funzionamento non usa, resta grigio",
+                "es": "diagrama: una tubería y la etiqueta que lleva solo se colorean mientras el agua realmente fluye por ella; una tubería cuya bomba está apagada, o que el modo de funcionamiento no usa, queda gris",
+                "pl": "schemat: rura i etykieta na niej są kolorowe tylko wtedy, gdy naprawdę płynie przez nią woda; rura, której pompa jest wyłączona lub której nie używa bieżący tryb pracy, pozostaje szara",
+                "uk": "схема: труба та позначка на ній забарвлюються лише поки по ній справді тече вода; труба, насос якої вимкнений або яку не використовує поточний режим, залишається сірою",
+                "zh-cn": "示意图：只有管道里真的有水流动时，管道及其上的标签才会着色；水泵关闭或当前运行模式不使用的管道保持灰色"
+            },
             "0.1.11": {
                 "en": "diagram: the flow in a heating circuit follows its pump (M31, M32, ...) instead of its operating mode, and the white flow dashes show only while a pipe actually flows",
                 "de": "Diagramm: der Fluss in einem Heizkreis folgt seiner Pumpe (M31, M32, ...) statt seiner Betriebsart, und die weißen Strömungsstriche erscheinen nur, solange eine Leitung wirklich fließt",
@@ -54,19 +67,6 @@
                 "pl": "stany nigdy nie są już usuwane (usuwa je tylko wyłączenie rejestru); kopia webowa elementu pojawia się, gdy Modbus nie zgłasza dla niego wartości (na przykład pompa ładowania M73 w postoju)",
                 "uk": "стани більше ніколи не видаляються (їх прибирає лише вимкнення регістра); веб-копія компонента з'являється, коли Modbus не повідомляє для нього значення (наприклад, зарядний насос M73 у простої)",
                 "zh-cn": "状态不再被删除（只有关闭寄存器才会移除）；当 Modbus 对某部件不报告数值时，会出现其网页副本（例如停机时的充水泵 M73）"
-            },
-            "0.1.7": {
-                "en": "diagram: new setting for the source of power and COP (Navigator or external meters, with fallback), thermal power shown, fan label under the icon; external power as states; translations reviewed",
-                "de": "Diagramm: neue Einstellung für die Quelle von Leistung und COP (Navigator oder externe Zähler, mit Rückfall), thermische Leistung angezeigt, Lüfter-Beschriftung unter dem Symbol; externe Leistung als Datenpunkte; Übersetzungen überarbeitet",
-                "ru": "диаграмма: новая настройка источника мощности и COP (Navigator или внешние счётчики, с резервным вариантом), отображается тепловая мощность, подпись вентилятора под значком; внешняя мощность в виде состояний; переводы пересмотрены",
-                "pt": "diagrama: nova definição para a origem da potência e do COP (Navigator ou contadores externos, com alternativa), potência térmica apresentada, legenda do ventilador sob o ícone; potência externa como estados; traduções revistas",
-                "nl": "diagram: nieuwe instelling voor de bron van vermogen en COP (Navigator of externe meters, met terugval), thermisch vermogen getoond, ventilatorlabel onder het pictogram; extern vermogen als states; vertalingen herzien",
-                "fr": "schéma : nouveau réglage de la source de la puissance et du COP (Navigator ou compteurs externes, avec repli), puissance thermique affichée, libellé du ventilateur sous l'icône ; puissance externe en états ; traductions révisées",
-                "it": "diagramma: nuova impostazione per la fonte di potenza e COP (Navigator o contatori esterni, con ripiego), potenza termica mostrata, etichetta del ventilatore sotto l'icona; potenza esterna come stati; traduzioni riviste",
-                "es": "esquema: nuevo ajuste para el origen de la potencia y el COP (Navigator o contadores externos, con alternativa), potencia térmica mostrada, etiqueta del ventilador bajo el icono; potencia externa como estados; traducciones revisadas",
-                "pl": "schemat: nowe ustawienie źródła mocy i COP (Navigator lub liczniki zewnętrzne, z rozwiązaniem zastępczym), wyświetlana moc cieplna, etykieta wentylatora pod ikoną; moc zewnętrzna jako stany; poprawione tłumaczenia",
-                "uk": "схема: нове налаштування джерела потужності та COP (Navigator або зовнішні лічильники, із запасним варіантом), відображається теплова потужність, підпис вентилятора під значком; зовнішня потужність як стани; переглянуто переклади",
-                "zh-cn": "示意图：新增功率和 COP 来源设置（Navigator 或外部电表，带回退）、显示热功率、风扇标签位于图标下方；外部功率作为状态提供；翻译已审校"
             }
         },
         "titleLang": {
