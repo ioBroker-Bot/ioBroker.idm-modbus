@@ -1147,12 +1147,8 @@
             // buffer the pipes come straight from the heat pump, which cannot feed them while it charges the hot water vessel
             circuitUses: view.storage.central ? ['heat', 'dhw', 'cool', 'rest'] : ['heat', 'cool'],
             roomsOf: roomsOf,
-            /* a circuit runs while its mode says so or its pump runs (M31 for circuit A, M32 for B, ...) */
-            running: m.circuits.map(function (circuit) {
-                return circuit.pump ? [circuit.active, circuit.pump] : [circuit.active];
-            }),
-            /* water flows through a circuit while its pump runs (the mode alone says nothing: a circuit in heating mode with its pump
-               off carries no water); only without a pump state does the mode have to do */
+            /* a circuit runs, and water flows through it, while its pump runs (M31 for circuit A, M32 for B, ...); the mode alone says
+               nothing (a circuit in heating mode with its pump off carries no water), only without a pump state does it have to do */
             flows: m.circuits.map(function (circuit) {
                 return circuit.pump ? [circuit.pump] : [circuit.active];
             }),
@@ -1167,7 +1163,6 @@
         var parts = view.parts;
         var c = cl.c;
         var y = cl.tops[i];
-        var running = cl.running[i];
         var flows = cl.flows[i];
         // the branches continue the dashes of the trunk they join (the trunk runs from the storage and, for the return, ends there)
         var flowPhase = phaseOf(cl.flowManifold - view.storage.flowX + (y + c.pipeDy - g.yFlow));
@@ -1181,7 +1176,7 @@
             uses: cl.circuitUses,
         });
         card(parts, c.x, y, c.w, c.h, circuit.name);
-        dot(parts, c.x + c.w - 18, y + 22, running);
+        dot(parts, c.x + c.w - 18, y + 22, flows);
         // pump and mixer of every circuit that reports them; a direct circuit shows the pump only
         if (circuit.pump) {
             badge(parts, c.x + 12, y + 150, circuit.pumpTag, circuit.pump, false);
