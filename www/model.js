@@ -57,6 +57,14 @@
         circulation: ['dhw.circulation_pump', 'web.io.digital_out.m64'],
         // the cold storage (cooling buffer)
         coldBuffer: ['dhw.cold_storage_temp'],
+        // the solar pumps (web outputs), the priority valve M111 of an oil / gas boiler, the tiled stove pump M88 and its sensor B84
+        // (the manuals name them; the state keys follow the web module's rule and are not confirmed on a device)
+        // (plant.js TAG_STATES lists the same ids by tag; a unit test keeps the two equal)
+        solarPump1: ['web.io.digital_out.m75'],
+        solarPump2: ['web.io.digital_out.m76'],
+        boilerValve: ['web.io.digital_out.m111'],
+        stovePump: ['web.io.analog_out.m88', 'web.io.digital_out.m88'],
+        stoveTemp: ['web.io.sensors.b84'],
     };
 
     /* the stages of the electric heating rod (web outputs), each with the kW it stands for */
@@ -95,6 +103,50 @@
 
     function hasValue(states, id) {
         return states[id] !== undefined && states[id] !== null;
+    }
+    /* the stages of a cascade by mode: how many are available and how many run; null on a single unit (the registers answer "not
+       available" there) */
+    function cascadeOf(states) {
+        var rows = ['heating', 'cooling', 'dhw']
+            .map(function (mode) {
+                return {
+                    mode: mode,
+                    available: `cascade.cascade_available_${mode}`,
+                    running: `cascade.cascade_running_${mode}`,
+                };
+            })
+            .filter(function (row) {
+                return Number(states[row.available]) > 0;
+            });
+        return rows.length ? { rows: rows } : null;
+    }
+    /* The further heat generators the plant reports, each with the states that say it runs (`run`; the pipes of a generator flow while
+       one of them does): the other heat pumps of a cascade (master and members; only the stage counts are exposed, no sensors of the
+       members), an oil / gas boiler (priority valve M111) and a tiled stove (pump M88, sensor B84). */
+    function generatorsOf(states, ids) {
+        var generators = [];
+        var cascade = cascadeOf(states);
+        if (cascade) {
+            generators.push({
+                kind: 'cascade',
+                rows: cascade.rows,
+                run: cascade.rows.map(function (row) {
+                    return row.running;
+                }),
+            });
+        }
+        if (ids.boilerValve) {
+            generators.push({ kind: 'boiler', valve: ids.boilerValve, run: [ids.boilerValve] });
+        }
+        if (ids.stovePump || ids.stoveTemp) {
+            generators.push({
+                kind: 'stove',
+                temp: ids.stoveTemp,
+                pump: ids.stovePump,
+                run: ids.stovePump ? [ids.stovePump] : [],
+            });
+        }
+        return generators;
     }
     /* a name that is a string or an object with the texts by language */
     function textOf(name, language) {
@@ -353,8 +405,7 @@
             storage:
                 settings.storage === 'separate' && ids.dhwTop !== null && ids.buffer !== null ? 'separate' : 'combined',
             parts: parts,
-            // hot water without a heating buffer (a Hygienik with a direct circuit): the circuits are fed by the heat pump itself
-            hotWaterOnly: parts.dhw && !parts.buffer,
+            generators: generatorsOf(states, ids),
             // the hot water vessel hangs below the pipes when there is no heating buffer or a separate one
             // (a fresh water station without hot water sensors still has a vessel: the schemes draw a Hygienik without B41 / B48)
             hungDhw:
@@ -364,6 +415,14 @@
             centralTank: parts.buffer,
             ids: ids,
             circuits: circuits,
+            // the compressors that report (a Twin unit has two, large ones up to four)
+            compressors: [1, 2, 3, 4]
+                .map(function (n) {
+                    return `hp.compressor_status_${n}`;
+                })
+                .filter(function (id) {
+                    return hasValue(states, id);
+                }),
             tagNames: withCircuitNames(findTagNames(objects, language), labels),
             rods: ROD_STAGES.filter(function (stage) {
                 return hasValue(states, stage.id);

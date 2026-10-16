@@ -23,6 +23,12 @@ export interface Scheme {
     title: string;
     tags: string[];
     storage: 'combined' | 'separate';
+    /** Units with more than one compressor (a Twin, a Max). */
+    compressors?: number;
+    /** Two units in a cascade (master and member). */
+    cascade?: boolean;
+    /** The number of heating circuits the title names; the other circuits are drawn dashed (optional) in the scheme. */
+    circuits?: number;
 }
 
 /** What the diagram page gets from the data layer. */
@@ -41,13 +47,28 @@ const exported: { module: { exports: unknown } } = { module: { exports: {} } };
 vm.runInNewContext(fs.readFileSync(path.join(root, 'www', 'plant.js'), 'utf8'), exported);
 const plant = exported.module.exports as Plant;
 
+/** The operating modes of the Navigator the pictures are drawn in (`hp.hp_operating_mode`). */
+export const MODE = { heating: 1, cooling: 2, hotWater: 4 } as const;
+
+const HOT_WATER_TAGS = ['B41', 'B42', 'B48'];
+const COOLING_TAGS = ['B31', 'B40', 'M51', 'M61', 'M62', 'M74'];
+
+/**
+ * Does the plant have hot water?
+ *
+ * @param scheme a scheme of the manuals
+ */
+export function hasHotWater(scheme: Scheme): boolean {
+    return scheme.tags.some(tag => HOT_WATER_TAGS.includes(tag));
+}
+
 /**
  * Can the plant cool? The tags that show it are the cold storage, humidity, changeover valves and the reversal valve.
  *
  * @param scheme a scheme of the manuals
  */
 export function canCool(scheme: Scheme): boolean {
-    return scheme.tags.some(tag => ['B31', 'B40', 'M51', 'M61', 'M62', 'M74'].includes(tag));
+    return scheme.tags.some(tag => COOLING_TAGS.includes(tag));
 }
 
 /** Every scheme of the manuals. */
@@ -79,12 +100,20 @@ const TEMPERATURES: Record<string, number> = {
     B74: 50,
     B75: 30,
     B76: 18,
+    B84: 55,
 };
-const ANALOG: Record<string, number> = { M13: 5.5, M71: 6, M22: 60 };
+const ANALOG: Record<string, number> = { M13: 5.5, M71: 6, M22: 60, M88: 40 };
+// outputs that run in the pictures: the solar pumps and the priority valve of a boiler
+const RUNNING = ['M75', 'M76', 'M111'];
 const WEB_NAMES: Record<string, string> = {
     B1: 'B1 Hot water flow',
     B2: 'B2 Heating flow sensor',
     B5: 'B5 Dew point monitor heating circuit A',
+    B84: 'B84 Tiled stove temperature',
+    M75: 'M75 Solar pump 1',
+    M76: 'M76 Solar pump 2',
+    M88: 'M88 Tiled stove pump',
+    M111: 'M111 Boiler priority valve',
     M13: 'M13 Fan speed 1',
     M22: 'M22 Fresh water station',
     M51: 'M51 Four-way valve circuit 1',
@@ -102,9 +131,9 @@ const registerById = new Map<string, RegisterEntry>(
  *
  * @param scheme a scheme of the manuals
  * @param language language of the page
- * @param cooling the heat pump cools: operating mode cooling and cold water temperatures
+ * @param mode the operating mode (see `MODE`); cooling also brings the cold water temperatures
  */
-export function buildSnapshot(scheme: Scheme, language = 'en', cooling = false): Snapshot {
+export function buildSnapshot(scheme: Scheme, language = 'en', mode: number = MODE.heating): Snapshot {
     const states: Snapshot['states'] = {
         'info.connection': true,
         'system.outdoor_temp': 8,
@@ -121,20 +150,31 @@ export function buildSnapshot(scheme: Scheme, language = 'en', cooling = false):
     ['B33', 'B34', 'M73'].forEach(tag => tags.add(tag));
     (scheme.family === 'air' ? ['B37', 'M13'] : ['B36', 'B43', 'M16']).forEach(tag => tags.add(tag));
     // the schemes draw a dashed box for optional further circuits; a scheme titled "1 HK" has circuit A only, "2 HK" A and C
-    const count = /(\d)\s*(?:x\s*)?(?:HK|Heizkreis|circuits?)\b/i.exec(scheme.title)?.[1];
-    if (count && !/circuits A to G/i.test(scheme.title)) {
-        const keep = ['A', 'C', 'D', 'E', 'F', 'G'].slice(0, Number(count));
+    const count = scheme.circuits;
+    if (count) {
+        const keep = ['A', 'C', 'D', 'E', 'F', 'G'].slice(0, count);
         'ABCDEFG'.split('').forEach((letter, i) => {
             if (!keep.includes(letter) && letter !== 'B') {
                 [`B${51 + i}`, `B${61 + i}`, `M${31 + i}`, `M${41 + i}`].forEach(tag => tags.delete(tag));
             }
         });
-        if (Number(count) === 1 && !/Direktheizkreis|direct/i.test(scheme.title)) {
+        if (count === 1 && !/Direktheizkreis|direct/i.test(scheme.title)) {
             ['B52', 'B62', 'M32'].forEach(tag => tags.delete(tag));
         }
     }
-    if (/Twin|Max/i.test(`${scheme.unit} ${scheme.title}`)) {
-        states['hp.compressor_status_2'] = 1;
+    for (let n = 2; n <= (scheme.compressors ?? 1); n++) {
+        states[`hp.compressor_status_${n}`] = 1;
+    }
+    if (scheme.cascade) {
+        // two units: stages available and running by mode (the cooling row only where the plant cools)
+        const cools = canCool(scheme);
+        Object.assign(states, {
+            'cascade.cascade_available_heating': 2,
+            'cascade.cascade_running_heating': 1,
+            'cascade.cascade_available_dhw': hasHotWater(scheme) ? 1 : 0,
+            'cascade.cascade_running_dhw': 0,
+            ...(cools ? { 'cascade.cascade_available_cooling': 2, 'cascade.cascade_running_cooling': 0 } : {}),
+        });
     }
     let index = 0;
     for (const tag of [...tags].sort()) {
@@ -153,6 +193,8 @@ export function buildSnapshot(scheme: Scheme, language = 'en', cooling = false):
             value = circuit[2] === 'flow_temp' ? 34 - i : 22;
             states[`hc.${circuit[1]}.active_mode`] = 1;
             states[`hc.${circuit[1]}.setpoint_flow_temp`] = 35 - i;
+        } else if (RUNNING.includes(tag)) {
+            value = 1;
         } else if (tag in TEMPERATURES) {
             value = TEMPERATURES[tag];
         } else if (tag === 'B31') {
@@ -170,8 +212,8 @@ export function buildSnapshot(scheme: Scheme, language = 'en', cooling = false):
         const name = reg ? reg.label : { en: WEB_NAMES[tag] ?? `${tag} ${id}` };
         objects[id] = { type: 'state', common: { name, ...(unit ? { unit } : {}), role: 'value' } };
     }
-    if (cooling) {
-        states['hp.hp_operating_mode'] = 2;
+    states['hp.hp_operating_mode'] = mode;
+    if (mode === MODE.cooling) {
         for (const [id, value] of Object.entries(states)) {
             if (typeof value !== 'number') {
                 continue;
@@ -185,12 +227,12 @@ export function buildSnapshot(scheme: Scheme, language = 'en', cooling = false):
             }
         }
     }
-    const mode = registerById.get('hp.hp_operating_mode');
-    if (mode) {
+    const modeRegister = registerById.get('hp.hp_operating_mode');
+    if (modeRegister) {
         objects['hp.hp_operating_mode'] = {
             type: 'state',
             common: {
-                name: mode.label,
+                name: modeRegister.label,
                 role: 'value',
                 states: { 0: 'Off', 1: 'Heating', 2: 'Cooling', 4: 'Hot water', 8: 'Defrost' },
             },
