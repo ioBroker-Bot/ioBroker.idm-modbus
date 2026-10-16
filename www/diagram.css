@@ -119,12 +119,13 @@ svg {
 .pipe-light {
     fill: none;
     stroke: #fff;
-    stroke-opacity: 0.55;
+    stroke-opacity: 0; /* the dashes show only while the pipe flows */
     stroke-width: 3;
     stroke-dasharray: 3 19;
     stroke-linecap: round;
 }
 .pipe-light.flowing {
+    stroke-opacity: 0.55;
     animation: flow 1.1s linear infinite;
 }
 /* the start position (--phase) lets a branch continue the dashes of the pipe it joins; one period moves the dashes on by 22 */

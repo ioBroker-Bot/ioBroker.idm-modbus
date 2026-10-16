@@ -1135,6 +1135,11 @@
             running: m.circuits.map(function (circuit) {
                 return circuit.pump ? [circuit.active, circuit.pump] : [circuit.active];
             }),
+            /* water flows through a circuit while its pump runs (the mode alone says nothing: a circuit in heating mode with its pump
+               off carries no water); only without a pump state does the mode have to do */
+            flows: m.circuits.map(function (circuit) {
+                return circuit.pump ? [circuit.pump] : [circuit.active];
+            }),
             tops: tops,
             bottom: next,
         };
@@ -1147,14 +1152,15 @@
         var c = cl.c;
         var y = cl.tops[i];
         var running = cl.running[i];
+        var flows = cl.flows[i];
         // the branches continue the dashes of the trunk they join (the trunk runs from the storage and, for the return, ends there)
         var flowPhase = phaseOf(cl.flowManifold - view.storage.flowX + (y + c.pipeDy - g.yFlow));
         var returnPhase = phaseOf(cl.tops[cl.tops.length - 1] - y - (c.x - cl.returnManifold));
-        hline(view.pipes, cl.flowManifold, c.x, y + c.pipeDy, circuit.flow || ids.hpFlow, running, {
+        hline(view.pipes, cl.flowManifold, c.x, y + c.pipeDy, circuit.flow || ids.hpFlow, flows, {
             phase: flowPhase,
             uses: cl.circuitUses,
         });
-        hline(view.pipes, c.x, cl.returnManifold, y + cl.returnDy, ids.hpReturn, running, {
+        hline(view.pipes, c.x, cl.returnManifold, y + cl.returnDy, ids.hpReturn, flows, {
             phase: returnPhase,
             uses: cl.circuitUses,
         });
@@ -1208,7 +1214,7 @@
         var storage = view.storage;
         var cold = storage.cold;
         var wallRight = tankWallRight();
-        var any = [].concat.apply([], cl.running);
+        var any = [].concat.apply([], cl.flows);
         var lastTop = cl.tops[cl.tops.length - 1];
         var flowBottom = lastTop + cl.c.pipeDy;
         var returnBottom = lastTop + cl.returnDy;
