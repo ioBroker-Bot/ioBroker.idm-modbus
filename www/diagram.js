@@ -418,10 +418,10 @@
     }
     /* A pipe is a thin grey base (all bases lie in one layer below), a solid coloured line while the pipe is on the active path (`uses`
        names the paths that use it: heat, dhw, cool), and light dashes that move along it while it runs (`activeIds`, see activityOf).
-       The colour comes from the sensor `sensorId` unless `opts.color` is given; `opts.phase` shifts the dash pattern (see phaseOf);
-       `opts.whileRunning` keeps the pipe grey while it does not run (a station or a generator has no operating mode of its own). */
+       The colour comes from the sensor `sensorId` unless `opts.color` is given; `opts.phase` shifts the dash pattern (see phaseOf).
+       A pipe on the active path that does not flow stays grey: no water, no colour. Without any state that could say so (`activeIds`
+       empty) the pipe counts as flowing. */
     function pipe(parent, d, sensorId, activeIds, opts) {
-        var whileRunning = opts && opts.whileRunning;
         var phase = opts && opts.phase;
         var uses = opts && opts.uses;
         var fixedColor = opts && opts.color;
@@ -432,13 +432,14 @@
             light.style.setProperty('--phase', `${phase}px`);
         }
         var activity = activityOf(activeIds);
+        var known = activity.ids.length > 0;
         var running = false;
         // what is on the screen, so that a temperature update that changes nothing writes nothing
         var shown = null;
         var flowing = null;
         var stroke = null;
         var update = function () {
-            var on = inUse(uses) && (!whileRunning || running);
+            var on = inUse(uses) && (!known || running);
             if (on !== shown) {
                 color.style.display = on ? '' : 'none';
                 light.style.display = on ? '' : 'none';
@@ -507,8 +508,8 @@
             opts,
         );
     }
-    /* a value chip with the IDM tag in front, sitting on a pipe */
-    function tagChip(parent, cx, cy, id, tag, uses) {
+    /* a value chip with the IDM tag in front, sitting on a pipe: coloured while the pipe is on the active path and flows (`activeIds`) */
+    function tagChip(parent, cx, cy, id, tag, uses, activeIds) {
         var g = el('g', {}, parent);
         var r = el(
             'rect',
@@ -523,16 +524,20 @@
             g,
         );
         var t = text(g, cx, cy + 5, tag, 'chiptext', 'middle');
+        var activity = activityOf(activeIds);
         // grey while the pipe it sits on rests
         var refresh = function () {
-            r.setAttribute('fill', inUse(uses) ? colorOf(id, state[id]) : IDLE_COLOR);
+            var on = inUse(uses) && (!activity.ids.length || activity.fn());
+            r.setAttribute('fill', on ? colorOf(id, state[id]) : IDLE_COLOR);
         };
+        activity.ids.forEach(function (activeId) {
+            bind(activeId, refresh);
+        });
         bind(id, function (v) {
             refresh();
             t.textContent = `${tag}  ${fmt(v, 1, '°C')}`;
         });
         view.modeIds.add(id);
-        return refresh;
     }
 
     /* ---------- parts ---------- */
@@ -1077,14 +1082,20 @@
         var farthest = lanes.length ? lanes[lanes.length - 1].feedX : L.tank.x;
         var chipX = hasPipes ? (st.hpRight + farthest) / 2 : st.hpRight + 80;
         var chipPipes = [
-            { y: g.yFlow, id: ids.hpFlow, tag: TAG.hpFlow, uses: flowChipUses },
-            { y: g.yRet, id: ids.hpReturn, tag: TAG.hpReturn, uses: returnChipUses },
+            { y: g.yFlow, id: ids.hpFlow, tag: TAG.hpFlow, uses: flowChipUses, active: st.waterActive },
+            { y: g.yRet, id: ids.hpReturn, tag: TAG.hpReturn, uses: returnChipUses, active: st.waterActive },
         ];
         if (ids.hgl && hasPipes) {
-            chipPipes.unshift({ y: g.yHgl, id: ids.hgl, tag: TAG.hgl, uses: central ? ['heat', 'dhw'] : ['dhw'] });
+            chipPipes.unshift({
+                y: g.yHgl,
+                id: ids.hgl,
+                tag: TAG.hgl,
+                uses: central ? ['heat', 'dhw'] : ['dhw'],
+                active: st.hglActive,
+            });
         }
         chipPipes.forEach(function (p) {
-            tagChip(view.parts, chipX, p.y, p.id, p.tag, p.uses);
+            tagChip(view.parts, chipX, p.y, p.id, p.tag, p.uses, p.active);
         });
         // where the pipes to the circuits start: at the heating buffer, else where the straight pipes leave the lanes
         view.storage = {
@@ -1286,19 +1297,17 @@
             badge(view.mid, x + 14 + (ids.pumpM22 ? s.circulationGap : 0), y + 126, 'M64', ids.circulation, false);
         }
         // hot in, back cooler, also where the vessel has no sensors
-        hline(view.mid, tankInside, hxX, inY, ids.dhwTop, active, { color: FLOW_COLOR, whileRunning: true });
+        hline(view.mid, tankInside, hxX, inY, ids.dhwTop, active, { color: FLOW_COLOR });
         hline(view.mid, hxX, tankInside, outY, ids.dhwBottom || ids.buffer, active, {
             color: RETURN_COLOR,
-            whileRunning: true,
         });
         el('rect', { x: hxX, y: hxY, width: s.hxW, height: s.hxH, rx: 6, class: 'hx' }, view.parts);
         el('path', { d: `M${hxX} ${hxY + s.hxH} L${hxRight} ${hxY}`, class: 'hxline' }, view.parts);
 
         // the drinking water runs through the heat exchanger as soon as the station works: cold in, hot out to the tap
-        pipe(view.parts, `M${hxRight} ${inY} H${tapX + 2}`, null, active, { color: FLOW_COLOR, whileRunning: true });
+        pipe(view.parts, `M${hxRight} ${inY} H${tapX + 2}`, null, active, { color: FLOW_COLOR });
         pipe(view.parts, `M${coldEnd} ${outY} H${hxRight}`, null, active, {
             color: tempColor(COLD_WATER_TEMP),
-            whileRunning: true,
         });
 
         text(view.parts, coldEnd, outY + 22, m.labels.coldWater, 'small', 'middle');
@@ -1417,20 +1426,13 @@
         hline(view.pipes, L.tank.x + 40, right, returnY, (back || {}).id || m.ids.solarCollector, loop, {
             uses: ['solar'],
         });
-        var refreshCharge = charge ? tagChip(parts, chipX, flowY, charge.id, TAG.solarCharge, ['solar']) : null;
-        var refreshBack = back ? tagChip(parts, chipX, returnY, back.id, TAG.solarReturn, ['solar']) : null;
-        if (charge && back) {
-            bind(back.id, refreshCharge);
-            bind(charge.id, refreshBack);
+        // the chips follow the loop (the pumps, or the two sensors), like the pipes
+        if (charge) {
+            tagChip(parts, chipX, flowY, charge.id, TAG.solarCharge, ['solar'], loop);
         }
-        // the loop follows the pumps where they report, so the chips do as well
-        solarPumps.forEach(function (pump) {
-            [refreshCharge, refreshBack].forEach(function (refresh) {
-                if (refresh) {
-                    bind(pump[1], refresh);
-                }
-            });
-        });
+        if (back) {
+            tagChip(parts, chipX, returnY, back.id, TAG.solarReturn, ['solar'], loop);
+        }
         drawSolarCoil(flowY, returnY);
         return y + h + 20;
     }
@@ -1527,12 +1529,10 @@
         line(view.pipes, flowPoints, spec.flowSensor, spec.active, {
             uses: spec.uses,
             color: spec.flowColor,
-            whileRunning: true,
         });
         line(view.pipes, returnPoints, spec.returnSensor, spec.active, {
             uses: spec.uses,
             color: spec.returnColor,
-            whileRunning: true,
         });
     }
     /* the cascade card: the stages that run of the stages that are available per mode */
