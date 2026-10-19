@@ -1148,9 +1148,13 @@
             // buffer the pipes come straight from the heat pump, which cannot feed them while it charges the hot water vessel
             circuitUses: view.storage.central ? ['heat', 'dhw', 'cool', 'rest'] : ['heat', 'cool'],
             roomsOf: roomsOf,
-            /* a circuit runs, and water flows through it, while its pump runs (M31 for circuit A, M32 for B, ...); the mode alone says
-               nothing (a circuit in heating mode with its pump off carries no water), only without a pump state does it have to do */
+            /* water flows through a circuit while its pump runs (M31 for circuit A, M32 for B, ...); the mode alone says nothing (a circuit
+               in heating mode with its pump off carries no water), and without a pump state nothing tells: no animation then */
             flows: m.circuits.map(function (circuit) {
+                return circuit.pump ? [circuit.pump] : [];
+            }),
+            // the dot of a circuit without a pump state (the pump comes from the web interface) shows its mode: the best information left
+            dots: m.circuits.map(function (circuit) {
                 return circuit.pump ? [circuit.pump] : [circuit.active];
             }),
             tops: tops,
@@ -1177,7 +1181,7 @@
             uses: cl.circuitUses,
         });
         card(parts, c.x, y, c.w, c.h, circuit.name);
-        dot(parts, c.x + c.w - 18, y + 22, flows);
+        dot(parts, c.x + c.w - 18, y + 22, cl.dots[i]);
         // pump and mixer of every circuit that reports them; a direct circuit shows the pump only
         if (circuit.pump) {
             badge(parts, c.x + 12, y + 150, circuit.pumpTag, circuit.pump, false);
@@ -1226,7 +1230,19 @@
         var storage = view.storage;
         var cold = storage.cold;
         var wallRight = tankWallRight();
-        var any = [].concat.apply([], cl.flows);
+        // water flows in the trunk and in a stretch of the manifold while a circuit it feeds runs; as long as one of those circuits has
+        // no pump state nothing tells, and the pipe is drawn coloured but not animated
+        var flowOf = function (from) {
+            var list = [];
+            for (var n = from; n < cl.flows.length; n++) {
+                if (!cl.flows[n].length) {
+                    return [];
+                }
+                list = list.concat(cl.flows[n]);
+            }
+            return list;
+        };
+        var any = flowOf(0);
         var lastTop = cl.tops[cl.tops.length - 1];
         var flowBottom = lastTop + cl.c.pipeDy;
         var returnBottom = lastTop + cl.returnDy;
@@ -1236,7 +1252,7 @@
         // the manifolds run along the circuits in one stretch per circuit: water flows in a stretch only while a circuit at or below it
         // runs, so the pipes past the last running circuit rest
         for (var k = 1; k < cl.tops.length; k++) {
-            var below = [].concat.apply([], cl.flows.slice(k));
+            var below = flowOf(k);
             var flowUpper = cl.tops[k - 1] + cl.c.pipeDy;
             var flowLower = cl.tops[k] + cl.c.pipeDy;
             var returnUpper = cl.tops[k - 1] + cl.returnDy;
@@ -1298,8 +1314,9 @@
         var inY = hxY + 16;
         var outY = hxY + s.hxH - 16;
         var tankInside = L.tank.x + L.tank.w - 60; // the storage pipes start where the tank wall is straight
-        /* the station runs while the hot water flow switch B1 or the station pump M22 says so (else with the compressor) */
-        var active = ids.dhwFlow || ids.pumpM22 ? [ids.dhwFlow, ids.pumpM22] : compressorIds();
+        /* the station runs while the hot water flow switch B1 or the station pump M22 says so (both come from the web interface); without
+           either nothing tells whether hot water is drawn, and the station is drawn coloured but not animated */
+        var active = [ids.dhwFlow, ids.pumpM22];
         var coldEnd = x + w + 54;
         var tapX = x + w + 90;
         var tapY = inY - 20;
